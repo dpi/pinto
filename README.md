@@ -11,3 +11,6 @@ Theme object system.
 ```shell
 composer global require dpi/pinto
 ```
+
+[ci]: https://github.com/dpi/pinto/actions
+[code-coverage]: https://app.codecov.io/gh/dpi/pinto
