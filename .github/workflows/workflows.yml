@@ -1,0 +1,70 @@
+name: Pinto
+on: [push]
+jobs:
+  code-style:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-versions: ['8.2']
+    steps:
+      - uses: actions/checkout@v2
+      - uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: ${{ matrix.php-versions }}
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: "Install dependencies"
+        uses: "ramsey/composer-install@v2"
+      - name: "Run PHP CS Fixer"
+        run: |
+          ./vendor/bin/php-cs-fixer --allow-risky=yes --dry-run fix --diff
+
+  static-analysis:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-versions: ['8.2']
+    steps:
+      - uses: actions/checkout@v2
+      - uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: ${{ matrix.php-versions }}
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: "Install dependencies"
+        uses: "ramsey/composer-install@v1"
+      - name: "Run PHPStan"
+        run: |
+          ./vendor/bin/phpstan analyse --no-progress
+
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-versions: ['8.2']
+        dependency-versions: ['highest', 'lowest']
+    steps:
+      - uses: actions/checkout@v2
+      - uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: ${{ matrix.php-versions }}
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup problem matchers for PHP
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+      - name: Setup problem matchers for PHPUnit
+        run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+      - name: "Install dependencies"
+        uses: "ramsey/composer-install@v2"
+        with:
+          dependency-versions: ${{ matrix.dependency-versions }}
+      - name: "Prepare for tests"
+        run: "mkdir -p build/logs"
+      - name: "Run tests"
+        run: |
+          ./vendor/bin/phpunit
+      - name: "Publish coverage report to Codecov"
+        uses: "codecov/codecov-action@v1"
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: build/logs/clover.xml
