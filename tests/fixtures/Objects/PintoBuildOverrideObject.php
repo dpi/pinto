@@ -32,9 +32,13 @@ final class PintoBuildOverrideObject
         return new static($text);
     }
 
-    public function __invoke(): mixed
+    /**
+     * @phpstan-return array{'build_context_from_list': class-string}
+     */
+    public function __invoke(): array
     {
-        return $this->pintoBuild(function (mixed $build): mixed {
+        // @phpstan-ignore-next-line
+        return $this->pintoBuild(function (mixed $build): array {
             return $build + [];
         });
     }
