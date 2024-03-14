@@ -33,7 +33,7 @@ interface ObjectListInterface extends \BackedEnum
      *
      * @param (callable (mixed $build): mixed) $wrapper
      */
-    public function build(callable $wrapper): callable;
+    public function build(callable $wrapper, object $object): callable;
 
     /**
      * The template directory.

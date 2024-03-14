@@ -45,11 +45,10 @@ trait ObjectListTrait
         ];
     }
 
-    public function build(callable $wrapper): callable
+    public function build(callable $wrapper, object $object): callable
     {
         return function (mixed $build) use ($wrapper) {
             // Override this trait fully, copy its contents, add your logic here.
-            // Or replace with a simple `return $wrapper`.
             return $wrapper($build);
         };
     }

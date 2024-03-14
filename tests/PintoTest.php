@@ -13,6 +13,7 @@ use Pinto\Exception\PintoBuildDefinitionMismatch;
 use Pinto\Exception\PintoCaseMissingDefinitionAttribute;
 use Pinto\Exception\PintoMissingObjectMapping;
 use Pinto\PintoMapping;
+use Pinto\tests\fixtures\Objects\PintoBuildOverrideObject;
 use Pinto\tests\fixtures\Objects\PintoList;
 use Pinto\tests\fixtures\Objects\PintoListMissingDefinition;
 use Pinto\tests\fixtures\Objects\PintoObject;
@@ -128,6 +129,15 @@ final class PintoTest extends TestCase
               ],
             ],
             ThemeDefinition::themeDefinitionForThemeObject(PintoObject::class),
+        );
+    }
+
+    public function testBuildOverride(): void
+    {
+        $object = PintoBuildOverrideObject::create('Foo');
+        static::assertEquals(
+            PintoBuildOverrideObject::class,
+            $object()['build_context_from_list'],
         );
     }
 }
