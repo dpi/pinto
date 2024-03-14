@@ -9,7 +9,7 @@
 Theme object system.
 
 ```shell
-composer global require dpi/pinto
+composer require dpi/pinto
 ```
 
 [ci]: https://github.com/dpi/pinto/actions
