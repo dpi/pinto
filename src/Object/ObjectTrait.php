@@ -42,7 +42,7 @@ trait ObjectTrait
 
         // A wrapper closure is used as to allow the enum to alter the build
         // for all enums (theme objects) under its control.
-        $built = (static::$pintoEnum->build($wrapper))($template);
+        $built = (static::$pintoEnum->build($wrapper, $this))($template);
 
         if (is_array($built)) {
             // @todo assert keys in $built map those in themeDefinition()
