@@ -36,8 +36,8 @@ trait ObjectTrait
         static::$pintoEnum ??= $this->pintoMapping()->getByClass(static::class);
 
         $template = [
-          '#theme' => static::$pintoEnum->name(),
-          '#attached' => ['library' => static::$pintoEnum->attachLibraries()],
+            '#theme' => static::$pintoEnum->name(),
+            '#attached' => ['library' => static::$pintoEnum->attachLibraries()],
         ];
 
         // A wrapper closure is used as to allow the enum to alter the build

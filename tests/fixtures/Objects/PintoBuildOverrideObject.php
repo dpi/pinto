@@ -7,6 +7,7 @@ namespace Pinto\tests\fixtures\Objects;
 use Pinto\Attribute\ThemeDefinition;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
+use Pinto\tests\fixtures\Lists\PintoBuildOverrideList;
 
 /**
  * Test object.
@@ -61,13 +62,13 @@ final class PintoBuildOverrideObject
         return new PintoMapping(
             enumClasses: [],
             enums: [
-              static::class => [PintoBuildOverrideList::class, 'PintoBuildOverrideObject'],
+                static::class => [PintoBuildOverrideList::class, 'PintoBuildOverrideObject'],
             ],
             themeDefinitions: [
-              static::class => [],
+                static::class => [],
             ],
             buildInvokers: [
-              static::class => '__invoke',
+                static::class => '__invoke',
             ],
         );
     }

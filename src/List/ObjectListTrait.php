@@ -41,7 +41,7 @@ trait ObjectListTrait
     public function attachLibraries(): array
     {
         return [
-          sprintf('pinto/%s', $this->libraryName()),
+            sprintf('pinto/%s', $this->libraryName()),
         ];
     }
 
@@ -61,8 +61,8 @@ trait ObjectListTrait
         $reflectionComponentClass = new \ReflectionClass($definition->className);
 
         return array_map(fn (\ReflectionAttribute $r) => $r->newInstance(), [
-          ...$reflectionComponentClass->getAttributes(Js::class),
-          ...$reflectionComponentClass->getAttributes(Css::class),
+            ...$reflectionComponentClass->getAttributes(Js::class),
+            ...$reflectionComponentClass->getAttributes(Css::class),
         ]);
     }
 
@@ -75,9 +75,9 @@ trait ObjectListTrait
                 $definition = ($reflection->getAttributes(Definition::class)[0] ?? null)?->newInstance() ?? throw new PintoCaseMissingDefinitionAttribute($case::class, $case->name);
 
                 $carry[$case->name()] = ThemeDefinition::themeDefinitionForThemeObject($definition->className) + [
-                  'variables' => [],
-                  'path' => $case->templateDirectory(),
-                  'template' => $case->templateName(),
+                    'variables' => [],
+                    'path' => $case->templateDirectory(),
+                    'template' => $case->templateName(),
                 ];
 
                 return $carry;

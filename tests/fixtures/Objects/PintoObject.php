@@ -9,6 +9,7 @@ use Pinto\Attribute\Asset\Js;
 use Pinto\Attribute\ThemeDefinition;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
+use Pinto\tests\fixtures\Lists\PintoList;
 
 /**
  * Test object.
@@ -61,13 +62,13 @@ final class PintoObject
         return new PintoMapping(
             enumClasses: [],
             enums: [
-              static::class => [PintoList::class, 'Pinto_Object'],
+                static::class => [PintoList::class, 'Pinto_Object'],
             ],
             themeDefinitions: [
-              static::class => [],
+                static::class => [],
             ],
             buildInvokers: [
-              static::class => '__invoke',
+                static::class => '__invoke',
             ],
         );
     }
