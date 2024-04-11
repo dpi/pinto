@@ -9,6 +9,9 @@ use Pinto\List\ObjectListInterface;
 use Pinto\List\ObjectListTrait;
 use Pinto\tests\fixtures\Objects\PintoObjectBuildDefinitionMismatch;
 
+/**
+ * For testing an object whose build method doesn't fulfill required keys.
+ */
 enum PintoListObjectBuildDefinitionMismatch: string implements ObjectListInterface
 {
     use ObjectListTrait;

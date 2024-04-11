@@ -38,6 +38,12 @@ final class PintoTest extends TestCase
         PintoListMissingDefinition::themeDefinitions([], '', '', '');
     }
 
+    /**
+     * Tests where an object build method doesn't fulfill required keys.
+     *
+     * @covers \Pinto\Object\ObjectTrait::pintoBuild
+     * @covers \Pinto\Exception\PintoBuildDefinitionMismatch
+     */
     public function testPintoBuildDefinitionMismatchException(): void
     {
         static::expectException(PintoBuildDefinitionMismatch::class);
