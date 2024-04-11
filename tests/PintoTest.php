@@ -13,9 +13,9 @@ use Pinto\Exception\PintoBuildDefinitionMismatch;
 use Pinto\Exception\PintoCaseMissingDefinitionAttribute;
 use Pinto\Exception\PintoMissingObjectMapping;
 use Pinto\PintoMapping;
+use Pinto\tests\fixtures\Lists\PintoList;
+use Pinto\tests\fixtures\Lists\PintoListMissingDefinition;
 use Pinto\tests\fixtures\Objects\PintoBuildOverrideObject;
-use Pinto\tests\fixtures\Objects\PintoList;
-use Pinto\tests\fixtures\Objects\PintoListMissingDefinition;
 use Pinto\tests\fixtures\Objects\PintoObject;
 use Pinto\tests\fixtures\Objects\PintoObjectBuildDefinitionMismatch;
 
@@ -34,7 +34,7 @@ final class PintoTest extends TestCase
     public function testPintoCaseMissingDefinitionAttributeException(): void
     {
         static::expectException(PintoCaseMissingDefinitionAttribute::class);
-        static::expectExceptionMessage('Case missing `Pinto\tests\fixtures\Objects\PintoListMissingDefinition::Pinto_Missing_Enum');
+        static::expectExceptionMessage('Case missing `Pinto\tests\fixtures\Lists\PintoListMissingDefinition::Pinto_Missing_Enum');
         PintoListMissingDefinition::themeDefinitions([], '', '', '');
     }
 
@@ -54,13 +54,13 @@ final class PintoTest extends TestCase
     {
         $themeDefinitions = PintoList::themeDefinitions([], '', '', '');
         static::assertEquals([
-          'object_test' => [
-            'variables' => [
-              'test_variable' => null,
+            'object_test' => [
+                'variables' => [
+                    'test_variable' => null,
+                ],
+                'path' => 'tests/fixtures/resources',
+                'template' => 'object-test',
             ],
-            'path' => 'tests/fixtures/resources',
-            'template' => 'object-test',
-          ],
         ], $themeDefinitions);
     }
 
@@ -71,23 +71,23 @@ final class PintoTest extends TestCase
     {
         $themeDefinitions = PintoList::libraries();
         static::assertEquals([
-          'object_test' => [
-            'js' => [
-              'tests/fixtures/resources/app.js' => [
-                'minified' => false,
-                'preprocess' => false,
-              ],
-            ],
-            'css' => [
-              'component' => [
-                'tests/fixtures/resources/styles.css' => [
-                  'minified' => false,
-                  'preprocess' => false,
-                  'category' => 'component',
+            'object_test' => [
+                'js' => [
+                    'tests/fixtures/resources/app.js' => [
+                        'minified' => false,
+                        'preprocess' => false,
+                    ],
                 ],
-              ],
+                'css' => [
+                    'component' => [
+                        'tests/fixtures/resources/styles.css' => [
+                            'minified' => false,
+                            'preprocess' => false,
+                            'category' => 'component',
+                        ],
+                    ],
+                ],
             ],
-          ],
         ], $themeDefinitions);
     }
 
@@ -103,12 +103,12 @@ final class PintoTest extends TestCase
     {
         $object = PintoObject::create('Foo bar!');
         $this::assertEquals([
-          '#theme' => 'object_test',
-          '#attached' => [
-            'library' => [
-              'pinto/object_test',
+            '#theme' => 'object_test',
+            '#attached' => [
+                'library' => [
+                    'pinto/object_test',
+                ],
             ],
-          ],
         ], $object());
     }
 
@@ -124,9 +124,9 @@ final class PintoTest extends TestCase
     {
         static::assertEquals(
             [
-              'variables' => [
-                'test_variable' => null,
-              ],
+                'variables' => [
+                    'test_variable' => null,
+                ],
             ],
             ThemeDefinition::themeDefinitionForThemeObject(PintoObject::class),
         );

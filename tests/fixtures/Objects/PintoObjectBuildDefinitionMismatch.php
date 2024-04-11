@@ -9,6 +9,7 @@ use Pinto\Attribute\Asset\Js;
 use Pinto\Attribute\ThemeDefinition;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
+use Pinto\tests\fixtures\Lists\PintoListObjectBuildDefinitionMismatch;
 
 /**
  * Test object.
@@ -61,17 +62,17 @@ final class PintoObjectBuildDefinitionMismatch
         return new PintoMapping(
             enumClasses: [],
             enums: [
-              static::class => [PintoListObjectBuildDefinitionMismatch::class, 'Pinto_Object_Build_Definition_Mismatch'],
+                static::class => [PintoListObjectBuildDefinitionMismatch::class, 'Pinto_Object_Build_Definition_Mismatch'],
             ],
             themeDefinitions: [
-              static::class => [
-                'variables' => [
-                  'test_variable' => null,
+                static::class => [
+                    'variables' => [
+                        'test_variable' => null,
+                    ],
                 ],
-              ],
             ],
             buildInvokers: [
-              static::class => '__invoke',
+                static::class => '__invoke',
             ],
         );
     }
