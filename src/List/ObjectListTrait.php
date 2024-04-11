@@ -10,6 +10,7 @@ use Pinto\Attribute\Asset\CssAssetInterface;
 use Pinto\Attribute\Asset\Js;
 use Pinto\Attribute\Asset\JsAssetInterface;
 use Pinto\Attribute\Definition;
+use Pinto\Attribute\DependencyOn;
 use Pinto\Attribute\ThemeDefinition;
 
 /**
@@ -124,8 +125,17 @@ trait ObjectListTrait
                     $nestedValueSet($library, $asset->getLibraryPath(), $vars);
                 }
 
-                // Define the library if there is at least one asset.
-                if (count($library) > 0) {
+                $rCase = new \ReflectionEnumUnitCase($case::class, $case->name);
+                foreach ($rCase->getAttributes(DependencyOn::class) as $r) {
+                    $dependencyAttr = $r->newInstance();
+                    $library['dependencies'] = [
+                        ...($library['dependencies'] ?? []),
+                        ...$dependencyAttr->case->attachLibraries(),
+                    ];
+                }
+
+                // Define the library if there is at least one asset or dependency.
+                if ([] !== $library) {
                     $libraries[$case->libraryName()] = $library;
                 }
 
