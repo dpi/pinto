@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pinto\tests\fixtures\Objects;
 
 use Pinto\Attribute\Asset\Css;
+use Pinto\Attribute\Asset\ExternalJs;
 use Pinto\Attribute\Asset\Js;
 use Pinto\Attribute\ThemeDefinition;
 use Pinto\Object\ObjectTrait;
@@ -16,6 +17,7 @@ use Pinto\tests\fixtures\Lists\PintoList;
  */
 #[Css('styles.css')]
 #[Js('app.js')]
+#[ExternalJs('https://example.com/path.js')]
 final class PintoObject
 {
     use ObjectTrait;

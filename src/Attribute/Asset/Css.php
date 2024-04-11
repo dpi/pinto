@@ -8,7 +8,7 @@ namespace Pinto\Attribute\Asset;
  * An attribute representing a single CSS file asset used by an object.
  */
 #[\Attribute(flags: \Attribute::TARGET_CLASS | \Attribute::TARGET_CLASS_CONSTANT | \Attribute::IS_REPEATABLE)]
-final class Css implements CssAssetInterface
+final class Css implements CssAssetInterface, LocalAssetInterface
 {
     private string $assetPath;
 
