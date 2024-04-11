@@ -13,11 +13,11 @@ enum PintoListNoDefinitions: string implements ObjectListInterface
 {
     use ObjectListTrait;
 
-  case No_Definition_No_Assets = 'no_definition_no_assets';
+    case No_Definition_No_Assets = 'no_definition_no_assets';
 
-  #[Css('styles.css')]
-  #[Js('app.js')]
-  case No_Definition_With_Assets = 'no_definition_with_assets';
+    #[Css('styles.css')]
+    #[Js('app.js')]
+    case No_Definition_With_Assets = 'no_definition_with_assets';
 
     public function templateDirectory(): string
     {

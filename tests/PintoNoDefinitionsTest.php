@@ -28,24 +28,24 @@ final class PintoNoDefinitionsTest extends TestCase
      */
     public function testNoAssets(): void
     {
-      static::assertEquals([
-        PintoListNoDefinitions::No_Definition_With_Assets->value => [
-          'js' => [
-            'tests/fixtures/resources/app.js' => [
-              'minified' => false,
-              'preprocess' => false,
+        static::assertEquals([
+            PintoListNoDefinitions::No_Definition_With_Assets->value => [
+                'js' => [
+                    'tests/fixtures/resources/app.js' => [
+                        'minified' => false,
+                        'preprocess' => false,
+                    ],
+                ],
+                'css' => [
+                    'component' => [
+                        'tests/fixtures/resources/styles.css' => [
+                            'minified' => false,
+                            'preprocess' => false,
+                            'category' => 'component',
+                        ],
+                    ],
+                ],
             ],
-          ],
-          'css' => [
-            'component' => [
-              'tests/fixtures/resources/styles.css' => [
-                'minified' => false,
-                'preprocess' => false,
-                'category' => 'component',
-              ],
-            ],
-          ],
-        ],
-      ], PintoListNoDefinitions::libraries());
+        ], PintoListNoDefinitions::libraries());
     }
 }
