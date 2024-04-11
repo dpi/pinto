@@ -6,6 +6,8 @@ namespace Pinto\tests;
 
 use PHPUnit\Framework\TestCase;
 use Pinto\Attribute\Asset\Css;
+use Pinto\Attribute\Asset\ExternalCss;
+use Pinto\Attribute\Asset\ExternalJs;
 use Pinto\Attribute\Asset\Js;
 use Pinto\Attribute\Build;
 use Pinto\Attribute\ThemeDefinition;
@@ -85,6 +87,9 @@ final class PintoTest extends TestCase
                             'preprocess' => false,
                             'category' => 'component',
                         ],
+                        'https://example.com/path.css' => [
+                            'external' => true,
+                        ],
                     ],
                 ],
             ],
@@ -94,9 +99,11 @@ final class PintoTest extends TestCase
     public function testAssets(): void
     {
         $assets = iterator_to_array(PintoList::Pinto_Object->assets());
-        static::assertCount(3, $assets);
+        static::assertCount(4, $assets);
         static::assertInstanceOf(Css::class, $assets[0]);
         static::assertInstanceOf(Js::class, $assets[1]);
+        static::assertInstanceOf(ExternalJs::class, $assets[2]);
+        static::assertInstanceOf(ExternalCss::class, $assets[3]);
     }
 
     public function testObject(): void
