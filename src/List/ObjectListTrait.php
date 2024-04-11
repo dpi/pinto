@@ -128,9 +128,12 @@ trait ObjectListTrait
                 $rCase = new \ReflectionEnumUnitCase($case::class, $case->name);
                 foreach ($rCase->getAttributes(DependencyOn::class) as $r) {
                     $dependencyAttr = $r->newInstance();
+                    $on = $dependencyAttr->dependency instanceof ObjectListInterface
+                      ? $dependencyAttr->dependency->attachLibraries()
+                        : [$dependencyAttr->dependency];
                     $library['dependencies'] = [
                         ...($library['dependencies'] ?? []),
-                        ...$dependencyAttr->case->attachLibraries(),
+                        ...$on,
                     ];
                 }
 

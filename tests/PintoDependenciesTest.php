@@ -58,6 +58,7 @@ final class PintoDependenciesTest extends TestCase
             PintoListDependencies::Delta->value => [
                 'dependencies' => [
                     'pinto/alpha',
+                    'foo/bar',
                 ],
             ],
         ], PintoListDependencies::libraries());

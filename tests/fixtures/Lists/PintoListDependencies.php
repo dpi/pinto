@@ -30,6 +30,7 @@ enum PintoListDependencies: string implements ObjectListInterface
     case Charlie = 'charlie';
 
     #[DependencyOn(self::Alpha)]
+    #[DependencyOn('foo/bar')]
     case Delta = 'delta';
 
     public function templateDirectory(): string
