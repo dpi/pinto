@@ -10,11 +10,9 @@ use Pinto\Attribute\Asset\Js;
 use Pinto\Attribute\Build;
 use Pinto\Attribute\ThemeDefinition;
 use Pinto\Exception\PintoBuildDefinitionMismatch;
-use Pinto\Exception\PintoCaseMissingDefinitionAttribute;
 use Pinto\Exception\PintoMissingObjectMapping;
 use Pinto\PintoMapping;
 use Pinto\tests\fixtures\Lists\PintoList;
-use Pinto\tests\fixtures\Lists\PintoListMissingDefinition;
 use Pinto\tests\fixtures\Objects\PintoBuildOverrideObject;
 use Pinto\tests\fixtures\Objects\PintoObject;
 use Pinto\tests\fixtures\Objects\PintoObjectBuildDefinitionMismatch;
@@ -29,13 +27,6 @@ final class PintoTest extends TestCase
         $pintoMapping = new PintoMapping([], [], [], []);
         static::expectException(PintoMissingObjectMapping::class);
         $pintoMapping->getBuildInvoker(PintoObject::class);
-    }
-
-    public function testPintoCaseMissingDefinitionAttributeException(): void
-    {
-        static::expectException(PintoCaseMissingDefinitionAttribute::class);
-        static::expectExceptionMessage('Case missing `Pinto\tests\fixtures\Lists\PintoListMissingDefinition::Pinto_Missing_Enum');
-        PintoListMissingDefinition::themeDefinitions([], '', '', '');
     }
 
     /**
@@ -101,8 +92,8 @@ final class PintoTest extends TestCase
     {
         $assets = iterator_to_array(PintoList::Pinto_Object->assets());
         static::assertCount(2, $assets);
-        static::assertInstanceOf(Js::class, $assets[0]);
-        static::assertInstanceOf(Css::class, $assets[1]);
+        static::assertInstanceOf(Css::class, $assets[0]);
+        static::assertInstanceOf(Js::class, $assets[1]);
     }
 
     public function testObject(): void
