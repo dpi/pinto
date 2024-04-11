@@ -74,6 +74,9 @@ final class PintoTest extends TestCase
                         'minified' => false,
                         'preprocess' => false,
                     ],
+                    'https://example.com/path.js' => [
+                        'external' => true,
+                    ],
                 ],
                 'css' => [
                     'component' => [
@@ -91,7 +94,7 @@ final class PintoTest extends TestCase
     public function testAssets(): void
     {
         $assets = iterator_to_array(PintoList::Pinto_Object->assets());
-        static::assertCount(2, $assets);
+        static::assertCount(3, $assets);
         static::assertInstanceOf(Css::class, $assets[0]);
         static::assertInstanceOf(Js::class, $assets[1]);
     }

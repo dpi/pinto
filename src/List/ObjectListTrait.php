@@ -9,6 +9,7 @@ use Pinto\Attribute\Asset\Css;
 use Pinto\Attribute\Asset\CssAssetInterface;
 use Pinto\Attribute\Asset\Js;
 use Pinto\Attribute\Asset\JsAssetInterface;
+use Pinto\Attribute\Asset\LocalAssetInterface;
 use Pinto\Attribute\Definition;
 use Pinto\Attribute\DependencyOn;
 use Pinto\Attribute\ThemeDefinition;
@@ -112,14 +113,16 @@ trait ObjectListTrait
             static function (array $libraries, self $case) use ($nestedValueSet): array {
                 $library = [];
                 foreach ($case->assets() as $asset) {
-                    /** @var AssetInterface $asset */
+                    /** @var JsAssetInterface|CssAssetInterface $asset */
                     /** @var (array{'path': string}&array<string, mixed>) $vars */
                     $vars = get_object_vars($asset);
                     unset($vars['path']);
-                    if ($asset instanceof JsAssetInterface) {
-                        $asset->setPath($case->jsDirectory());
-                    } elseif ($asset instanceof CssAssetInterface) {
-                        $asset->setPath($case->cssDirectory());
+                    if ($asset instanceof LocalAssetInterface) {
+                        if ($asset instanceof JsAssetInterface) {
+                            $asset->setPath($case->jsDirectory());
+                        } elseif ($asset instanceof CssAssetInterface) {
+                            $asset->setPath($case->cssDirectory());
+                        }
                     }
 
                     $nestedValueSet($library, $asset->getLibraryPath(), $vars);
