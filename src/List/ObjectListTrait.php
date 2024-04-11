@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Pinto\List;
 
+use Pinto\Attribute\Asset\AssetInterface;
 use Pinto\Attribute\Asset\Css;
 use Pinto\Attribute\Asset\CssAssetInterface;
 use Pinto\Attribute\Asset\Js;
 use Pinto\Attribute\Asset\JsAssetInterface;
 use Pinto\Attribute\Definition;
 use Pinto\Attribute\ThemeDefinition;
-use Pinto\Exception\PintoCaseMissingDefinitionAttribute;
 
 /**
  * Implements interface defaults.
@@ -55,35 +55,37 @@ trait ObjectListTrait
 
     public function assets(): iterable
     {
-        $reflection = new \ReflectionEnumUnitCase($this::class, $this->name);
-        $definition = ($reflection->getAttributes(Definition::class)[0] ?? null)?->newInstance() ?? throw new \LogicException('All component cases must have a `' . Definition::class . '`.');
+        $rCase = new \ReflectionEnumUnitCase($this::class, $this->name);
+        $definitionAttr = ($rCase->getAttributes(Definition::class)[0] ?? null)?->newInstance();
+        $rComponentClass = null !== $definitionAttr ? new \ReflectionClass($definitionAttr->className) : null;
 
-        $reflectionComponentClass = new \ReflectionClass($definition->className);
+        /** @var array<\ReflectionAttribute<\Pinto\Attribute\Asset\AssetInterface>> $assets */
+        $assets = ($rComponentClass ?? $rCase)->getAttributes(AssetInterface::class, \ReflectionAttribute::IS_INSTANCEOF);
 
-        return array_map(fn (\ReflectionAttribute $r) => $r->newInstance(), [
-            ...$reflectionComponentClass->getAttributes(Js::class),
-            ...$reflectionComponentClass->getAttributes(Css::class),
-        ]);
+        return array_map(fn (\ReflectionAttribute $r) => $r->newInstance(), $assets);
     }
 
     public static function themeDefinitions(array $existing, string $type, string $theme, string $path): array
     {
-        return array_reduce(
+        return \array_filter(\array_reduce(
             static::cases(),
             static function (array $carry, self $case): array {
-                $reflection = new \ReflectionEnumUnitCase($case::class, $case->name);
-                $definition = ($reflection->getAttributes(Definition::class)[0] ?? null)?->newInstance() ?? throw new PintoCaseMissingDefinitionAttribute($case::class, $case->name);
+                $rCase = new \ReflectionEnumUnitCase($case::class, $case->name);
+                $definitionAttr = ($rCase->getAttributes(Definition::class)[0] ?? null)?->newInstance();
 
-                $carry[$case->name()] = ThemeDefinition::themeDefinitionForThemeObject($definition->className) + [
-                    'variables' => [],
-                    'path' => $case->templateDirectory(),
-                    'template' => $case->templateName(),
-                ];
+                $carry[$case->name()] = null !== $definitionAttr
+                  ? ThemeDefinition::themeDefinitionForThemeObject($definitionAttr->className) + [
+                      'variables' => [],
+                      'path' => $case->templateDirectory(),
+                      'template' => $case->templateName(),
+                  ]
+                  // Only theme objects must/may have a theme definition.
+                  : null;
 
                 return $carry;
             },
             [],
-        );
+        ));
     }
 
     /**
@@ -109,7 +111,7 @@ trait ObjectListTrait
             static function (array $libraries, self $case) use ($nestedValueSet): array {
                 $library = [];
                 foreach ($case->assets() as $asset) {
-                    /** @var \Pinto\Attribute\Asset\AssetInterface $asset */
+                    /** @var AssetInterface $asset */
                     /** @var (array{'path': string}&array<string, mixed>) $vars */
                     $vars = get_object_vars($asset);
                     unset($vars['path']);

@@ -7,7 +7,7 @@ namespace Pinto\Attribute\Asset;
 /**
  * An attribute representing a single Javascript file asset used by an object.
  */
-#[\Attribute(flags: \Attribute::TARGET_CLASS | \Attribute::IS_REPEATABLE)]
+#[\Attribute(flags: \Attribute::TARGET_CLASS | \Attribute::TARGET_CLASS_CONSTANT | \Attribute::IS_REPEATABLE)]
 final class Js implements JsAssetInterface
 {
     private string $assetPath;
