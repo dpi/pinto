@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Pinto\Object;
 
 use Pinto\Exception\PintoBuildDefinitionMismatch;
-use Pinto\List\ObjectListInterface;
 use Pinto\PintoMapping;
 
 /**
@@ -14,9 +13,13 @@ use Pinto\PintoMapping;
 trait ObjectTrait
 {
     /**
-     * Static cache.
+     * Memo/cache.
+     *
+     * @var array<class-string<object>, \Pinto\List\ObjectListInterface>
+     *
+     * @internal
      */
-    private static ObjectListInterface $pintoEnum;
+    protected static array $pintoEnum = [];
 
     /**
      * An optional wrapper for individual object build methods.
@@ -33,16 +36,16 @@ trait ObjectTrait
      */
     private function pintoBuild(callable $wrapper): mixed
     {
-        static::$pintoEnum ??= $this->pintoMapping()->getByClass(static::class);
+        static::$pintoEnum[static::class] ??= $this->pintoMapping()->getByClass(static::class);
 
         $template = [
-            '#theme' => static::$pintoEnum->name(),
-            '#attached' => ['library' => static::$pintoEnum->attachLibraries()],
+            '#theme' => static::$pintoEnum[static::class]->name(),
+            '#attached' => ['library' => static::$pintoEnum[static::class]->attachLibraries()],
         ];
 
         // A wrapper closure is used as to allow the enum to alter the build
         // for all enums (theme objects) under its control.
-        $built = (static::$pintoEnum->build($wrapper, $this))($template);
+        $built = (static::$pintoEnum[static::class]->build($wrapper, $this))($template);
 
         if (is_array($built)) {
             // @todo assert keys in $built map those in themeDefinition()

@@ -48,7 +48,7 @@ final class ThemeDefinition
             /** @var static $themeDefinition */
             $themeDefinition = $r->newInstance();
 
-            return $themeDefinition->definition ?? throw new PintoThemeDefinition('Theme definition must be set for theme definition attributes on the class level of a theme object.');
+            return $themeDefinition->definition ?? throw new PintoThemeDefinition('$definition property must be set for ' . static::class . ' attributes on the class level of a theme object.');
         }, $objectClassReflection->getAttributes(static::class)));
 
         $methods = $objectClassReflection->getMethods(\ReflectionMethod::IS_PUBLIC);
