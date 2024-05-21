@@ -15,6 +15,8 @@ use Pinto\Exception\PintoBuildDefinitionMismatch;
 use Pinto\Exception\PintoMissingObjectMapping;
 use Pinto\PintoMapping;
 use Pinto\tests\fixtures\Lists\PintoList;
+use Pinto\tests\fixtures\Objects\Extends\PintoObjectExtends1;
+use Pinto\tests\fixtures\Objects\Extends\PintoObjectExtends2;
 use Pinto\tests\fixtures\Objects\PintoBuildOverrideObject;
 use Pinto\tests\fixtures\Objects\PintoObject;
 use Pinto\tests\fixtures\Objects\PintoObjectBuildDefinitionMismatch;
@@ -146,5 +148,32 @@ final class PintoTest extends TestCase
             PintoBuildOverrideObject::class,
             $object()['build_context_from_list'],
         );
+    }
+
+    /**
+     * @covers \Pinto\Object\ObjectTrait::pintoBuild
+     */
+    public function testObjectExtends(): void
+    {
+        $object = PintoObjectExtends1::create('Foo bar!');
+        $this::assertEquals([
+            '#theme' => 'extends1',
+            '#attached' => [
+                'library' => [
+                    'pinto/extends1',
+                ],
+            ],
+        ], $object());
+
+        $object = PintoObjectExtends2::create('Fizz buzz!');
+        $this::assertEquals([
+            // Ensures the enum is matched and the correct meta information is merged into the build.
+            '#theme' => 'extends2',
+            '#attached' => [
+                'library' => [
+                    'pinto/extends2',
+                ],
+            ],
+        ], $object());
     }
 }
