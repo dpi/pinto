@@ -10,6 +10,7 @@ namespace Pinto\Attribute\Asset;
 #[\Attribute(flags: \Attribute::TARGET_CLASS | \Attribute::TARGET_CLASS_CONSTANT | \Attribute::IS_REPEATABLE)]
 final class Css implements CssAssetInterface, LocalAssetInterface
 {
+    public array $attributes = [];
     private string $assetPath;
 
     /**
@@ -19,6 +20,7 @@ final class Css implements CssAssetInterface, LocalAssetInterface
      *   A path to append after ObjectListInterface::cssDirectory for the enum
      *   this object is represented by
      * @param 'base'|'layout'|'component'|'state'|'theme' $category
+     *   A SMACSS category
      */
     public function __construct(
         public string $path,

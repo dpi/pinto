@@ -11,6 +11,7 @@ namespace Pinto\Attribute\Asset;
 final class Js implements JsAssetInterface, LocalAssetInterface
 {
     private string $assetPath;
+    public array $attributes = [];
 
     /**
      * Defines a Javascript asset for the built library.

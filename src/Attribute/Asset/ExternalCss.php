@@ -10,6 +10,8 @@ namespace Pinto\Attribute\Asset;
 #[\Attribute(flags: \Attribute::TARGET_CLASS | \Attribute::TARGET_CLASS_CONSTANT | \Attribute::IS_REPEATABLE)]
 final class ExternalCss implements JsAssetInterface, ExternalAssetInterface
 {
+    public array $attributes = [];
+
     /**
      * Defines an externally hosted Javascript asset.
      */
@@ -18,7 +20,7 @@ final class ExternalCss implements JsAssetInterface, ExternalAssetInterface
         private string $category = 'component',
         public readonly bool $external = true,
     ) {
-        if (!str_starts_with($url, 'https://')) {
+        if (!str_starts_with($url, 'https://') && !str_starts_with($url, '//')) {
             throw new \InvalidArgumentException('Invalid URL.');
         }
     }
