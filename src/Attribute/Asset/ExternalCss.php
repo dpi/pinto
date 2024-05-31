@@ -11,17 +11,15 @@ namespace Pinto\Attribute\Asset;
 final class ExternalCss implements JsAssetInterface, ExternalAssetInterface
 {
     /**
-     * @var array<string, mixed>
-     */
-    public array $attributes = [];
-
-    /**
      * Defines an externally hosted Javascript asset.
+     *
+     * @phpstan-param array<string, mixed> $attributes
      */
     public function __construct(
         private readonly string $url,
         private string $category = 'component',
         public readonly bool $external = true,
+        public readonly array $attributes = [],
     ) {
         if (!str_starts_with($url, 'https://') && !str_starts_with($url, '//')) {
             throw new \InvalidArgumentException('Invalid URL.');
