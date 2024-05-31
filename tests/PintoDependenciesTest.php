@@ -32,6 +32,7 @@ final class PintoDependenciesTest extends TestCase
                     'tests/fixtures/resources/app.js' => [
                         'minified' => false,
                         'preprocess' => false,
+                        'attributes' => [],
                     ],
                 ],
                 'css' => [
@@ -40,6 +41,7 @@ final class PintoDependenciesTest extends TestCase
                             'minified' => false,
                             'preprocess' => false,
                             'category' => 'component',
+                            'attributes' => [],
                         ],
                     ],
                 ],
@@ -52,6 +54,7 @@ final class PintoDependenciesTest extends TestCase
                     'tests/fixtures/resources/app.js' => [
                         'minified' => false,
                         'preprocess' => false,
+                        'attributes' => [],
                     ],
                 ],
             ],

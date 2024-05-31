@@ -13,6 +13,11 @@ final class Js implements JsAssetInterface, LocalAssetInterface
     private string $assetPath;
 
     /**
+     * @var array<string, mixed>
+     */
+    public array $attributes = [];
+
+    /**
      * Defines a Javascript asset for the built library.
      *
      * @param string $path
