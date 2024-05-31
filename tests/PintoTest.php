@@ -62,6 +62,13 @@ final class PintoTest extends TestCase
                 'path' => 'tests/fixtures/resources',
                 'template' => 'object-test',
             ],
+            'object_test_attributes' => [
+                'variables' => [
+                    'test_variable' => null,
+                ],
+                'path' => 'tests/fixtures/resources',
+                'template' => 'object-test-attributes',
+            ],
         ], $themeDefinitions);
     }
 
@@ -95,6 +102,33 @@ final class PintoTest extends TestCase
                         'https://example.com/path.css' => [
                             'external' => true,
                             'attributes' => [],
+                        ],
+                    ],
+                ],
+            ],
+            'object_test_attributes' => [
+                'js' => [
+                    'tests/fixtures/resources/app.js' => [
+                        'minified' => false,
+                        'preprocess' => false,
+                        'attributes' => ['defer' => true],
+                    ],
+                    'https://example.com/path.js' => [
+                        'external' => true,
+                        'attributes' => ['defer' => true],
+                    ],
+                ],
+                'css' => [
+                    'component' => [
+                        'tests/fixtures/resources/styles.css' => [
+                            'minified' => false,
+                            'preprocess' => false,
+                            'category' => 'component',
+                            'attributes' => ['defer' => true],
+                        ],
+                        'https://example.com/path.css' => [
+                            'external' => true,
+                            'attributes' => ['defer' => true],
                         ],
                     ],
                 ],

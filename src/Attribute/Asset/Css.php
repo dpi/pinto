@@ -10,10 +10,6 @@ namespace Pinto\Attribute\Asset;
 #[\Attribute(flags: \Attribute::TARGET_CLASS | \Attribute::TARGET_CLASS_CONSTANT | \Attribute::IS_REPEATABLE)]
 final class Css implements CssAssetInterface, LocalAssetInterface
 {
-    /**
-     * @var array<string, mixed>
-     */
-    public array $attributes = [];
     private string $assetPath;
 
     /**
@@ -24,12 +20,14 @@ final class Css implements CssAssetInterface, LocalAssetInterface
      *   this object is represented by
      * @param 'base'|'layout'|'component'|'state'|'theme' $category
      *   A SMACSS category
+     * @param array<string, mixed> $attributes
      */
     public function __construct(
         public string $path,
         public bool $minified = false,
         public bool $preprocess = false,
         public string $category = 'component',
+        public readonly array $attributes = [],
     ) {
         if (str_starts_with($path, '/')) {
             throw new \LogicException('Path must not begin with forward-slash');

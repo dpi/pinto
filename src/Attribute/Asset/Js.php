@@ -13,21 +13,18 @@ final class Js implements JsAssetInterface, LocalAssetInterface
     private string $assetPath;
 
     /**
-     * @var array<string, mixed>
-     */
-    public array $attributes = [];
-
-    /**
      * Defines a Javascript asset for the built library.
      *
      * @param string $path
      *   A path to append after ObjectListInterface::cssDirectory for the enum
      *   this object is represented by
+     * @param array<string, mixed> $attributes
      */
     public function __construct(
         public string $path,
         public bool $minified = false,
         public bool $preprocess = false,
+        public readonly array $attributes = [],
     ) {
         if (str_starts_with($path, '/')) {
             throw new \LogicException('Path must not begin with forward-slash');

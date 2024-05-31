@@ -8,6 +8,7 @@ use Pinto\Attribute\Definition;
 use Pinto\List\ObjectListInterface;
 use Pinto\List\ObjectListTrait;
 use Pinto\tests\fixtures\Objects\PintoObject;
+use Pinto\tests\fixtures\Objects\PintoObjectAttributes;
 
 enum PintoList: string implements ObjectListInterface
 {
@@ -15,6 +16,9 @@ enum PintoList: string implements ObjectListInterface
 
     #[Definition(PintoObject::class)]
     case Pinto_Object = 'object_test';
+
+    #[Definition(PintoObjectAttributes::class)]
+    case Pinto_Object_Attributes = 'object_test_attributes';
 
     public function templateDirectory(): string
     {
