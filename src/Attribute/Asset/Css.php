@@ -10,6 +10,9 @@ namespace Pinto\Attribute\Asset;
 #[\Attribute(flags: \Attribute::TARGET_CLASS | \Attribute::TARGET_CLASS_CONSTANT | \Attribute::IS_REPEATABLE)]
 final class Css implements CssAssetInterface, LocalAssetInterface
 {
+    /**
+     * @var array<string, mixed>
+     */
     public array $attributes = [];
     private string $assetPath;
 

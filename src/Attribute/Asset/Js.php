@@ -11,6 +11,10 @@ namespace Pinto\Attribute\Asset;
 final class Js implements JsAssetInterface, LocalAssetInterface
 {
     private string $assetPath;
+
+    /**
+     * @var array<string, mixed>
+     */
     public array $attributes = [];
 
     /**

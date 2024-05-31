@@ -77,9 +77,11 @@ final class PintoTest extends TestCase
                     'tests/fixtures/resources/app.js' => [
                         'minified' => false,
                         'preprocess' => false,
+                        'attributes' => [],
                     ],
                     'https://example.com/path.js' => [
                         'external' => true,
+                        'attributes' => [],
                     ],
                 ],
                 'css' => [
@@ -88,9 +90,11 @@ final class PintoTest extends TestCase
                             'minified' => false,
                             'preprocess' => false,
                             'category' => 'component',
+                            'attributes' => [],
                         ],
                         'https://example.com/path.css' => [
                             'external' => true,
+                            'attributes' => [],
                         ],
                     ],
                 ],

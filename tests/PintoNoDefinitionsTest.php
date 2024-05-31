@@ -34,6 +34,7 @@ final class PintoNoDefinitionsTest extends TestCase
                     'tests/fixtures/resources/app.js' => [
                         'minified' => false,
                         'preprocess' => false,
+                        'attributes' => [],
                     ],
                 ],
                 'css' => [
@@ -42,6 +43,7 @@ final class PintoNoDefinitionsTest extends TestCase
                             'minified' => false,
                             'preprocess' => false,
                             'category' => 'component',
+                            'attributes' => [],
                         ],
                     ],
                 ],
