@@ -49,8 +49,8 @@ final class PintoTest extends TestCase
     }
 
     /**
-     * @covers \Pinto\List\ObjectListInterface::themeDefinitions
-     * @covers \Pinto\List\ObjectListTrait::themeDefinitions
+     * @covers \Pinto\List\ObjectListInterface::definitions
+     * @covers \Pinto\List\ObjectListTrait::definitions
      */
     public function testThemeDefinitions(): void
     {

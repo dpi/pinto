@@ -15,7 +15,7 @@ use Pinto\tests\fixtures\Lists\PintoListNoDefinitions;
 final class PintoNoDefinitionsTest extends TestCase
 {
     /**
-     * @covers \Pinto\List\ObjectListTrait::themeDefinitions
+     * @covers \Pinto\List\ObjectListTrait::definitions
      */
     public function testNoThemeDefinitions(): void
     {
