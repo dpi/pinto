@@ -10,6 +10,7 @@ use Pinto\List\ObjectListTrait;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsAttributeOnMethod;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBasic;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsMissingSlotValue;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsMissingSlotValueWithDefault;
 
 enum PintoListSlots implements ObjectListInterface
 {
@@ -23,6 +24,9 @@ enum PintoListSlots implements ObjectListInterface
 
     #[Definition(PintoObjectSlotsMissingSlotValue::class)]
     case SlotMissingValue;
+
+    #[Definition(PintoObjectSlotsMissingSlotValueWithDefault::class)]
+    case PintoObjectSlotsMissingSlotValueWithDefault;
 
     public function templateDirectory(): string
     {

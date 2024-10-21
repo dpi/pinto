@@ -41,14 +41,14 @@ trait ObjectTrait
         static::$pintoEnum[static::class] ??= $this->pintoMapping()->getByClass(static::class);
 
         $objectType = $this->pintoMapping()->getObjectType(static::class);
+        $definition = $this->pintoMapping()->getThemeDefinition($this::class);
 
-        $template = $objectType::createBuild(static::$pintoEnum[static::class], static::class);
+        $template = $objectType::createBuild(static::$pintoEnum[static::class], $definition, static::class);
 
         // A wrapper closure is used as to allow the enum to alter the build
         // for all enums (theme objects) under its control.
         $built = (static::$pintoEnum[static::class]->build($wrapper, $this))($template);
 
-        $definition = $this->pintoMapping()->getThemeDefinition($this::class);
         $objectType::validateBuild($built, $definition, static::class);
 
         return $built;

@@ -12,16 +12,16 @@ use Pinto\Slots\Build;
 use Pinto\tests\fixtures\Lists\PintoListSlots;
 
 /**
- * Where slot is missing a value.
+ * Where slot is missing a value, but a default is provided.
  */
 #[ObjectType\Slots]
-final class PintoObjectSlotsMissingSlotValue
+final class PintoObjectSlotsMissingSlotValueWithDefault
 {
     use ObjectTrait;
 
     public function __construct(
         readonly string $text,
-        readonly int $number,
+        readonly int $number = 3,
     ) {
     }
 
@@ -40,12 +40,12 @@ final class PintoObjectSlotsMissingSlotValue
         return new PintoMapping(
             enumClasses: [],
             enums: [
-                static::class => [PintoListSlots::class, PintoListSlots::SlotMissingValue->name],
+                static::class => [PintoListSlots::class, PintoListSlots::PintoObjectSlotsMissingSlotValueWithDefault->name],
             ],
             definitions: [
                 static::class => new Slots\Definition([
                     'text' => ['type' => 'string', 'default' => null],
-                    'number' => ['type' => 'int'],
+                    'number' => ['type' => 'int', 'default' => 3],
                 ]),
             ],
             buildInvokers: [
