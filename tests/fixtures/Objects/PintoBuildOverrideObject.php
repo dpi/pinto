@@ -8,6 +8,7 @@ use Pinto\Attribute\ThemeDefinition;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
 use Pinto\tests\fixtures\Lists\PintoBuildOverrideList;
+use Pinto\ThemeDefinition\HookThemeDefinition;
 
 /**
  * Test object.
@@ -40,7 +41,9 @@ final class PintoBuildOverrideObject
     {
         // @phpstan-ignore-next-line
         return $this->pintoBuild(function (mixed $build): array {
-            return $build + [];
+            return $build + [
+                '#test_variable' => $this->text,
+            ];
         });
     }
 
@@ -62,14 +65,19 @@ final class PintoBuildOverrideObject
         return new PintoMapping(
             enumClasses: [],
             enums: [
-                static::class => [PintoBuildOverrideList::class, 'PintoBuildOverrideObject'],
+                static::class => [PintoBuildOverrideList::class, PintoBuildOverrideList::PintoBuildOverrideObject->name],
             ],
-            themeDefinitions: [
-                static::class => [],
+            definitions: [
+                static::class => new HookThemeDefinition([
+                    'variables' => [
+                        'test_variable' => null,
+                    ],
+                ]),
             ],
             buildInvokers: [
                 static::class => '__invoke',
             ],
+            types: [static::class => ThemeDefinition::class],
         );
     }
 }

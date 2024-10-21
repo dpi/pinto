@@ -6,7 +6,7 @@ namespace Pinto\tests\fixtures\Objects\Extends;
 
 use Pinto\Attribute\ThemeDefinition;
 
-#[ThemeDefinition()]
+#[ThemeDefinition]
 final class PintoObjectExtends2 extends PintoObjectAbstract
 {
 }

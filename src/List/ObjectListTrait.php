@@ -5,26 +5,27 @@ declare(strict_types=1);
 namespace Pinto\List;
 
 use Pinto\Attribute\Asset\AssetInterface;
-use Pinto\Attribute\Asset\Css;
 use Pinto\Attribute\Asset\CssAssetInterface;
-use Pinto\Attribute\Asset\Js;
 use Pinto\Attribute\Asset\JsAssetInterface;
 use Pinto\Attribute\Asset\LocalAssetInterface;
 use Pinto\Attribute\Definition;
 use Pinto\Attribute\DependencyOn;
-use Pinto\Attribute\ThemeDefinition;
+use Pinto\DefinitionCollection;
+use Pinto\ObjectType\ObjectTypeDiscovery;
 
 /**
  * Implements interface defaults.
  *
  * @see ObjectListInterface
+ *
+ * @phpstan-require-implements \Pinto\List\ObjectListInterface
  */
 trait ObjectListTrait
 {
     public function name(): string
     {
         return match ($this) {
-            default => $this->value,
+            default => $this instanceof \BackedEnum ? $this->value : $this->name,
         };
     }
 
@@ -36,7 +37,7 @@ trait ObjectListTrait
     public function libraryName(): string
     {
         return match ($this) {
-            default => $this->value,
+            default => $this instanceof \BackedEnum ? $this->value : $this->name,
         };
     }
 
@@ -67,27 +68,19 @@ trait ObjectListTrait
         return array_map(fn (\ReflectionAttribute $r) => $r->newInstance(), $assets);
     }
 
-    public static function themeDefinitions(array $existing, string $type, string $theme, string $path): array
+    public static function definitions(): DefinitionCollection
     {
-        return \array_filter(\array_reduce(
-            static::cases(),
-            static function (array $carry, self $case): array {
-                $rCase = new \ReflectionEnumUnitCase($case::class, $case->name);
-                $definitionAttr = ($rCase->getAttributes(Definition::class)[0] ?? null)?->newInstance();
+        $collection = new DefinitionCollection();
 
-                $carry[$case->name()] = null !== $definitionAttr
-                  ? ThemeDefinition::themeDefinitionForThemeObject($definitionAttr->className) + [
-                      'variables' => [],
-                      'path' => $case->templateDirectory(),
-                      'template' => $case->templateName(),
-                  ]
-                  // Only theme objects must/may have a theme definition.
-                  : null;
+        foreach (static::cases() as $case) {
+            $rCase = new \ReflectionEnumUnitCase($case::class, $case->name);
+            $definitionAttr = ($rCase->getAttributes(Definition::class)[0] ?? null)?->newInstance();
+            if (null !== $definitionAttr) {
+                $collection[$case] = ObjectTypeDiscovery::definitionForThemeObject($definitionAttr->className, $case)[1];
+            }
+        }
 
-                return $carry;
-            },
-            [],
-        ));
+        return $collection;
     }
 
     /**

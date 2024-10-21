@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Pinto\List;
 
+use Pinto\DefinitionCollection;
+
 /**
  * an interface.
  */
-interface ObjectListInterface extends \BackedEnum
+interface ObjectListInterface extends \UnitEnum
 {
     public function name(): string;
 
@@ -60,13 +62,9 @@ interface ObjectListInterface extends \BackedEnum
     /**
      * Get all theme definitions for all components.
      *
-     * @phpstan-param array<mixed> $existing
-     *
-     * @phpstan-return array<array{template: string, variables: array<mixed>}>
-     *
      * @internal
      */
-    public static function themeDefinitions(array $existing, string $type, string $theme, string $path): array;
+    public static function definitions(): DefinitionCollection;
 
     /**
      * Get all library definitions for all components.

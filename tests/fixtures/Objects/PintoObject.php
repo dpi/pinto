@@ -12,6 +12,7 @@ use Pinto\Attribute\ThemeDefinition;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
 use Pinto\tests\fixtures\Lists\PintoList;
+use Pinto\ThemeDefinition\HookThemeDefinition;
 
 /**
  * Test object.
@@ -44,7 +45,9 @@ final class PintoObject
     public function __invoke(): mixed
     {
         return $this->pintoBuild(function (mixed $build): mixed {
-            return $build + [];
+            return $build + [
+                '#test_variable' => $this->text,
+            ];
         });
     }
 
@@ -66,14 +69,19 @@ final class PintoObject
         return new PintoMapping(
             enumClasses: [],
             enums: [
-                static::class => [PintoList::class, 'Pinto_Object'],
+                static::class => [PintoList::class, PintoList::Pinto_Object->name],
             ],
-            themeDefinitions: [
-                static::class => [],
+            definitions: [
+                static::class => new HookThemeDefinition([
+                    'variables' => [
+                        'test_variable' => null,
+                    ],
+                ]),
             ],
             buildInvokers: [
                 static::class => '__invoke',
             ],
+            types: [static::class => ThemeDefinition::class],
         );
     }
 }

@@ -29,47 +29,29 @@ trait ObjectTrait
      * - Applies '#theme' and attaches libraries.
      * - Calls a wrapper build method on the main object list enum.
      *
-     * @param (callable (mixed $build): mixed) $wrapper
+     * @param (callable (W $build): W) $wrapper
      *
      * @throws \Pinto\Exception\PintoMissingObjectMapping
      * @throws PintoBuildDefinitionMismatch
+     *
+     * @template W
      */
     private function pintoBuild(callable $wrapper): mixed
     {
         static::$pintoEnum[static::class] ??= $this->pintoMapping()->getByClass(static::class);
 
-        $template = [
-            '#theme' => static::$pintoEnum[static::class]->name(),
-            '#attached' => ['library' => static::$pintoEnum[static::class]->attachLibraries()],
-        ];
+        $objectType = $this->pintoMapping()->getObjectType(static::class);
+
+        $template = $objectType::createBuild(static::$pintoEnum[static::class], static::class);
 
         // A wrapper closure is used as to allow the enum to alter the build
         // for all enums (theme objects) under its control.
         $built = (static::$pintoEnum[static::class]->build($wrapper, $this))($template);
 
-        if (is_array($built)) {
-            // @todo assert keys in $built map those in themeDefinition()
-            // allow extra keys ( things like # cache).
-            // But dont allow missing keys.
-            $missingKeys = array_diff($this->themeDefinitionKeysForComparison(), array_keys($built));
-            if (count($missingKeys) > 0) {
-                throw new PintoBuildDefinitionMismatch($this::class, $missingKeys);
-            }
-        }
+        $definition = $this->pintoMapping()->getThemeDefinition($this::class);
+        $objectType::validateBuild($built, $definition, static::class);
 
         return $built;
-    }
-
-    /**
-     * @return string[]
-     *
-     * @internal
-     */
-    private function themeDefinitionKeysForComparison(): array
-    {
-        $themeDefinition = $this->pintoMapping()->getThemeDefinition($this::class);
-
-        return array_map(fn (string $varName): string => '#' . $varName, array_keys($themeDefinition['variables'] ?? []));
     }
 
     /**
