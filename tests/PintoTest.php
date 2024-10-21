@@ -10,9 +10,9 @@ use Pinto\Attribute\Asset\ExternalCss;
 use Pinto\Attribute\Asset\ExternalJs;
 use Pinto\Attribute\Asset\Js;
 use Pinto\Attribute\Build;
-use Pinto\Attribute\ThemeDefinition;
 use Pinto\Exception\PintoBuildDefinitionMismatch;
 use Pinto\Exception\PintoMissingObjectMapping;
+use Pinto\ObjectType\ObjectTypeDiscovery;
 use Pinto\PintoMapping;
 use Pinto\tests\fixtures\Lists\PintoList;
 use Pinto\tests\fixtures\Objects\Extends\PintoObjectExtends1;
@@ -20,6 +20,7 @@ use Pinto\tests\fixtures\Objects\Extends\PintoObjectExtends2;
 use Pinto\tests\fixtures\Objects\PintoBuildOverrideObject;
 use Pinto\tests\fixtures\Objects\PintoObject;
 use Pinto\tests\fixtures\Objects\PintoObjectBuildDefinitionMismatch;
+use Pinto\ThemeDefinition\HookThemeDefinition;
 
 /**
  * @coversDefaultClass \Pinto\PintoMapping
@@ -28,7 +29,7 @@ final class PintoTest extends TestCase
 {
     public function testPintoMapping(): void
     {
-        $pintoMapping = new PintoMapping([], [], [], []);
+        $pintoMapping = new PintoMapping([], [], [], [], []);
         static::expectException(PintoMissingObjectMapping::class);
         $pintoMapping->getBuildInvoker(PintoObject::class);
     }
@@ -48,28 +49,33 @@ final class PintoTest extends TestCase
     }
 
     /**
-     * @covers \Pinto\List\ObjectListInterface::themeDefinitions
-     * @covers \Pinto\List\ObjectListTrait::themeDefinitions
+     * @covers \Pinto\List\ObjectListInterface::definitions
+     * @covers \Pinto\List\ObjectListTrait::definitions
      */
     public function testThemeDefinitions(): void
     {
-        $themeDefinitions = PintoList::themeDefinitions([], '', '', '');
-        static::assertEquals([
-            'object_test' => [
-                'variables' => [
-                    'test_variable' => null,
-                ],
-                'path' => 'tests/fixtures/resources',
-                'template' => 'object-test',
+        $themeDefinitions = PintoList::definitions();
+        static::assertCount(2, $themeDefinitions);
+
+        $definition1 = $themeDefinitions[PintoList::Pinto_Object];
+        static::assertInstanceOf(HookThemeDefinition::class, $definition1);
+        static::assertEquals($definition1->definition, [
+            'variables' => [
+                'test_variable' => null,
             ],
-            'object_test_attributes' => [
-                'variables' => [
-                    'test_variable' => null,
-                ],
-                'path' => 'tests/fixtures/resources',
-                'template' => 'object-test-attributes',
+            'path' => 'tests/fixtures/resources',
+            'template' => 'object-test',
+        ]);
+
+        $definition2 = $themeDefinitions[PintoList::Pinto_Object_Attributes];
+        static::assertInstanceOf(HookThemeDefinition::class, $definition2);
+        static::assertEquals($definition2->definition, [
+            'variables' => [
+                'test_variable' => null,
             ],
-        ], $themeDefinitions);
+            'path' => 'tests/fixtures/resources',
+            'template' => 'object-test-attributes',
+        ]);
     }
 
     /**
@@ -156,6 +162,7 @@ final class PintoTest extends TestCase
                     'pinto/object_test',
                 ],
             ],
+            '#test_variable' => 'Foo bar!',
         ], $object());
     }
 
@@ -167,15 +174,19 @@ final class PintoTest extends TestCase
         );
     }
 
-    public function testThemeDefinitionForThemeObject(): void
+    public function testDefinitionForThemeObject(): void
     {
+        $definition = ObjectTypeDiscovery::definitionForThemeObject(PintoObject::class, PintoList::Pinto_Object)[1];
+        static::assertInstanceOf(HookThemeDefinition::class, $definition);
         static::assertEquals(
             [
                 'variables' => [
                     'test_variable' => null,
                 ],
+                'path' => 'tests/fixtures/resources',
+                'template' => 'object-test',
             ],
-            ThemeDefinition::themeDefinitionForThemeObject(PintoObject::class),
+            $definition->definition,
         );
     }
 

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Pinto\tests\fixtures\Objects\Extends;
 
+use Pinto\Attribute\ThemeDefinition;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
 use Pinto\tests\fixtures\Lists\PintoListExtends;
+use Pinto\ThemeDefinition\HookThemeDefinition;
 
 abstract class PintoObjectAbstract
 {
@@ -35,17 +37,18 @@ abstract class PintoObjectAbstract
         return new PintoMapping(
             enumClasses: [],
             enums: [
-                PintoObjectExtends1::class => [PintoListExtends::class, 'Extends1'],
-                PintoObjectExtends2::class => [PintoListExtends::class, 'Extends2'],
+                PintoObjectExtends1::class => [PintoListExtends::class, PintoListExtends::Extends1->name],
+                PintoObjectExtends2::class => [PintoListExtends::class, PintoListExtends::Extends2->name],
             ],
-            themeDefinitions: [
-                PintoObjectExtends1::class => [],
-                PintoObjectExtends2::class => [],
+            definitions: [
+                PintoObjectExtends1::class => new HookThemeDefinition([]),
+                PintoObjectExtends2::class => new HookThemeDefinition([]),
             ],
             buildInvokers: [
                 PintoObjectExtends1::class => '__invoke',
                 PintoObjectExtends2::class => '__invoke',
             ],
+            types: [static::class => ThemeDefinition::class],
         );
     }
 }

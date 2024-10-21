@@ -18,23 +18,25 @@ final readonly class PintoMapping
      *   class-string,
      *   array{class-string<\Pinto\List\ObjectListInterface>, string}
      * > $enums
-     * @param array<
-     *   class-string,
-     *   (array{'variables'?: array<mixed>}&array<string, mixed>)
-     * > $themeDefinitions
+     * @param array<class-string, mixed> $definitions
      * @param array<class-string, string> $buildInvokers
+     * @param array<class-string, class-string<\Pinto\ObjectType\ObjectTypeInterface>> $types
+     *   A map of object class-strings to object type class-strings
      *
      * @internal
      */
     public function __construct(
         private array $enumClasses,
         private array $enums,
-        private array $themeDefinitions,
+        private array $definitions,
         private array $buildInvokers,
+        private array $types,
     ) {
     }
 
     /**
+     * Get the enum case.
+     *
      * @param class-string $objectClassName
      *
      * @throws PintoMissingObjectMapping
@@ -53,13 +55,11 @@ final readonly class PintoMapping
     /**
      * @param class-string $objectClassName
      *
-     * @return (array{'variables'?: array<mixed>}&array<string, mixed>)
-     *
      * @throws PintoMissingObjectMapping
      */
-    public function getThemeDefinition(string $objectClassName): array
+    public function getThemeDefinition(string $objectClassName): mixed
     {
-        return $this->themeDefinitions[$objectClassName] ?? throw new PintoMissingObjectMapping($objectClassName);
+        return $this->definitions[$objectClassName] ?? throw new PintoMissingObjectMapping($objectClassName);
     }
 
     /**
@@ -78,5 +78,17 @@ final readonly class PintoMapping
     public function getEnumClasses(): array
     {
         return $this->enumClasses;
+    }
+
+    /**
+     * @param class-string $objectClassName
+     *
+     * @return class-string<\Pinto\ObjectType\ObjectTypeInterface>
+     *
+     * @throws PintoMissingObjectMapping
+     */
+    public function getObjectType(string $objectClassName): string
+    {
+        return $this->types[$objectClassName] ?? throw new PintoMissingObjectMapping($objectClassName);
     }
 }
