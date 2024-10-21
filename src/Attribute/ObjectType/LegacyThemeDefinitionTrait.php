@@ -30,7 +30,7 @@ trait LegacyThemeDefinitionTrait
     ) {
     }
 
-    final public static function createBuild(ObjectListInterface $case, string $objectClassName): mixed
+    final public static function createBuild(ObjectListInterface $case, mixed $definition, string $objectClassName): mixed
     {
         return [
             '#theme' => $case->name(),

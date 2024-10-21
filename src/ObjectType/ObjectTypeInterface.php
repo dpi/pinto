@@ -11,7 +11,7 @@ use Pinto\List\ObjectListInterface;
  */
 interface ObjectTypeInterface
 {
-    public static function createBuild(ObjectListInterface $case, string $objectClassName): mixed;
+    public static function createBuild(ObjectListInterface $case, mixed $definition, string $objectClassName): mixed;
 
     /**
      * @phpstan-param class-string $objectClassName

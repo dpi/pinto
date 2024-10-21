@@ -7,7 +7,7 @@ namespace Pinto\Slots;
 final class Definition
 {
     /**
-     * @param array<string, array{type: string, default: mixed}> $slots
+     * @param array<string, array{type: string, default?: mixed}> $slots
      */
     public function __construct(
         // @todo adapt to Enum-keys.

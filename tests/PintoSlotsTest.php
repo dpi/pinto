@@ -30,17 +30,26 @@ final class PintoSlotsTest extends TestCase
         $object();
     }
 
+    public function testSlotsBuildMissingValueWithDefault(): void
+    {
+        $object = new Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsMissingSlotValueWithDefault('Foo!');
+        $build = $object();
+        static::assertInstanceOf(Slots\Build::class, $build);
+        static::assertEquals('Foo!', $build->pintoGet('text'));
+        // '3' comes from the entrypoint (constructor).
+        static::assertEquals(3, $build->pintoGet('number'));
+    }
+
     public function testDefinitionsSlotsAttrOnObject(): void
     {
         $themeDefinitions = Lists\PintoListSlots::definitions();
-        static::assertCount(3, $themeDefinitions);
+        static::assertCount(4, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlots::Slots];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals([
             'text' => [
                 'type' => 'string',
-                'default' => null,
             ],
             'number' => [
                 'type' => 'int',
@@ -72,7 +81,6 @@ final class PintoSlotsTest extends TestCase
         static::assertEquals([
             'fooFromList' => [
                 'type' => 'string',
-                'default' => null,
             ],
             'number' => [
                 'type' => 'int',
@@ -91,7 +99,6 @@ final class PintoSlotsTest extends TestCase
         static::assertEquals([
             'fooFromListCase' => [
                 'type' => 'string',
-                'default' => null,
             ],
         ], $slotsDefinition->slots);
     }

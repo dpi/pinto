@@ -29,9 +29,19 @@ final class Slots implements ObjectTypeInterface
     ) {
     }
 
-    public static function createBuild(ObjectListInterface $case, string $objectClassName): mixed
+    public static function createBuild(ObjectListInterface $case, mixed $definition, string $objectClassName): mixed
     {
-        return Build::create();
+        assert($definition instanceof Definition);
+
+        $build = Build::create();
+
+        foreach ($definition->slots as $slotName => $slot) {
+            if (\array_key_exists('default', $slot)) {
+                $build->set($slotName, $slot['default']);
+            }
+        }
+
+        return $build;
     }
 
     public static function validateBuild(mixed $build, mixed $definition, string $objectClassName): void
@@ -42,10 +52,11 @@ final class Slots implements ObjectTypeInterface
 
         $missingSlots = [];
         // @todo adapt to Enum-keys.
-        foreach (\array_keys($definition->slots) as $slot) {
-            if (false === $build->pintoHas($slot)) {
+        foreach ($definition->slots as $slotName => $slot) {
+            // When there is no default, the slot must be defined:
+            if (false === \array_key_exists('default', $slot) && false === $build->pintoHas($slotName)) {
                 // @todo adapt to Enum-keys.
-                $missingSlots[] = $slot;
+                $missingSlots[] = $slotName;
             }
         }
 
@@ -71,10 +82,16 @@ final class Slots implements ObjectTypeInterface
         foreach ($reflectionMethod->getParameters() as $rParam) {
             $paramType = $rParam->getType();
             if ($paramType instanceof \ReflectionNamedType) {
-                $slots[$rParam->getName()] = [
+                $slot = [
                     'type' => $paramType->getName(),
-                    'default' => $rParam->isDefaultValueAvailable() ? $rParam->getDefaultValue() : null,
                 ];
+
+                // Default should only be set if there is a default.
+                if ($rParam->isDefaultValueAvailable()) {
+                    $slot['default'] = $rParam->getDefaultValue();
+                }
+
+                $slots[$rParam->getName()] = $slot;
             }
         }
 
