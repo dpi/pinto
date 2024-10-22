@@ -43,10 +43,10 @@ final class PintoObjectSlotsMissingSlotValue
                 static::class => [PintoListSlots::class, PintoListSlots::SlotMissingValue->name],
             ],
             definitions: [
-                static::class => new Slots\Definition([
-                    'text' => ['type' => 'string', 'default' => null],
-                    'number' => ['type' => 'int'],
-                ]),
+                static::class => new Slots\Definition(new Slots\SlotList([
+                    new Slots\Slot(name: 'text', defaultValue: null),
+                    new Slots\Slot(name: 'number'),
+                ])),
             ],
             buildInvokers: [
                 static::class => '__invoke',

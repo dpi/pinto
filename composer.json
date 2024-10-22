@@ -2,7 +2,8 @@
     "name": "dpi/pinto",
     "type": "library",
     "require": {
-        "php": ">=8.2"
+        "php": ">=8.2",
+        "ramsey/collection": "^2.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.64",

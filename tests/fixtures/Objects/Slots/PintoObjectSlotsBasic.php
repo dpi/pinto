@@ -43,10 +43,10 @@ final class PintoObjectSlotsBasic
                 static::class => [PintoListSlots::class, PintoListSlots::Slots->name],
             ],
             definitions: [
-                static::class => new Slots\Definition([
-                    'text' => ['type' => 'string', 'default' => null],
-                    'number' => ['type' => 'int', 'default' => 3],
-                ]),
+                static::class => new Slots\Definition(new Slots\SlotList([
+                    new Slots\Slot(name: 'text', defaultValue: null),
+                    new Slots\Slot(name: 'number', defaultValue: 3),
+                ])),
             ],
             buildInvokers: [
                 static::class => '__invoke',

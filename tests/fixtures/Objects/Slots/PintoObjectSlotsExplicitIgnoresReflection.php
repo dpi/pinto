@@ -8,36 +8,33 @@ use Pinto\Attribute\ObjectType;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
 use Pinto\Slots;
-use Pinto\Slots\Build;
 use Pinto\tests\fixtures\Lists\PintoListSlots;
 
 /**
- * Slots derived from a specific method.
+ * Slots defined on the attribute, and that slots on the constructor are not reflected.
  */
-final class PintoObjectSlotsAttributeOnMethod
+#[ObjectType\Slots(
+    slots: [
+        new Slots\Slot(name: 'text'),
+        new Slots\Slot(name: 'number', defaultValue: 3),
+    ],
+)]
+final class PintoObjectSlotsExplicitIgnoresReflection
 {
     use ObjectTrait;
 
-    private function __construct()
-    {
-    }
-
-    /**
-     * @phpstan-param array<mixed>|null $arr
-     */
-    #[ObjectType\Slots]
-    public function create(
-        ?string $foo = null,
-        ?array $arr = [],
-    ): void {
+    public function __construct(
+        readonly string $textShouldBeIgnored,
+        readonly int $numberShouldBeIgnored = 4,
+    ) {
     }
 
     public function __invoke(): mixed
     {
-        return $this->pintoBuild(function (Build $build): Build {
+        return $this->pintoBuild(function (Slots\Build $build): Slots\Build {
             return $build
-              ->set('foo', '')
-              ->set('arr', '')
+              ->set('text', 'Some text')
+              ->set('number', 12345)
             ;
         });
     }
@@ -51,8 +48,8 @@ final class PintoObjectSlotsAttributeOnMethod
             ],
             definitions: [
                 static::class => new Slots\Definition(new Slots\SlotList([
-                    new Slots\Slot(name: 'foo', defaultValue: null),
-                    new Slots\Slot(name: 'arr', defaultValue: []),
+                    new Slots\Slot(name: 'text'),
+                    new Slots\Slot(name: 'number', defaultValue: 3),
                 ])),
             ],
             buildInvokers: [

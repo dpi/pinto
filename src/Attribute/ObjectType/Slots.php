@@ -10,6 +10,9 @@ use Pinto\List\ObjectListInterface;
 use Pinto\ObjectType\ObjectTypeInterface;
 use Pinto\Slots\Build;
 use Pinto\Slots\Definition;
+use Pinto\Slots\NoDefaultValue;
+use Pinto\Slots\Slot;
+use Pinto\Slots\SlotList;
 
 /**
  * An attribute representing an object with slots.
@@ -17,27 +20,53 @@ use Pinto\Slots\Definition;
 #[\Attribute(flags: \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::TARGET_CLASS_CONSTANT)]
 final class Slots implements ObjectTypeInterface
 {
+    private const useNamedParameters = 'Using this attribute without named parameters is not supported.';
+
+    public SlotList $slots;
+
     /**
      * Constructs a Slots attribute.
      *
+     * @param list<\Pinto\Slots\Slot|string|\UnitEnum> $slots
+     *   The list of slots for the object.
+     *   If omitted, slots will be reflected:
+     *     - from the class constructor when the attribute is on the class, or,
+     *     - a method if the attribute is on a method or $method parameter is
+     *       supplied.
+     *   Slots may be string or enums or \Pinto\Slots\Slot objects. Using string
+     *   or enum slots is a simplified way of defining slots. To provide other
+     *   options like default values, the \Pinto\Slots\Slot object or reflection
+     *   (by omitting $slots) must be used.
      * @param string|null $method
      *   Specify the name of a method to reflect slots from. This is only used
      *   when the attribute is on an enum, not individual theme objects.
      */
     public function __construct(
+        string $useNamedParameters = self::useNamedParameters,
+        $slots = [],
         public ?string $method = null,
     ) {
+        if (self::useNamedParameters !== $useNamedParameters) {
+            throw new \LogicException(self::useNamedParameters);
+        }
+
+        $this->slots = new SlotList();
+        foreach ($slots as $slot) {
+            $this->slots->add(
+                $slot instanceof Slot ? $slot : new Slot(name: $slot)
+            );
+        }
     }
 
     public static function createBuild(ObjectListInterface $case, mixed $definition, string $objectClassName): mixed
     {
         assert($definition instanceof Definition);
 
-        $build = Build::create();
+        $build = Build::create(slotList: $definition->slots);
 
-        foreach ($definition->slots as $slotName => $slot) {
-            if (\array_key_exists('default', $slot)) {
-                $build->set($slotName, $slot['default']);
+        foreach ($definition->slots as $slot) {
+            if (!$slot->defaultValue instanceof NoDefaultValue) {
+                $build->set($slot->name, $slot->defaultValue);
             }
         }
 
@@ -51,12 +80,11 @@ final class Slots implements ObjectTypeInterface
         assert($definition instanceof Definition);
 
         $missingSlots = [];
-        // @todo adapt to Enum-keys.
-        foreach ($definition->slots as $slotName => $slot) {
+
+        foreach ($definition->slots as $slot) {
             // When there is no default, the slot must be defined:
-            if (false === \array_key_exists('default', $slot) && false === $build->pintoHas($slotName)) {
-                // @todo adapt to Enum-keys.
-                $missingSlots[] = $slotName;
+            if ($slot->defaultValue instanceof NoDefaultValue && false === $build->pintoHas($slot->name)) {
+                $missingSlots[] = $slot->name instanceof \UnitEnum ? $slot->name->name : $slot->name;
             }
         }
 
@@ -78,20 +106,23 @@ final class Slots implements ObjectTypeInterface
             throw new PintoThemeDefinition(sprintf('Method %s::%s() must be public to be used as a %s entrypoint.', $reflectionMethod->getDeclaringClass()->getName(), $reflectionMethod->getShortName(), static::class));
         }
 
-        $slots = [];
-        foreach ($reflectionMethod->getParameters() as $rParam) {
-            $paramType = $rParam->getType();
-            if ($paramType instanceof \ReflectionNamedType) {
-                $slot = [
-                    'type' => $paramType->getName(),
-                ];
+        $slots = $this->slots;
 
-                // Default should only be set if there is a default.
-                if ($rParam->isDefaultValueAvailable()) {
-                    $slot['default'] = $rParam->getDefaultValue();
+        // When no slots were provided to the attribute, use reflection:
+        if (0 === $this->slots->count()) {
+            $slots = new SlotList();
+            foreach ($reflectionMethod->getParameters() as $rParam) {
+                $paramType = $rParam->getType();
+                if ($paramType instanceof \ReflectionNamedType) {
+                    // @todo use the type @ $paramType->getName()
+                    $args = ['name' => $rParam->getName()];
+                    // Default should only be set if there is a default.
+                    if ($rParam->isDefaultValueAvailable()) {
+                        $args['defaultValue'] = $rParam->getDefaultValue();
+                    }
+
+                    $slots[] = new Slot(...$args);
                 }
-
-                $slots[$rParam->getName()] = $slot;
             }
         }
 
