@@ -40,9 +40,9 @@ final class PintoObjectSlotsFromListCase
                 static::class => [PintoListSlotsOnEnumCase::class, PintoListSlotsOnEnumCase::SlotsOnEnumCase->name],
             ],
             definitions: [
-                static::class => new Slots\Definition([
-                    'fooFromListCase' => ['type' => 'string', 'default' => null],
-                ]),
+                static::class => new Slots\Definition(new Slots\SlotList([
+                    new Slots\Slot(name: 'fooFromListCase', defaultValue: null),
+                ])),
             ],
             buildInvokers: [
                 static::class => '__invoke',

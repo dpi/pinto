@@ -42,10 +42,10 @@ final class PintoObjectSlotsFromList
                 static::class => [PintoListSlotsOnEnum::class, PintoListSlotsOnEnum::SlotsOnEnum->name],
             ],
             definitions: [
-                static::class => new Slots\Definition([
-                    'fooFromList' => ['type' => 'string', 'default' => null],
-                    'number' => ['type' => 'int', 'default' => 4],
-                ]),
+                static::class => new Slots\Definition(new Slots\SlotList([
+                    new Slots\Slot(name: 'fooFromList', defaultValue: null),
+                    new Slots\Slot(name: 'number', defaultValue: 4),
+                ])),
             ],
             buildInvokers: [
                 static::class => '__invoke',

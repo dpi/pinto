@@ -9,25 +9,31 @@ use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
 use Pinto\Slots;
 use Pinto\Slots\Build;
-use Pinto\tests\fixtures\Lists\PintoListSlotsOnEnumMethodSpecified;
+use Pinto\tests\fixtures\Lists\PintoListSlots;
 
 /**
- * Slots from list.
+ * Slots defined on the attribute.
  */
-final class PintoObjectSlotsFromListMethodSpecified
+#[ObjectType\Slots(
+    slots: [
+        new Slots\Slot(name: 'text'),
+        new Slots\Slot(name: 'number', defaultValue: 3),
+    ],
+)]
+final class PintoObjectSlotsExplicit
 {
     use ObjectTrait;
 
-    public function create(
-        ?string $create = 'from method specified on enum #[Slots]',
-    ): void {
+    public function __construct()
+    {
     }
 
     public function __invoke(): mixed
     {
         return $this->pintoBuild(function (Build $build): Build {
             return $build
-              ->set('create', '')
+              ->set('text', 'Some text')
+              ->set('number', 12345)
             ;
         });
     }
@@ -37,11 +43,12 @@ final class PintoObjectSlotsFromListMethodSpecified
         return new PintoMapping(
             enumClasses: [],
             enums: [
-                static::class => [PintoListSlotsOnEnumMethodSpecified::class, PintoListSlotsOnEnumMethodSpecified::SlotsOnEnumMethodSpecified->name],
+                static::class => [PintoListSlots::class, PintoListSlots::Slots->name],
             ],
             definitions: [
                 static::class => new Slots\Definition(new Slots\SlotList([
-                    new Slots\Slot(name: 'create', defaultValue: 'from method specified on enum #[Slots]'),
+                    new Slots\Slot(name: 'text'),
+                    new Slots\Slot(name: 'number', defaultValue: 3),
                 ])),
             ],
             buildInvokers: [
