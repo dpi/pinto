@@ -24,40 +24,6 @@ final class Slots implements ObjectTypeInterface
 
     public SlotList $slots;
 
-    /**
-     * Constructs a Slots attribute.
-     *
-     * @param list<\Pinto\Slots\Slot|string|\UnitEnum> $slots
-     *   The list of slots for the object.
-     *   If omitted, slots will be reflected:
-     *     - from the class constructor when the attribute is on the class, or,
-     *     - a method if the attribute is on a method or $method parameter is
-     *       supplied.
-     *   Slots may be string or enums or \Pinto\Slots\Slot objects. Using string
-     *   or enum slots is a simplified way of defining slots. To provide other
-     *   options like default values, the \Pinto\Slots\Slot object or reflection
-     *   (by omitting $slots) must be used.
-     * @param string|null $method
-     *   Specify the name of a method to reflect slots from. This is only used
-     *   when the attribute is on an enum, not individual theme objects.
-     */
-    public function __construct(
-        string $useNamedParameters = self::useNamedParameters,
-        $slots = [],
-        public ?string $method = null,
-    ) {
-        if (self::useNamedParameters !== $useNamedParameters) {
-            throw new \LogicException(self::useNamedParameters);
-        }
-
-        $this->slots = new SlotList();
-        foreach ($slots as $slot) {
-            $this->slots->add(
-                $slot instanceof Slot ? $slot : new Slot(name: $slot)
-            );
-        }
-    }
-
     public static function createBuild(ObjectListInterface $case, mixed $definition, string $objectClassName): mixed
     {
         assert($definition instanceof Definition);
@@ -71,6 +37,48 @@ final class Slots implements ObjectTypeInterface
         }
 
         return $build;
+    }
+
+    /**
+     * Constructs a Slots attribute.
+     *
+     * @param list<\Pinto\Slots\Slot|string|\UnitEnum|class-string<\UnitEnum>> $slots
+     *   The list of slots for the object.
+     *   If omitted, slots will be reflected:
+     *     - from the class constructor when the attribute is on the class, or,
+     *     - a method if the attribute is on a method or $method parameter is supplied.
+     *   Slots may be any mix of \Pinto\Slots\Slot objects, string, enums, or enum class-strings. Using string, enum,
+     *   enum class-string slots are a simplified way of defining slots. To provide other options like default values,
+     *   the \Pinto\Slots\Slot object or reflection (by omitting $slots) must be used.
+     * @param string|null $method
+     *   Specify the name of a method to reflect slots from. This is only used when the attribute is on an enum, not individual theme objects.
+     */
+    public function __construct(
+        string $useNamedParameters = self::useNamedParameters,
+        $slots = [],
+        public ?string $method = null,
+    ) {
+        if (self::useNamedParameters !== $useNamedParameters) {
+            throw new \LogicException(self::useNamedParameters);
+        }
+
+        $this->slots = new SlotList();
+        foreach ($slots as $slot) {
+            if (is_string($slot) && \class_exists($slot)) {
+                $r = new \ReflectionClass($slot);
+                if ($r->implementsInterface(\UnitEnum::class)) {
+                    foreach ($slot::cases() as $case) {
+                        $this->slots->add(new Slot(name: $case));
+                    }
+                }
+
+                // Otherwise skip if it's a regular class name.
+                continue;
+            }
+            $this->slots->add(
+                $slot instanceof Slot ? $slot : new Slot(name: $slot)
+            );
+        }
     }
 
     public static function validateBuild(mixed $build, mixed $definition, string $objectClassName): void

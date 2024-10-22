@@ -7,26 +7,26 @@ namespace Pinto\tests\fixtures\Lists;
 use Pinto\Attribute\Definition;
 use Pinto\List\ObjectListInterface;
 use Pinto\List\ObjectListTrait;
-use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsAttributeOnMethod;
-use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBasic;
-use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsMissingSlotValue;
-use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsMissingSlotValueWithDefault;
+use Pinto\tests\fixtures\Objects\Slots;
 
 enum PintoListSlots implements ObjectListInterface
 {
     use ObjectListTrait;
 
-    #[Definition(PintoObjectSlotsBasic::class)]
+    #[Definition(Slots\PintoObjectSlotsBasic::class)]
     case Slots;
 
-    #[Definition(PintoObjectSlotsAttributeOnMethod::class)]
+    #[Definition(Slots\PintoObjectSlotsAttributeOnMethod::class)]
     case SlotsAttributeOnMethod;
 
-    #[Definition(PintoObjectSlotsMissingSlotValue::class)]
+    #[Definition(Slots\PintoObjectSlotsMissingSlotValue::class)]
     case SlotMissingValue;
 
-    #[Definition(PintoObjectSlotsMissingSlotValueWithDefault::class)]
+    #[Definition(Slots\PintoObjectSlotsMissingSlotValueWithDefault::class)]
     case PintoObjectSlotsMissingSlotValueWithDefault;
+
+    #[Definition(Slots\PintoObjectSlotsExplicitEnumClass::class)]
+    case PintoObjectSlotsExplicitEnumClass;
 
     public function templateDirectory(): string
     {

@@ -8,8 +8,10 @@ use Pinto\Slots;
 use Pinto\Slots\SlotList;
 use Pinto\tests\fixtures\Etc\SlotEnum;
 use Pinto\tests\fixtures\Lists;
+use Pinto\tests\fixtures\Lists\PintoListSlots;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBasic;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicit;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicitEnumClass;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsMissingSlotValue;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsSetInvalidSlot;
 
@@ -56,6 +58,23 @@ final class PintoSlotsTest extends TestCase
         $build->pintoGet(SlotEnum::Slot3);
     }
 
+    /**
+     * @covers \Pinto\Attribute\ObjectType\Slots::__construct
+     */
+    public function testSlotsExplicitEnumClass(): void
+    {
+        // Call \Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject
+        // directly since pintoMapping won't execute enum->cases expansion..
+        [1 => $slotsDefinition] = Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsExplicitEnumClass::class, PintoListSlots::PintoObjectSlotsExplicitEnumClass);
+
+        static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
+        static::assertEquals(new SlotList([
+            new Slots\Slot(name: SlotEnum::Slot1),
+            new Slots\Slot(name: SlotEnum::Slot2),
+            new Slots\Slot(name: SlotEnum::Slot3),
+        ]), $slotsDefinition->slots);
+    }
+
     public function testSlotsExplicitIgnoresReflection(): void
     {
         $object = new Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicitIgnoresReflection('Should be ignored', 999);
@@ -85,17 +104,17 @@ final class PintoSlotsTest extends TestCase
 
     public function testDefinitionsSlotsAttrOnObject(): void
     {
-        $themeDefinitions = Lists\PintoListSlots::definitions();
-        static::assertCount(4, $themeDefinitions);
+        $themeDefinitions = PintoListSlots::definitions();
+        static::assertCount(5, $themeDefinitions);
 
-        $slotsDefinition = $themeDefinitions[Lists\PintoListSlots::Slots];
+        $slotsDefinition = $themeDefinitions[PintoListSlots::Slots];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
             new Slots\Slot(name: 'text'),
             new Slots\Slot(name: 'number', defaultValue: 3),
         ]), $slotsDefinition->slots);
 
-        $slotsDefinition = $themeDefinitions[Lists\PintoListSlots::SlotsAttributeOnMethod];
+        $slotsDefinition = $themeDefinitions[PintoListSlots::SlotsAttributeOnMethod];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
             new Slots\Slot(name: 'foo', defaultValue: null),
