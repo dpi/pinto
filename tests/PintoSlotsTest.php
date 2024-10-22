@@ -139,4 +139,24 @@ final class PintoSlotsTest extends TestCase
             new Slots\Slot(name: 'create', defaultValue: 'from method specified on enum #[Slots]'),
         ]), $slotsDefinition->slots);
     }
+
+    public function testSlotAttribute(): void
+    {
+        $attr = new Pinto\Attribute\ObjectType\Slots(slots: [
+            new Slots\Slot(name: 'foo'),
+            'bar',
+        ]);
+
+        static::assertEquals([
+            new Slots\Slot(name: 'foo'),
+            new Slots\Slot(name: 'bar'),
+        ], $attr->slots->toArray());
+    }
+
+    public function testSlotAttributeNamedParameters(): void
+    {
+        static::expectException(LogicException::class);
+        static::expectExceptionMessage('Using this attribute without named parameters is not supported.');
+        new Pinto\Attribute\ObjectType\Slots('');
+    }
 }
