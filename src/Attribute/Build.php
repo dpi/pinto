@@ -24,10 +24,6 @@ use Pinto\Exception\PintoBuild;
 #[\Attribute(\Attribute::TARGET_METHOD)]
 final class Build
 {
-    public function __construct(
-    ) {
-    }
-
     /**
      * @param class-string $objectClassName
      *

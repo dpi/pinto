@@ -20,6 +20,12 @@ use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsSetInvalidSlot;
  */
 final class PintoSlotsTest extends TestCase
 {
+    public function testSlotsAttribute(): void
+    {
+        static::expectException(LogicException::class);
+        new Pinto\Attribute\ObjectType\Slots('');
+    }
+
     public function testSlotsBuild(): void
     {
         $object = new PintoObjectSlotsBasic('Foo!', 12345);

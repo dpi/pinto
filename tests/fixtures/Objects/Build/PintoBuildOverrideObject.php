@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Pinto\tests\fixtures\Objects;
+namespace Pinto\tests\fixtures\Objects\Build;
 
 use Pinto\Attribute\ThemeDefinition;
 use Pinto\Object\ObjectTrait;
@@ -11,7 +11,9 @@ use Pinto\tests\fixtures\Lists\PintoBuildOverrideList;
 use Pinto\ThemeDefinition\HookThemeDefinition;
 
 /**
- * Test object.
+ * Test where the list enum overrides the build of this object.
+ *
+ * @see \Pinto\tests\fixtures\Lists\PintoBuildOverrideList::build
  */
 final class PintoBuildOverrideObject
 {
