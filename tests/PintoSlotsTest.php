@@ -178,6 +178,13 @@ final class PintoSlotsTest extends TestCase
         ], $attr->slots->toArray());
     }
 
+    public function testSlotNamedParameters(): void
+    {
+        static::expectException(LogicException::class);
+        static::expectExceptionMessage('Using this attribute without named parameters is not supported.');
+        new Slots\Slot('slotname', '', 'defaultvalue');
+    }
+
     public function testSlotAttributeNamedParameters(): void
     {
         static::expectException(LogicException::class);
