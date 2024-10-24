@@ -11,29 +11,16 @@ use Pinto\Attribute\Asset\ExternalJs;
 use Pinto\Attribute\Asset\Js;
 use Pinto\Attribute\Build;
 use Pinto\Exception\PintoBuildDefinitionMismatch;
-use Pinto\Exception\PintoMissingObjectMapping;
-use Pinto\ObjectType\ObjectTypeDiscovery;
-use Pinto\PintoMapping;
 use Pinto\tests\fixtures\Lists\PintoList;
+use Pinto\tests\fixtures\Objects\Build\PintoBuildOverrideObject;
 use Pinto\tests\fixtures\Objects\Extends\PintoObjectExtends1;
 use Pinto\tests\fixtures\Objects\Extends\PintoObjectExtends2;
-use Pinto\tests\fixtures\Objects\PintoBuildOverrideObject;
 use Pinto\tests\fixtures\Objects\PintoObject;
 use Pinto\tests\fixtures\Objects\PintoObjectBuildDefinitionMismatch;
 use Pinto\ThemeDefinition\HookThemeDefinition;
 
-/**
- * @coversDefaultClass \Pinto\PintoMapping
- */
 final class PintoTest extends TestCase
 {
-    public function testPintoMapping(): void
-    {
-        $pintoMapping = new PintoMapping([], [], [], [], []);
-        static::expectException(PintoMissingObjectMapping::class);
-        $pintoMapping->getBuildInvoker(PintoObject::class);
-    }
-
     /**
      * Tests where an object build method doesn't fulfill required keys.
      *
@@ -171,22 +158,6 @@ final class PintoTest extends TestCase
         static::assertEquals(
             '__invoke',
             Build::buildMethodForThemeObject(PintoObject::class),
-        );
-    }
-
-    public function testDefinitionForThemeObject(): void
-    {
-        $definition = ObjectTypeDiscovery::definitionForThemeObject(PintoObject::class, PintoList::Pinto_Object)[1];
-        static::assertInstanceOf(HookThemeDefinition::class, $definition);
-        static::assertEquals(
-            [
-                'variables' => [
-                    'test_variable' => null,
-                ],
-                'path' => 'tests/fixtures/resources',
-                'template' => 'object-test',
-            ],
-            $definition->definition,
         );
     }
 

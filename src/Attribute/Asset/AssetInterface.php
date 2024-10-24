@@ -8,6 +8,8 @@ interface AssetInterface
 {
     /**
      * @return string[]
+     *
+     * @internal
      */
     public function getLibraryPath(): array;
 }

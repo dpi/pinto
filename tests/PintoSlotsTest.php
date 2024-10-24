@@ -20,6 +20,12 @@ use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsSetInvalidSlot;
  */
 final class PintoSlotsTest extends TestCase
 {
+    public function testSlotsAttribute(): void
+    {
+        static::expectException(LogicException::class);
+        new Pinto\Attribute\ObjectType\Slots('');
+    }
+
     public function testSlotsBuild(): void
     {
         $object = new PintoObjectSlotsBasic('Foo!', 12345);
@@ -170,6 +176,13 @@ final class PintoSlotsTest extends TestCase
             new Slots\Slot(name: 'foo'),
             new Slots\Slot(name: 'bar'),
         ], $attr->slots->toArray());
+    }
+
+    public function testSlotNamedParameters(): void
+    {
+        static::expectException(LogicException::class);
+        static::expectExceptionMessage('Using this attribute without named parameters is not supported.');
+        new Slots\Slot('slotname', '', 'defaultvalue');
     }
 
     public function testSlotAttributeNamedParameters(): void
