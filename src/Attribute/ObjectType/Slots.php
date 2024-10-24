@@ -110,14 +110,15 @@ final class Slots implements ObjectTypeInterface
             default => throw new \LogicException('Unsupported reflection: ' . $r::class),
         };
 
-        if (true !== $reflectionMethod->isPublic()) {
-            throw new PintoThemeDefinition(sprintf('Method %s::%s() must be public to be used as a %s entrypoint.', $reflectionMethod->getDeclaringClass()->getName(), $reflectionMethod->getShortName(), static::class));
-        }
-
         $slots = $this->slots;
 
         // When no slots were provided to the attribute, use reflection:
         if (0 === $this->slots->count()) {
+          // Method doesn't need to be public if there are defined slots:
+          if (true !== $reflectionMethod->isPublic()) {
+            throw new PintoThemeDefinition(sprintf('Method %s::%s() must be public to be used as a %s entrypoint.', $reflectionMethod->getDeclaringClass()->getName(), $reflectionMethod->getShortName(), static::class));
+          }
+
             $slots = new SlotList();
             foreach ($reflectionMethod->getParameters() as $rParam) {
                 $paramType = $rParam->getType();
