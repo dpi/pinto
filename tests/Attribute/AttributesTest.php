@@ -10,6 +10,7 @@ use Pinto\Attribute\Build;
 use Pinto\Exception\PintoBuild;
 use Pinto\tests\fixtures\Lists\PintoList;
 use Pinto\tests\fixtures\Objects\Build\Faulty\PintoMissingBuildMethodObject;
+use Pinto\tests\fixtures\Objects\Build\Faulty\PintoMultipleBuildMethodObject;
 use Pinto\tests\fixtures\Objects\Build\PintoBuildMethodObject;
 
 /**
@@ -31,8 +32,25 @@ final class AttributesTest extends TestCase
     {
         static::assertEquals('__invoke', Build::buildMethodForThemeObject(\Pinto\tests\fixtures\Objects\PintoObject::class));
         static::assertEquals('builder', Build::buildMethodForThemeObject(PintoBuildMethodObject::class));
+    }
+
+    /**
+     * @covers \Pinto\Attribute\Build::buildMethodForThemeObject
+     */
+    public function testZeroBuildAttributes(): void
+    {
         static::expectException(PintoBuild::class);
         static::expectExceptionMessage(sprintf('%s attribute or __invoke() method on %s', Build::class, PintoMissingBuildMethodObject::class));
-        static::assertEquals('builder', Build::buildMethodForThemeObject(PintoMissingBuildMethodObject::class));
+        Build::buildMethodForThemeObject(PintoMissingBuildMethodObject::class);
+    }
+
+    /**
+     * @covers \Pinto\Attribute\Build::buildMethodForThemeObject
+     */
+    public function testMultipleBuildAttributes(): void
+    {
+        static::expectException(PintoBuild::class);
+        static::expectExceptionMessage('Multiple build definitions found on ' . PintoMultipleBuildMethodObject::class . '. There must only be one.');
+        Build::buildMethodForThemeObject(PintoMultipleBuildMethodObject::class);
     }
 }
