@@ -43,12 +43,13 @@ trait ObjectTrait
         $objectType = $this->pintoMapping()->getObjectType(static::class);
         $definition = $this->pintoMapping()->getThemeDefinition($this::class);
 
-        $template = $objectType::createBuild(static::$pintoEnum[static::class], $definition, static::class);
+        $build = $objectType::createBuild(static::$pintoEnum[static::class], $definition, static::class);
 
         // A wrapper closure is used as to allow the enum to alter the build
         // for all enums (theme objects) under its control.
-        $built = (static::$pintoEnum[static::class]->build($wrapper, $this))($template);
+        $built = (static::$pintoEnum[static::class]->build($wrapper, $this))($build);
 
+        $objectType::lateBindObjectToBuild($built, $definition, $this);
         $objectType::validateBuild($built, $definition, static::class);
 
         return $built;

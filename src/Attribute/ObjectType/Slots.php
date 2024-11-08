@@ -52,11 +52,17 @@ final class Slots implements ObjectTypeInterface
      *   the \Pinto\Slots\Slot object or reflection (by omitting $slots) must be used.
      * @param string|null $method
      *   Specify the name of a method to reflect slots from. This is only used when the attribute is on an enum, not individual theme objects.
+     * @param bool $bindPromotedProperties
+     *   When true, values of promoted properties will be set on the
+     *   \Pinto\Slots\Build object provided to the builder (usually __invoke) AFTER the builder method has run, and if
+     *   the builder method did not already set a value for the slot.
+     *   Must be false when $slots are provided.
      */
     public function __construct(
         string $useNamedParameters = self::useNamedParameters,
         $slots = [],
         public ?string $method = null,
+        public bool $bindPromotedProperties = false,
     ) {
         if (self::useNamedParameters !== $useNamedParameters) {
             throw new \LogicException(self::useNamedParameters);
@@ -78,6 +84,24 @@ final class Slots implements ObjectTypeInterface
             $this->slots->add(
                 $slot instanceof Slot ? $slot : new Slot(name: $slot)
             );
+        }
+    }
+
+    public static function lateBindObjectToBuild(mixed $build, mixed $definition, object $object): void
+    {
+        assert($build instanceof Build);
+        assert($definition instanceof Definition);
+
+        foreach ($definition->slots as $slot) {
+            if (true === $build->pintoHas($slot->name)) {
+                continue;
+            }
+
+            $classProperty = $slot->fillValueFromThemeObjectClassPropertyWhenEmpty;
+            if (null !== $classProperty) {
+                // @phpstan-ignore-next-line
+                $build->set($slot->name, $object->{$classProperty});
+            }
         }
     }
 
@@ -130,9 +154,16 @@ final class Slots implements ObjectTypeInterface
                         $args['defaultValue'] = $rParam->getDefaultValue();
                     }
 
+                    if ($this->bindPromotedProperties && $rParam->isPromoted() && $reflectionMethod->getDeclaringClass()->getProperty($rParam->name)->isPublic()) {
+                        $args['fillValueFromThemeObjectClassPropertyWhenEmpty'] = $rParam->name;
+                    }
+
                     $slots[] = new Slot(...$args);
                 }
             }
+        } elseif (true === $this->bindPromotedProperties) {
+            // Slots > 0 and bind properties are an invalid state.
+            throw new PintoThemeDefinition(sprintf('Slots must use reflection (no explicitly defined `$slots`) when promoted properties bind is on.'));
         }
 
         return new Definition($slots);

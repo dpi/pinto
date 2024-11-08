@@ -13,6 +13,8 @@ interface ObjectTypeInterface
 {
     public static function createBuild(ObjectListInterface $case, mixed $definition, string $objectClassName): mixed;
 
+    public static function lateBindObjectToBuild(mixed $build, mixed $definition, object $object): void;
+
     /**
      * @phpstan-param class-string $objectClassName
      *

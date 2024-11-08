@@ -22,6 +22,9 @@ enum PintoFaultyList implements ObjectListInterface
     #[Definition(fixtures\Objects\Faulty\PintoObjectMultipleObjectTypeAttributes::class)]
     case PintoObjectMultipleObjectTypeAttributes;
 
+    #[Definition(fixtures\Objects\Faulty\PintoObjectSlotsBindPromotedPublicWithDefinedSlots::class)]
+    case PintoObjectSlotsBindPromotedPublicWithDefinedSlots;
+
     public function templateDirectory(): string
     {
         return 'tests/fixtures/resources';
