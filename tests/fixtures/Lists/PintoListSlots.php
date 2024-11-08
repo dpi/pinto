@@ -28,6 +28,9 @@ enum PintoListSlots implements ObjectListInterface
     #[Definition(Slots\PintoObjectSlotsExplicitEnumClass::class)]
     case PintoObjectSlotsExplicitEnumClass;
 
+    #[Definition(Slots\PintoObjectSlotsBindPromotedPublic::class)]
+    case PintoObjectSlotsBindPromotedPublic;
+
     public function templateDirectory(): string
     {
         return 'tests/fixtures/resources';

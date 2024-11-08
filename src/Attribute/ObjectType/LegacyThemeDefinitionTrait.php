@@ -38,6 +38,10 @@ trait LegacyThemeDefinitionTrait
         ];
     }
 
+    public static function lateBindObjectToBuild(mixed $build, mixed $definition, object $object): void
+    {
+    }
+
     final public static function validateBuild(mixed $build, mixed $definition, string $objectClassName): void
     {
         /* @phpstan-assert array{variables?: array<mixed>, path: string, template: string} $definition */

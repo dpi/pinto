@@ -10,6 +10,7 @@ use Pinto\tests\fixtures\Etc\SlotEnum;
 use Pinto\tests\fixtures\Lists;
 use Pinto\tests\fixtures\Lists\PintoListSlots;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBasic;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBindPromotedPublic;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicit;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicitEnumClass;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsMissingSlotValue;
@@ -81,6 +82,35 @@ final class PintoSlotsTest extends TestCase
         ]), $slotsDefinition->slots);
     }
 
+    /**
+     * @covers \Pinto\Attribute\ObjectType\Slots::__construct
+     */
+    public function testPintoObjectSlotsBindPromotedPublic(): void
+    {
+        [1 => $slotsDefinition] = Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsBindPromotedPublic::class, PintoListSlots::PintoObjectSlotsBindPromotedPublic);
+
+        static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
+        static::assertEquals(new SlotList([
+            new Slots\Slot(name: 'aPublic', fillValueFromThemeObjectClassPropertyWhenEmpty: 'aPublic'),
+            new Slots\Slot(name: 'aPublicAndSetInInvoker', fillValueFromThemeObjectClassPropertyWhenEmpty: 'aPublicAndSetInInvoker'),
+            new Slots\Slot(name: 'aPrivate'),
+        ]), $slotsDefinition->slots);
+
+        $object = new PintoObjectSlotsBindPromotedPublic('the public', 'public but also overridden in invoker', 'the private');
+        $build = $object();
+        static::assertInstanceOf(Slots\Build::class, $build);
+        static::assertEquals('the public', $build->pintoGet('aPublic'));
+        static::assertEquals('public value set in invoker', $build->pintoGet('aPublicAndSetInInvoker'));
+        static::assertEquals('private value set in invoker', $build->pintoGet('aPrivate'));
+    }
+
+    public function testPintoObjectSlotsBindPromotedPublicWithDefinedSlots(): void
+    {
+        static::expectException(Pinto\Exception\PintoThemeDefinition::class);
+        static::expectExceptionMessage('Slots must use reflection (no explicitly defined `$slots`) when promoted properties bind is on.');
+        Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(Pinto\tests\fixtures\Objects\Faulty\PintoObjectSlotsBindPromotedPublicWithDefinedSlots::class, Lists\PintoFaultyList::PintoObjectSlotsBindPromotedPublicWithDefinedSlots);
+    }
+
     public function testSlotsExplicitIgnoresReflection(): void
     {
         $object = new Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicitIgnoresReflection('Should be ignored', 999);
@@ -111,7 +141,7 @@ final class PintoSlotsTest extends TestCase
     public function testDefinitionsSlotsAttrOnObject(): void
     {
         $themeDefinitions = PintoListSlots::definitions();
-        static::assertCount(5, $themeDefinitions);
+        static::assertCount(6, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[PintoListSlots::Slots];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
