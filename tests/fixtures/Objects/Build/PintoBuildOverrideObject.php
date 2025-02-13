@@ -13,7 +13,7 @@ use Pinto\ThemeDefinition\HookThemeDefinition;
 /**
  * Test where the list enum overrides the build of this object.
  *
- * @see \Pinto\tests\fixtures\Lists\PintoBuildOverrideList::build
+ * @see PintoBuildOverrideList::build
  */
 final class PintoBuildOverrideObject
 {
