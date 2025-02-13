@@ -6,14 +6,14 @@
         "ramsey/collection": "^2.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.64",
+        "friendsofphp/php-cs-fixer": "^3.68.5",
         "jangregor/phpstan-prophecy": "^2",
         "phpstan/extension-installer": "^1.4.3",
-        "phpstan/phpstan": "^2",
-        "phpstan/phpstan-strict-rules": "^2",
-        "phpstan/phpstan-deprecation-rules": "^2",
-        "phpstan/phpstan-symfony": "^2",
-        "phpunit/phpunit": "^11"
+        "phpstan/phpstan": "^2.1.4",
+        "phpstan/phpstan-strict-rules": "^2.0.3",
+        "phpstan/phpstan-deprecation-rules": "^2.0.1",
+        "phpstan/phpstan-symfony": "^2.0.2",
+        "phpunit/phpunit": "^11.5.7"
     },
     "config": {
         "allow-plugins": {
