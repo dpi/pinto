@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pinto\List;
 
 use Pinto\DefinitionCollection;
+use Pinto\DefinitionDiscovery;
 
 /**
  * an interface.
@@ -64,7 +65,7 @@ interface ObjectListInterface extends \UnitEnum
      *
      * @internal
      */
-    public static function definitions(): DefinitionCollection;
+    public static function definitions(DefinitionDiscovery $definitionDiscovery): DefinitionCollection;
 
     /**
      * Get all library definitions for all components.

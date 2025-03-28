@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Pinto\ObjectType;
 
+use Pinto\DefinitionDiscovery;
 use Pinto\Exception\PintoThemeDefinition;
 use Pinto\List\ObjectListInterface;
+use Pinto\PintoMapping;
 
 /**
  * Discovers ObjectTypeInterface attributes on a class, on a class or its methods.
@@ -35,7 +37,7 @@ final class ObjectTypeDiscovery
      *
      * @throws PintoThemeDefinition
      */
-    public static function definitionForThemeObject(string $objectClassName, ObjectListInterface $case): array
+    public static function definitionForThemeObject(string $objectClassName, ObjectListInterface $case, DefinitionDiscovery $definitionDiscovery, ?ObjectListInterface $originalCase = null): array
     {
         /** @var array<array{\ReflectionAttribute<\Pinto\ObjectType\ObjectTypeInterface>, \Reflector}> $definitions */
         $definitions = [];
@@ -62,7 +64,13 @@ final class ObjectTypeDiscovery
         if (count($definitions) > 1) {
             throw new PintoThemeDefinition(sprintf('Multiple theme definitions found on %s. There must only be one.', $objectClassName));
         } elseif (1 === count($definitions)) {
-            return [$definitions[0][0]->getName(), $definitions[0][0]->newInstance()->getDefinition($case, $definitions[0][1])];
+            return [$definitions[0][0]->getName(), $definitions[0][0]->newInstance()->getDefinition($originalCase ?? $case, $definitions[0][1])];
+        }
+
+        // Otherwise defer to parent if it was provided (this isn't recurison).
+        $extendsObject = $definitionDiscovery->extendsKnownObject($objectClassName);
+        if ($extendsObject !== null) {
+          return static::definitionForThemeObject($extendsObject, $definitionDiscovery[$extendsObject], $definitionDiscovery, originalCase: $case);
         }
 
         // Try the enum case.
@@ -70,7 +78,7 @@ final class ObjectTypeDiscovery
         $attr = $rCase->getAttributes(ObjectTypeInterface::class, \ReflectionAttribute::IS_INSTANCEOF)[0] ?? null;
         $slotInstance = $attr?->newInstance();
         if (null !== $slotInstance) {
-            return [$attr->getName(), $slotInstance->getDefinition($case, $objectClassReflection)];
+            return [$attr->getName(), $slotInstance->getDefinition($originalCase ?? $case, $objectClassReflection)];
         }
 
         // Try the enum.
@@ -79,7 +87,7 @@ final class ObjectTypeDiscovery
         $attr = $rEnum->getAttributes(ObjectTypeInterface::class, \ReflectionAttribute::IS_INSTANCEOF)[0] ?? null;
         $slotInstance = $attr?->newInstance();
         if (null !== $slotInstance) {
-            return [$attr->getName(), $slotInstance->getDefinition($case, $objectClassReflection)];
+            return [$attr->getName(), $slotInstance->getDefinition($originalCase ?? $case, $objectClassReflection)];
         }
 
         throw new PintoThemeDefinition(sprintf('Missing %s attribute on %s or %s or %s', ObjectTypeInterface::class, $objectClassName, $enumClassName, sprintf('%s::%s', $case::class, $case->name)));
