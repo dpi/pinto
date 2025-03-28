@@ -3,17 +3,17 @@
     "type": "library",
     "require": {
         "php": ">=8.2",
-        "ramsey/collection": "^2.0"
+        "ramsey/collection": "^2.1.1"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.64",
+        "friendsofphp/php-cs-fixer": "^3.74",
         "jangregor/phpstan-prophecy": "^1.0.2",
         "phpstan/extension-installer": "^1.4.3",
-        "phpstan/phpstan": "^1.12.6",
-        "phpstan/phpstan-strict-rules": "^1.6.1",
+        "phpstan/phpstan": "^1.12.23",
+        "phpstan/phpstan-strict-rules": "^1.6.2",
         "phpstan/phpstan-deprecation-rules": "^1.2.1",
-        "phpstan/phpstan-symfony": "^1.4.10",
-        "phpunit/phpunit": "^11.4.1"
+        "phpstan/phpstan-symfony": "^1.4.14",
+        "phpunit/phpunit": "^11.5.15"
     },
     "config": {
         "allow-plugins": {

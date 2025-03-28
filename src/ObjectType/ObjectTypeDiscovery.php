@@ -31,13 +31,13 @@ final class ObjectTypeDiscovery
      *
      * @param class-string $objectClassName
      *
-     * @return array{class-string<\Pinto\ObjectType\ObjectTypeInterface>, mixed}
+     * @return array{class-string<ObjectTypeInterface>, mixed}
      *
      * @throws PintoThemeDefinition
      */
     public static function definitionForThemeObject(string $objectClassName, ObjectListInterface $case): array
     {
-        /** @var array<array{\ReflectionAttribute<\Pinto\ObjectType\ObjectTypeInterface>, \Reflector}> $definitions */
+        /** @var array<array{\ReflectionAttribute<ObjectTypeInterface>, \Reflector}> $definitions */
         $definitions = [];
 
         // Look for attribute instances of ObjectTypeInterface attributes on the class and all
