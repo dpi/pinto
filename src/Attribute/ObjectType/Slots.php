@@ -8,6 +8,7 @@ use Pinto\Exception\PintoThemeDefinition;
 use Pinto\Exception\Slots\BuildValidation;
 use Pinto\List\ObjectListInterface;
 use Pinto\ObjectType\ObjectTypeInterface;
+use Pinto\Slots\Attribute\RenameSlot;
 use Pinto\Slots\Build;
 use Pinto\Slots\Definition;
 use Pinto\Slots\NoDefaultValue;
@@ -166,6 +167,25 @@ final class Slots implements ObjectTypeInterface
             throw new PintoThemeDefinition(sprintf('Slots must use reflection (no explicitly defined `$slots`) when promoted properties bind is on.'));
         }
 
-        return new Definition($slots);
+        // Now look for other attributes.
+
+        // Get the theme object class name.
+        $rCase = new \ReflectionEnumUnitCase($case::class, $case->name);
+        /** @var array<\ReflectionAttribute<\Pinto\Attribute\Definition>> $attributes */
+        $attributes = $rCase->getAttributes(\Pinto\Attribute\Definition::class);
+        $definition = ($attributes[0] ?? null)?->newInstance() ?? throw new \LogicException('Missing definition for slot');
+        $objectClassName = $definition->className;
+
+        $renameSlots = \Pinto\Slots\RenameSlots::create();
+        // Only check on the object class (not enums or parents, for now).
+        $objectClassReflection = new \ReflectionClass($objectClassName);
+        foreach ($objectClassReflection->getAttributes(RenameSlot::class) as $rAttr) {
+            $renameSlots->add($rAttr->newInstance());
+        }
+
+        return new Definition(
+            $slots,
+            renameSlots: $renameSlots,
+        );
     }
 }
