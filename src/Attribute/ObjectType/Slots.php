@@ -42,7 +42,7 @@ final class Slots implements ObjectTypeInterface
     /**
      * Constructs a Slots attribute.
      *
-     * @param list<\Pinto\Slots\Slot|string|\UnitEnum|class-string<\UnitEnum>> $slots
+     * @param list<Slot|string|\UnitEnum|class-string<\UnitEnum>> $slots
      *   The list of slots for the object.
      *   If omitted, slots will be reflected:
      *     - from the class constructor when the attribute is on the class, or,

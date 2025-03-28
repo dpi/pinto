@@ -11,6 +11,7 @@ use Pinto\Attribute\Asset\LocalAssetInterface;
 use Pinto\Attribute\Definition;
 use Pinto\Attribute\DependencyOn;
 use Pinto\DefinitionCollection;
+use Pinto\DefinitionDiscovery;
 use Pinto\ObjectType\ObjectTypeDiscovery;
 
 /**
@@ -62,13 +63,13 @@ trait ObjectListTrait
         $definitionAttr = ($rCase->getAttributes(Definition::class)[0] ?? null)?->newInstance();
         $rComponentClass = null !== $definitionAttr ? new \ReflectionClass($definitionAttr->className) : null;
 
-        /** @var array<\ReflectionAttribute<\Pinto\Attribute\Asset\AssetInterface>> $assets */
+        /** @var array<\ReflectionAttribute<AssetInterface>> $assets */
         $assets = ($rComponentClass ?? $rCase)->getAttributes(AssetInterface::class, \ReflectionAttribute::IS_INSTANCEOF);
 
         return array_map(fn (\ReflectionAttribute $r) => $r->newInstance(), $assets);
     }
 
-    public static function definitions(): DefinitionCollection
+    public static function definitions(DefinitionDiscovery $definitionDiscovery): DefinitionCollection
     {
         $collection = new DefinitionCollection();
 
@@ -76,7 +77,7 @@ trait ObjectListTrait
             $rCase = new \ReflectionEnumUnitCase($case::class, $case->name);
             $definitionAttr = ($rCase->getAttributes(Definition::class)[0] ?? null)?->newInstance();
             if (null !== $definitionAttr) {
-                $collection[$case] = ObjectTypeDiscovery::definitionForThemeObject($definitionAttr->className, $case)[1];
+                $collection[$case] = ObjectTypeDiscovery::definitionForThemeObject($definitionAttr->className, $case, $definitionDiscovery)[1];
             }
         }
 

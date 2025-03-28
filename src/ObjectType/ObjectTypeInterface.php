@@ -22,5 +22,11 @@ interface ObjectTypeInterface
      */
     public static function validateBuild(mixed $build, mixed $definition, string $objectClassName): void;
 
+    /**
+     * @param ObjectListInterface $case
+     *   The list enum case where the object is defined
+     * @param \Reflector $r
+     *   The location where this object type attribute (e.g Slots) was defined.
+     */
     public function getDefinition(ObjectListInterface $case, \Reflector $r): mixed;
 }
