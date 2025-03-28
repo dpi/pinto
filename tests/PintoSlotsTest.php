@@ -276,5 +276,10 @@ final class PintoSlotsTest extends TestCase
         $expectedRenameSlots->add(new Slots\Attribute\RenameSlot('stringFromParentThatWillBeRenamed', 'stringRenamed'));
         $expectedRenameSlots->add(new Slots\Attribute\RenameSlot(SlotEnum::Slot1, 'enumRenamed'));
         static::assertEquals($expectedRenameSlots, $slotsDefinition->renameSlots);
+
+        static::assertNull($expectedRenameSlots->renamesTo('unknown slot'));
+        static::assertNull($expectedRenameSlots->renamesTo(SlotEnum::Slot2));
+        static::assertEquals('stringRenamed', $expectedRenameSlots->renamesTo('stringFromParentThatWillBeRenamed'));
+        static::assertEquals('enumRenamed', $expectedRenameSlots->renamesTo(SlotEnum::Slot1));
     }
 }
