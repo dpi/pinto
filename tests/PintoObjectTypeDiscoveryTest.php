@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pinto\tests;
 
 use PHPUnit\Framework\TestCase;
+use Pinto\Exception\PintoIndeterminableObjectType;
 use Pinto\Exception\PintoThemeDefinition;
 use Pinto\ObjectType\ObjectTypeDiscovery;
 use Pinto\ObjectType\ObjectTypeInterface;
@@ -17,7 +18,7 @@ final class PintoObjectTypeDiscoveryTest extends TestCase
 {
     public function testZeroObjectTypeAttributes(): void
     {
-        static::expectException(PintoThemeDefinition::class);
+        static::expectException(PintoIndeterminableObjectType::class);
         static::expectExceptionMessage(sprintf('Missing %s attribute on %s or a parent class or %s or %s::%s',
             ObjectTypeInterface::class,
             fixtures\Objects\Faulty\PintoObjectZeroObjectTypeAttributes::class,

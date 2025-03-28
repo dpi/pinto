@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pinto\ObjectType;
 
 use Pinto\DefinitionDiscovery;
+use Pinto\Exception\PintoIndeterminableObjectType;
 use Pinto\Exception\PintoThemeDefinition;
 use Pinto\List\ObjectListInterface;
 
@@ -89,6 +90,6 @@ final class ObjectTypeDiscovery
             return [$attr->getName(), $slotInstance->getDefinition($originalCase ?? $case, $objectClassReflection)];
         }
 
-        throw new PintoThemeDefinition(sprintf('Missing %s attribute on %s or a parent class or %s or %s', ObjectTypeInterface::class, $objectClassName, $enumClassName, sprintf('%s::%s', $case::class, $case->name)));
+        throw new PintoIndeterminableObjectType(sprintf('Missing %s attribute on %s or a parent class or %s or %s', ObjectTypeInterface::class, $objectClassName, $enumClassName, sprintf('%s::%s', $case::class, $case->name)));
     }
 }

@@ -200,6 +200,17 @@ final class PintoSlotsTest extends TestCase
         ]), $slotsDefinition->slots);
     }
 
+    public function testDefinitionsSlotsAttrByInheritanceGrandParentUnregistered(): void
+    {
+        // It the parent isn't registered to an enum, no object type is determined.
+        $definitionDiscovery = new Pinto\DefinitionDiscovery();
+        // Normally parent is set here.
+        $definitionDiscovery[PintoObjectSlotsByInheritanceChild::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild;
+
+        static::expectException(Pinto\Exception\PintoIndeterminableObjectType::class);
+        Lists\PintoListSlotsByInheritance::definitions($definitionDiscovery);
+    }
+
     public function testDefinitionsSlotsAttrOnListMethodSpecified(): void
     {
         $themeDefinitions = Lists\PintoListSlotsOnEnumMethodSpecified::definitions(new Pinto\DefinitionDiscovery());
