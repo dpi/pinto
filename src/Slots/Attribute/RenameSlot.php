@@ -9,7 +9,7 @@ namespace Pinto\Slots\Attribute;
  *
  * An objects builder method must still reference original slot names in set().
  */
-#[\Attribute(flags: \Attribute::TARGET_CLASS)]
+#[\Attribute(flags: \Attribute::TARGET_CLASS | \Attribute::IS_REPEATABLE)]
 final class RenameSlot
 {
     public function __construct(
