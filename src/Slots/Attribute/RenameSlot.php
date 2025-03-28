@@ -14,7 +14,7 @@ final class RenameSlot
 {
   public function __construct(
     public string|\UnitEnum $original,
-    public string|\UnitEnum $new,
+    public string $new,
   ) {
   }
 }

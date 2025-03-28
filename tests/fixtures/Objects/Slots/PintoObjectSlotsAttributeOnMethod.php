@@ -59,6 +59,7 @@ final class PintoObjectSlotsAttributeOnMethod
                 static::class => '__invoke',
             ],
             types: [static::class => ObjectType\Slots::class],
+            lsbFactoryCanonicalObjectClasses: [],
         );
     }
 }

@@ -21,7 +21,7 @@ final class PintoMappingTest extends TestCase
             fixtures\Objects\PintoObject::class => [
                 fixtures\Lists\PintoList::class, fixtures\Lists\PintoList::Pinto_Object->name,
             ],
-        ], [], [], []);
+        ], [], [], [], []);
 
         static::assertEquals([
             fixtures\Lists\PintoList::class,
@@ -32,7 +32,7 @@ final class PintoMappingTest extends TestCase
 
     public function testGetBuildInvokerException(): void
     {
-        $pintoMapping = new PintoMapping([], [], [], [], []);
+        $pintoMapping = new PintoMapping([], [], [], [], [], []);
         static::expectException(PintoMissingObjectMapping::class);
         $pintoMapping->getBuildInvoker(fixtures\Objects\PintoObject::class);
     }

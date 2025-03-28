@@ -13,21 +13,22 @@ use Pinto\Exception\Slots\UnknownValue;
 final class RenameSlots
 {
     /**
-     * @phpstan-param \SplObjectStorage<\UnitEnum, mixed> $slotObjValues
-     * @phpstan-param array<string, mixed> $slotStringValues
+     * @phpstan-param \SplObjectStorage<\UnitEnum, string> $enumSlotRenames
+     * @phpstan-param array<string, string> $stringSlotRenames
      */
     private function __construct(
         // I'd like to use _new in initializers_ but PHPStan doesn't seem to have
         // a way of representing the generic types.
-        private \SplObjectStorage $slotObjValues,
-        private array $slotStringValues,
+        private \SplObjectStorage $enumSlotRenames,
+        private array $stringSlotRenames,
     ) {
-      $this->slotObjValues = new \SplObjectStorage();
     }
 
-    public static function create() {
+    public static function create(): static {
+      /** @var \SplObjectStorage<\UnitEnum, string> $enumSlotRenames */
+      $enumSlotRenames = new \SplObjectStorage();
       return new static(
-        new \SplObjectStorage(),
+        $enumSlotRenames,
         [],
       );
     }
@@ -38,8 +39,8 @@ final class RenameSlots
     public function renamesTo(string|\UnitEnum $slot): ?string
     {
         return \is_string($slot)
-          ? (\array_key_exists($slot, $this->slotStringValues) ? $this->slotStringValues[$slot] : NULL)
-          : $this->slotObjValues[$slot] ?? NULL
+          ? (\array_key_exists($slot, $this->stringSlotRenames) ? $this->stringSlotRenames[$slot] : NULL)
+          : $this->enumSlotRenames[$slot] ?? NULL
         ;
     }
 
@@ -49,9 +50,9 @@ final class RenameSlots
     public function add(RenameSlot $renameSlot): static
     {
         if (\is_string($renameSlot->original)) {
-            $this->slotStringValues[$renameSlot->original] = $renameSlot->new;
+            $this->stringSlotRenames[$renameSlot->original] = $renameSlot->new;
         } else {
-            $this->slotObjValues[$renameSlot->original] = $renameSlot->new;
+            $this->enumSlotRenames[$renameSlot->original] = $renameSlot->new;
         }
 
         return $this;

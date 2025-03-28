@@ -72,7 +72,7 @@ final class PintoSlotsTest extends TestCase
     {
         // Call \Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject
         // directly since pintoMapping won't execute enum->cases expansion..
-        [1 => $slotsDefinition] = Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsExplicitEnumClass::class, PintoListSlots::PintoObjectSlotsExplicitEnumClass);
+        [1 => $slotsDefinition] = Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsExplicitEnumClass::class, PintoListSlots::PintoObjectSlotsExplicitEnumClass, definitionDiscovery: new \Pinto\DefinitionDiscovery());
 
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
@@ -87,7 +87,7 @@ final class PintoSlotsTest extends TestCase
      */
     public function testPintoObjectSlotsBindPromotedPublic(): void
     {
-        [1 => $slotsDefinition] = Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsBindPromotedPublic::class, PintoListSlots::PintoObjectSlotsBindPromotedPublic);
+        [1 => $slotsDefinition] = Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsBindPromotedPublic::class, PintoListSlots::PintoObjectSlotsBindPromotedPublic, definitionDiscovery: new \Pinto\DefinitionDiscovery());
 
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
@@ -108,7 +108,7 @@ final class PintoSlotsTest extends TestCase
     {
         static::expectException(Pinto\Exception\PintoThemeDefinition::class);
         static::expectExceptionMessage('Slots must use reflection (no explicitly defined `$slots`) when promoted properties bind is on.');
-        Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(Pinto\tests\fixtures\Objects\Faulty\PintoObjectSlotsBindPromotedPublicWithDefinedSlots::class, Lists\PintoFaultyList::PintoObjectSlotsBindPromotedPublicWithDefinedSlots);
+        Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(Pinto\tests\fixtures\Objects\Faulty\PintoObjectSlotsBindPromotedPublicWithDefinedSlots::class, Lists\PintoFaultyList::PintoObjectSlotsBindPromotedPublicWithDefinedSlots, definitionDiscovery: new \Pinto\DefinitionDiscovery());
     }
 
     public function testSlotsExplicitIgnoresReflection(): void
@@ -140,7 +140,7 @@ final class PintoSlotsTest extends TestCase
 
     public function testDefinitionsSlotsAttrOnObject(): void
     {
-        $themeDefinitions = PintoListSlots::definitions();
+        $themeDefinitions = PintoListSlots::definitions(new \Pinto\DefinitionDiscovery());
         static::assertCount(6, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[PintoListSlots::Slots];
@@ -160,7 +160,7 @@ final class PintoSlotsTest extends TestCase
 
     public function testDefinitionsSlotsAttrOnList(): void
     {
-        $themeDefinitions = Lists\PintoListSlotsOnEnum::definitions();
+        $themeDefinitions = Lists\PintoListSlotsOnEnum::definitions(new \Pinto\DefinitionDiscovery());
         static::assertCount(1, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsOnEnum::SlotsOnEnum];
@@ -173,7 +173,7 @@ final class PintoSlotsTest extends TestCase
 
     public function testDefinitionsSlotsAttrOnListCase(): void
     {
-        $themeDefinitions = Lists\PintoListSlotsOnEnumCase::definitions();
+        $themeDefinitions = Lists\PintoListSlotsOnEnumCase::definitions(new \Pinto\DefinitionDiscovery());
         static::assertCount(1, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsOnEnumCase::SlotsOnEnumCase];
@@ -185,7 +185,7 @@ final class PintoSlotsTest extends TestCase
 
     public function testDefinitionsSlotsAttrOnListMethodSpecified(): void
     {
-        $themeDefinitions = Lists\PintoListSlotsOnEnumMethodSpecified::definitions();
+        $themeDefinitions = Lists\PintoListSlotsOnEnumMethodSpecified::definitions(new \Pinto\DefinitionDiscovery());
         static::assertCount(1, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsOnEnumMethodSpecified::SlotsOnEnumMethodSpecified];

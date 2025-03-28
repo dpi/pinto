@@ -41,7 +41,7 @@ final class PintoTest extends TestCase
      */
     public function testThemeDefinitions(): void
     {
-        $themeDefinitions = PintoList::definitions();
+        $themeDefinitions = PintoList::definitions(new \Pinto\DefinitionDiscovery());
         static::assertCount(2, $themeDefinitions);
 
         $definition1 = $themeDefinitions[PintoList::Pinto_Object];

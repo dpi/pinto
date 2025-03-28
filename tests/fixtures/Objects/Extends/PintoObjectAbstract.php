@@ -49,6 +49,7 @@ abstract class PintoObjectAbstract
                 PintoObjectExtends2::class => '__invoke',
             ],
             types: [static::class => ThemeDefinition::class],
+            lsbFactoryCanonicalObjectClasses: [],
         );
     }
 }

@@ -29,6 +29,6 @@ final class PintoMultipleBuildMethodObject
 
     private function pintoMapping(): PintoMapping
     {
-        return new PintoMapping([], [], [], [], []);
+        return new PintoMapping([], [], [], [], [], []);
     }
 }

@@ -171,8 +171,8 @@ final class Slots implements ObjectTypeInterface
         // Now look for other attributes.
 
         // Get the theme object class name.
-        /** @var array<\ReflectionAttribute<\Pinto\Attribute\Definition>> $attributes */
         $rCase = new \ReflectionEnumUnitCase($case::class, $case->name);
+        /** @var array<\ReflectionAttribute<\Pinto\Attribute\Definition>> $attributes */
         $attributes = $rCase->getAttributes(\Pinto\Attribute\Definition::class);
         $definition = ($attributes[0] ?? NULL)?->newInstance() ?? throw new \LogicException('Missing definition for slot');
         $objectClassName = $definition->className;
