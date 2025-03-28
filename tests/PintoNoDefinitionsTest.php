@@ -19,7 +19,7 @@ final class PintoNoDefinitionsTest extends TestCase
      */
     public function testNoThemeDefinitions(): void
     {
-        static::assertCount(0, PintoListNoDefinitions::definitions());
+        static::assertCount(0, PintoListNoDefinitions::definitions(new \Pinto\DefinitionDiscovery()));
     }
 
     /**

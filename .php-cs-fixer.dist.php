@@ -11,6 +11,7 @@ $finder = PhpCsFixer\Finder::create()
   ]);
 
 return (new PhpCsFixer\Config('Pinto'))
+    ->setRiskyAllowed(true)
     ->setFinder($finder)
     ->setRules([
         '@Symfony' => true,
