@@ -177,6 +177,7 @@ final class Slots implements ObjectTypeInterface
         $objectClassName = $definition->className;
 
         $renameSlots = \Pinto\Slots\RenameSlots::create();
+        // Only check on the object class (not enums or parents, for now).
         $objectClassReflection = new \ReflectionClass($objectClassName);
         foreach ($objectClassReflection->getAttributes(RenameSlot::class) as $rAttr) {
             $renameSlots->add($rAttr->newInstance());
