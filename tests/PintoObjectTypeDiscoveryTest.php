@@ -18,7 +18,7 @@ final class PintoObjectTypeDiscoveryTest extends TestCase
     public function testZeroObjectTypeAttributes(): void
     {
         static::expectException(PintoThemeDefinition::class);
-        static::expectExceptionMessage(sprintf('Missing %s attribute on %s or %s or %s::%s',
+        static::expectExceptionMessage(sprintf('Missing %s attribute on %s or a parent class or %s or %s::%s',
             ObjectTypeInterface::class,
             fixtures\Objects\Faulty\PintoObjectZeroObjectTypeAttributes::class,
             fixtures\Lists\PintoFaultyList::class,

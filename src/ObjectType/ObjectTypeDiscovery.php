@@ -89,6 +89,6 @@ final class ObjectTypeDiscovery
             return [$attr->getName(), $slotInstance->getDefinition($originalCase ?? $case, $objectClassReflection)];
         }
 
-        throw new PintoThemeDefinition(sprintf('Missing %s attribute on %s or %s or %s', ObjectTypeInterface::class, $objectClassName, $enumClassName, sprintf('%s::%s', $case::class, $case->name)));
+        throw new PintoThemeDefinition(sprintf('Missing %s attribute on %s or a parent class or %s or %s', ObjectTypeInterface::class, $objectClassName, $enumClassName, sprintf('%s::%s', $case::class, $case->name)));
     }
 }
