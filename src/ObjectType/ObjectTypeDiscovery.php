@@ -7,7 +7,6 @@ namespace Pinto\ObjectType;
 use Pinto\DefinitionDiscovery;
 use Pinto\Exception\PintoThemeDefinition;
 use Pinto\List\ObjectListInterface;
-use Pinto\PintoMapping;
 
 /**
  * Discovers ObjectTypeInterface attributes on a class, on a class or its methods.
@@ -33,13 +32,13 @@ final class ObjectTypeDiscovery
      *
      * @param class-string $objectClassName
      *
-     * @return array{class-string<\Pinto\ObjectType\ObjectTypeInterface>, mixed}
+     * @return array{class-string<ObjectTypeInterface>, mixed}
      *
      * @throws PintoThemeDefinition
      */
     public static function definitionForThemeObject(string $objectClassName, ObjectListInterface $case, DefinitionDiscovery $definitionDiscovery, ?ObjectListInterface $originalCase = null): array
     {
-        /** @var array<array{\ReflectionAttribute<\Pinto\ObjectType\ObjectTypeInterface>, \Reflector}> $definitions */
+        /** @var array<array{\ReflectionAttribute<ObjectTypeInterface>, \Reflector}> $definitions */
         $definitions = [];
 
         // Look for attribute instances of ObjectTypeInterface attributes on the class and all
@@ -69,8 +68,8 @@ final class ObjectTypeDiscovery
 
         // Otherwise defer to parent if it was provided (this isn't recurison).
         $extendsObject = $definitionDiscovery->extendsKnownObject($objectClassName);
-        if ($extendsObject !== null) {
-          return static::definitionForThemeObject($extendsObject, $definitionDiscovery[$extendsObject], $definitionDiscovery, originalCase: $case);
+        if (null !== $extendsObject) {
+            return static::definitionForThemeObject($extendsObject, $definitionDiscovery[$extendsObject], $definitionDiscovery, originalCase: $case);
         }
 
         // Try the enum case.

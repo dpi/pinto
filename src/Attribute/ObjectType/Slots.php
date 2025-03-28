@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Pinto\Attribute\ObjectType;
 
-use Pinto\CanonicalProduct\CanonicalProductDiscovery;
 use Pinto\Exception\PintoThemeDefinition;
 use Pinto\Exception\Slots\BuildValidation;
 use Pinto\List\ObjectListInterface;
@@ -44,7 +43,7 @@ final class Slots implements ObjectTypeInterface
     /**
      * Constructs a Slots attribute.
      *
-     * @param list<\Pinto\Slots\Slot|string|\UnitEnum|class-string<\UnitEnum>> $slots
+     * @param list<Slot|string|\UnitEnum|class-string<\UnitEnum>> $slots
      *   The list of slots for the object.
      *   If omitted, slots will be reflected:
      *     - from the class constructor when the attribute is on the class, or,
@@ -174,18 +173,18 @@ final class Slots implements ObjectTypeInterface
         $rCase = new \ReflectionEnumUnitCase($case::class, $case->name);
         /** @var array<\ReflectionAttribute<\Pinto\Attribute\Definition>> $attributes */
         $attributes = $rCase->getAttributes(\Pinto\Attribute\Definition::class);
-        $definition = ($attributes[0] ?? NULL)?->newInstance() ?? throw new \LogicException('Missing definition for slot');
+        $definition = ($attributes[0] ?? null)?->newInstance() ?? throw new \LogicException('Missing definition for slot');
         $objectClassName = $definition->className;
 
         $renameSlots = \Pinto\Slots\RenameSlots::create();
         $objectClassReflection = new \ReflectionClass($objectClassName);
         foreach ($objectClassReflection->getAttributes(RenameSlot::class) as $rAttr) {
-          $renameSlots->add($rAttr->newInstance());
+            $renameSlots->add($rAttr->newInstance());
         }
 
         return new Definition(
-          $slots,
-          renameSlots: $renameSlots,
+            $slots,
+            renameSlots: $renameSlots,
         );
     }
 }

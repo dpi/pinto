@@ -12,9 +12,9 @@ namespace Pinto\Slots\Attribute;
 #[\Attribute(flags: \Attribute::TARGET_CLASS)]
 final class RenameSlot
 {
-  public function __construct(
-    public string|\UnitEnum $original,
-    public string $new,
-  ) {
-  }
+    public function __construct(
+        public string|\UnitEnum $original,
+        public string $new,
+    ) {
+    }
 }

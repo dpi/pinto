@@ -13,14 +13,14 @@ use Pinto\List\ObjectListInterface;
 final readonly class PintoMapping
 {
     /**
-     * @param array<class-string<\Pinto\List\ObjectListInterface>> $enumClasses
+     * @param array<class-string<ObjectListInterface>> $enumClasses
      * @param array<
      *   class-string,
      *   array{class-string<\Pinto\List\ObjectListInterface>, string}
      * > $enums
      * @param array<class-string, mixed> $definitions
      * @param array<class-string, string> $buildInvokers
-     * @param array<class-string, class-string<\Pinto\ObjectType\ObjectTypeInterface>> $types
+     * @param array<class-string, class-string<ObjectType\ObjectTypeInterface>> $types
      *   A map of object class-strings to object type class-strings
      * @param array<class-string, class-string> $lsbFactoryCanonicalObjectClasses
      *   A map of original object class-string to overridden class-strings. Used
@@ -48,7 +48,7 @@ final readonly class PintoMapping
      */
     public function getByClass(string $objectClassName): ObjectListInterface
     {
-        /** @var class-string<\Pinto\List\ObjectListInterface> $listClass */
+        /** @var class-string<ObjectListInterface> $listClass */
         [$listClass, $caseName] = $this->enums[$objectClassName] ?? throw new PintoMissingObjectMapping($objectClassName);
 
         /** @var ObjectListInterface $enum */
@@ -78,7 +78,7 @@ final readonly class PintoMapping
     }
 
     /**
-     * @return array<class-string<\Pinto\List\ObjectListInterface>>
+     * @return array<class-string<ObjectListInterface>>
      */
     public function getEnumClasses(): array
     {
@@ -88,7 +88,7 @@ final readonly class PintoMapping
     /**
      * @param class-string $objectClassName
      *
-     * @return class-string<\Pinto\ObjectType\ObjectTypeInterface>
+     * @return class-string<ObjectType\ObjectTypeInterface>
      *
      * @throws PintoMissingObjectMapping
      */

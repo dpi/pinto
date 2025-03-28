@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Pinto\Slots;
 
 use Pinto\Slots\Attribute\RenameSlot;
-use Pinto\Exception\Slots\UnknownValue;
 
 /**
  * @internal
@@ -24,13 +23,15 @@ final class RenameSlots
     ) {
     }
 
-    public static function create(): static {
-      /** @var \SplObjectStorage<\UnitEnum, string> $enumSlotRenames */
-      $enumSlotRenames = new \SplObjectStorage();
-      return new static(
-        $enumSlotRenames,
-        [],
-      );
+    public static function create(): static
+    {
+        /** @var \SplObjectStorage<\UnitEnum, string> $enumSlotRenames */
+        $enumSlotRenames = new \SplObjectStorage();
+
+        return new static(
+            $enumSlotRenames,
+            [],
+        );
     }
 
     /**
@@ -39,8 +40,8 @@ final class RenameSlots
     public function renamesTo(string|\UnitEnum $slot): ?string
     {
         return \is_string($slot)
-          ? (\array_key_exists($slot, $this->stringSlotRenames) ? $this->stringSlotRenames[$slot] : NULL)
-          : $this->enumSlotRenames[$slot] ?? NULL
+          ? (\array_key_exists($slot, $this->stringSlotRenames) ? $this->stringSlotRenames[$slot] : null)
+          : $this->enumSlotRenames[$slot] ?? null
         ;
     }
 

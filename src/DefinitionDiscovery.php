@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Pinto;
 
-use Ramsey\Collection\AbstractCollection;
 use Ramsey\Collection\Map\AbstractMap;
 
 /**
@@ -14,28 +13,27 @@ use Ramsey\Collection\Map\AbstractMap;
  */
 final class DefinitionDiscovery extends AbstractMap
 {
+    /**
+     * Utility for getting the first ancestor class-string of a class-string.
+     *
+     * @internal
+     *
+     * @phpstan-param class-string $objectClassName
+     *
+     * @phpstan-return class-string
+     */
+    public function extendsKnownObject(string $objectClassName): ?string
+    {
+        $r = new \ReflectionClass($objectClassName);
+        $parent = null;
 
-  /**
-   * Utility for getting the first ancestor class-string of a class-string.
-   *
-   * @internal
-   *
-   * @phpstan-param class-string $objectClassName
-   * @phpstan-return class-string
-   */
-  public function extendsKnownObject(string $objectClassName): ?string
-  {
-    $r = new \ReflectionClass($objectClassName);
-    $parent = NULL;
+        while (false !== ($parent = ($parent ?? $r)->getParentClass())) {
+            $parentClassName = $parent->getName();
+            if ($this->offsetExists($parentClassName)) {
+                return $parentClassName;
+            }
+        }
 
-    while (FALSE !== ($parent = ($parent ?? $r)->getParentClass())) {
-      $parentClassName = $parent->getName();
-      if ($this->offsetExists($parentClassName)) {
-        return $parentClassName;
-      }
+        return null;
     }
-
-    return null;
-  }
-
 }
