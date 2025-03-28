@@ -8,6 +8,7 @@ final class Definition
 {
     public function __construct(
         public SlotList $slots,
+        public ?RenameSlots $renameSlots = null,
     ) {
     }
 }
