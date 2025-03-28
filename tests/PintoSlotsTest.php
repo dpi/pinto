@@ -11,9 +11,13 @@ use Pinto\tests\fixtures\Lists;
 use Pinto\tests\fixtures\Lists\PintoListSlots;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBasic;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBindPromotedPublic;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsByInheritanceChild;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsByInheritanceGrandParent;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicit;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicitEnumClass;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsMissingSlotValue;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsRenameChild;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsRenameParent;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsSetInvalidSlot;
 
 /**
@@ -183,6 +187,32 @@ final class PintoSlotsTest extends TestCase
         ]), $slotsDefinition->slots);
     }
 
+    public function testDefinitionsSlotsAttrByInheritance(): void
+    {
+        $definitionDiscovery = new Pinto\DefinitionDiscovery();
+        $definitionDiscovery[PintoObjectSlotsByInheritanceChild::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild;
+        $definitionDiscovery[PintoObjectSlotsByInheritanceGrandParent::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceGrandParent;
+        $themeDefinitions = Lists\PintoListSlotsByInheritance::definitions($definitionDiscovery);
+        static::assertCount(2, $themeDefinitions);
+
+        $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild];
+        static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
+        static::assertEquals(new SlotList([
+            new Slots\Slot(name: 'fooFromGrandParent'),
+        ]), $slotsDefinition->slots);
+    }
+
+    public function testDefinitionsSlotsAttrByInheritanceGrandParentUnregistered(): void
+    {
+        // It the parent isn't registered to an enum, no object type is determined.
+        $definitionDiscovery = new Pinto\DefinitionDiscovery();
+        // Normally parent is set here.
+        $definitionDiscovery[PintoObjectSlotsByInheritanceChild::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild;
+
+        static::expectException(Pinto\Exception\PintoIndeterminableObjectType::class);
+        Lists\PintoListSlotsByInheritance::definitions($definitionDiscovery);
+    }
+
     public function testDefinitionsSlotsAttrOnListMethodSpecified(): void
     {
         $themeDefinitions = Lists\PintoListSlotsOnEnumMethodSpecified::definitions(new Pinto\DefinitionDiscovery());
@@ -220,5 +250,36 @@ final class PintoSlotsTest extends TestCase
         static::expectException(LogicException::class);
         static::expectExceptionMessage('Using this attribute without named parameters is not supported.');
         new Pinto\Attribute\ObjectType\Slots('');
+    }
+
+    /**
+     * @covers \Pinto\Slots\Attribute\RenameSlot
+     * @covers \Pinto\Slots\RenameSlots
+     */
+    public function testRenameSlots(): void
+    {
+        $definitionDiscovery = new Pinto\DefinitionDiscovery();
+        $definitionDiscovery[PintoObjectSlotsRenameParent::class] = Lists\PintoListSlotsRename::SlotsRenameParent;
+        $definitionDiscovery[PintoObjectSlotsRenameChild::class] = Lists\PintoListSlotsRename::SlotsRenameChild;
+        $themeDefinitions = Lists\PintoListSlotsRename::definitions($definitionDiscovery);
+        static::assertCount(2, $themeDefinitions);
+
+        $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsRename::SlotsRenameChild];
+        static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
+        static::assertEquals(new SlotList([
+            new Slots\Slot(name: 'slotFromParentUnrenamed'),
+            new Slots\Slot(name: 'stringFromParentThatWillBeRenamed'),
+            new Slots\Slot(name: SlotEnum::Slot1),
+        ]), $slotsDefinition->slots);
+
+        $expectedRenameSlots = Slots\RenameSlots::create();
+        $expectedRenameSlots->add(new Slots\Attribute\RenameSlot('stringFromParentThatWillBeRenamed', 'stringRenamed'));
+        $expectedRenameSlots->add(new Slots\Attribute\RenameSlot(SlotEnum::Slot1, 'enumRenamed'));
+        static::assertEquals($expectedRenameSlots, $slotsDefinition->renameSlots);
+
+        static::assertNull($expectedRenameSlots->renamesTo('unknown slot'));
+        static::assertNull($expectedRenameSlots->renamesTo(SlotEnum::Slot2));
+        static::assertEquals('stringRenamed', $expectedRenameSlots->renamesTo('stringFromParentThatWillBeRenamed'));
+        static::assertEquals('enumRenamed', $expectedRenameSlots->renamesTo(SlotEnum::Slot1));
     }
 }
