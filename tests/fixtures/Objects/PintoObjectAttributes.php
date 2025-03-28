@@ -80,6 +80,7 @@ final class PintoObjectAttributes
                 static::class => '__invoke',
             ],
             types: [static::class => ThemeDefinition::class],
+            lsbFactoryCanonicalObjectClasses: [],
         );
     }
 }

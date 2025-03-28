@@ -80,6 +80,7 @@ final class PintoBuildOverrideObject
                 static::class => '__invoke',
             ],
             types: [static::class => ThemeDefinition::class],
+            lsbFactoryCanonicalObjectClasses: [],
         );
     }
 }

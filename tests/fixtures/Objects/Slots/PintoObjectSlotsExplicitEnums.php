@@ -56,6 +56,7 @@ final class PintoObjectSlotsExplicitEnums
                 static::class => '__invoke',
             ],
             types: [static::class => ObjectType\Slots::class],
+            lsbFactoryCanonicalObjectClasses: [],
         );
     }
 }

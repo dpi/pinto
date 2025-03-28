@@ -22,6 +22,10 @@ final readonly class PintoMapping
      * @param array<class-string, string> $buildInvokers
      * @param array<class-string, class-string<ObjectType\ObjectTypeInterface>> $types
      *   A map of object class-strings to object type class-strings
+     * @param array<class-string, class-string> $lsbFactoryCanonicalObjectClasses
+     *   A map of original object class-string to overridden class-strings. Used
+     *   by static factories on a base class, where a child class wants to indicate it overrides
+     *   the base class.
      *
      * @internal
      */
@@ -31,6 +35,7 @@ final readonly class PintoMapping
         private array $definitions,
         private array $buildInvokers,
         private array $types,
+        private array $lsbFactoryCanonicalObjectClasses,
     ) {
     }
 
@@ -90,5 +95,10 @@ final readonly class PintoMapping
     public function getObjectType(string $objectClassName): string
     {
         return $this->types[$objectClassName] ?? throw new PintoMissingObjectMapping($objectClassName);
+    }
+
+    public function getCanonicalObjectClassName(string $rootObjectClassName): ?string
+    {
+        return $this->lsbFactoryCanonicalObjectClasses[$rootObjectClassName] ?? null;
     }
 }
