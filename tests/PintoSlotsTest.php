@@ -11,6 +11,8 @@ use Pinto\tests\fixtures\Lists;
 use Pinto\tests\fixtures\Lists\PintoListSlots;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBasic;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBindPromotedPublic;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsByInheritanceChild;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsByInheritanceGrandParent;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicit;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicitEnumClass;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsMissingSlotValue;
@@ -181,6 +183,32 @@ final class PintoSlotsTest extends TestCase
         static::assertEquals(new SlotList([
             new Slots\Slot(name: 'fooFromListCase'),
         ]), $slotsDefinition->slots);
+    }
+
+    public function testDefinitionsSlotsAttrByInheritance(): void
+    {
+        $definitionDiscovery = new Pinto\DefinitionDiscovery();
+        $definitionDiscovery[PintoObjectSlotsByInheritanceChild::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild;
+        $definitionDiscovery[PintoObjectSlotsByInheritanceGrandParent::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceGrandParent;
+        $themeDefinitions = Lists\PintoListSlotsByInheritance::definitions($definitionDiscovery);
+        static::assertCount(2, $themeDefinitions);
+
+        $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild];
+        static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
+        static::assertEquals(new SlotList([
+            new Slots\Slot(name: 'fooFromGrandParent'),
+        ]), $slotsDefinition->slots);
+    }
+
+    public function testDefinitionsSlotsAttrByInheritanceGrandParentUnregistered(): void
+    {
+        // It the parent isn't registered to an enum, no object type is determined.
+        $definitionDiscovery = new Pinto\DefinitionDiscovery();
+        // Normally parent is set here.
+        $definitionDiscovery[PintoObjectSlotsByInheritanceChild::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild;
+
+        static::expectException(Pinto\Exception\PintoIndeterminableObjectType::class);
+        Lists\PintoListSlotsByInheritance::definitions($definitionDiscovery);
     }
 
     public function testDefinitionsSlotsAttrOnListMethodSpecified(): void
