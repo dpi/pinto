@@ -14,8 +14,11 @@ use Pinto\List\ObjectListInterface;
 #[\Attribute(flags: \Attribute::TARGET_CLASS)]
 final class CanonicalProduct
 {
-    // Class is never instantiated; functionality comes from placement.
-    // @codeCoverageIgnore
+    /**
+     * Class is never instantiated; functionality comes from placement.
+     *
+     * @codeCoverageIgnore
+     */
     public function __construct(
     ) {
     }
