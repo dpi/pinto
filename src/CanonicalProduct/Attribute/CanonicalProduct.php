@@ -20,7 +20,9 @@ final class CanonicalProduct
 
     /**
      * @return array<class-string, class-string>
-     *   Array of objects keyed by the extended object
+     *   Objects strings keyed by the extended object.
+     *   The result of this method is designed to be consumed by
+     *   \Pinto\PintoMapping::__construct(lsbFactoryCanonicalObjectClasses)
      *
      * @internal
      */

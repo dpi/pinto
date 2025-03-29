@@ -126,7 +126,7 @@ trait ObjectListTrait
                 foreach ($rCase->getAttributes(DependencyOn::class) as $r) {
                     $dependencyAttr = $r->newInstance();
                     $on = $dependencyAttr->dependency instanceof ObjectListInterface
-                      ? $dependencyAttr->dependency->attachLibraries()
+                        ? $dependencyAttr->dependency->attachLibraries()
                         : [$dependencyAttr->dependency];
                     $library['dependencies'] = [
                         ...($library['dependencies'] ?? []),
