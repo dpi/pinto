@@ -29,6 +29,18 @@ final class PintoCanonicalProductTest extends TestCase
         static::assertEquals($text . ' built!', $build->pintoGet('text'));
     }
 
+    /**
+     * Object inherits use of CanonicalFactoryTrait, but does not have #[CanonicalProduct] on the object or related enum list.
+     */
+    public function testCreateUsesTraitWithoutAttribute(): void
+    {
+        $text = 'foo bar';
+        $object = PintoObjectCanonicalProductRoot::customCreate($text);
+        $build = $object();
+        static::assertInstanceOf(Build::class, $build);
+        static::assertEquals($text . ' built!', $build->pintoGet('text'));
+    }
+
     public function testCreateIncorrectEntryPoint(): void
     {
         static::expectException(BadMethodCallException::class);
