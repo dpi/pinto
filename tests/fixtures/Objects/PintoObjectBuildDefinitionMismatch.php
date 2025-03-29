@@ -76,6 +76,7 @@ final class PintoObjectBuildDefinitionMismatch
                 static::class => '__invoke',
             ],
             types: [static::class => ThemeDefinition::class],
+            lsbFactoryCanonicalObjectClasses: [],
         );
     }
 }

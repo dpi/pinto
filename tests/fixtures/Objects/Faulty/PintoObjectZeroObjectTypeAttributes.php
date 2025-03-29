@@ -27,6 +27,6 @@ final class PintoObjectZeroObjectTypeAttributes
 
     private function pintoMapping(): PintoMapping
     {
-        return new PintoMapping([], [], [], [], []);
+        return new PintoMapping([], [], [], [], [], []);
     }
 }
