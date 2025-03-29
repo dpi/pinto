@@ -35,9 +35,8 @@ final class PintoCanonicalProductTest extends TestCase
      */
     public function testCreateUsesTraitWithoutAttribute(): void
     {
-        $text = 'foo bar';
-        static::expectException(BadMethodCallException::class);
-        $object = PintoObjectCanonicalProductWithoutAttrChild::create($text);
+        $object = PintoObjectCanonicalProductWithoutAttrChild::create('foo bar');
+        static::assertInstanceOf(PintoObjectCanonicalProductWithoutAttrChild::class, $object);
     }
 
     public function testCreateIncorrectEntryPoint(): void
