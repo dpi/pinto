@@ -17,6 +17,7 @@ use Pinto\tests\fixtures\Objects\CanonicalProduct\PintoObjectCanonicalProductOnL
 use Pinto\tests\fixtures\Objects\CanonicalProduct\PintoObjectCanonicalProductOnListRoot1;
 use Pinto\tests\fixtures\Objects\CanonicalProduct\PintoObjectCanonicalProductOnListRoot2;
 use Pinto\tests\fixtures\Objects\CanonicalProduct\PintoObjectCanonicalProductRoot;
+use Pinto\tests\fixtures\Objects\CanonicalProduct\PintoObjectCanonicalProductWithoutAttrChild;
 
 final class PintoCanonicalProductTest extends TestCase
 {
@@ -35,10 +36,8 @@ final class PintoCanonicalProductTest extends TestCase
     public function testCreateUsesTraitWithoutAttribute(): void
     {
         $text = 'foo bar';
-        $object = PintoObjectCanonicalProductRoot::customCreate($text);
-        $build = $object();
-        static::assertInstanceOf(Build::class, $build);
-        static::assertEquals($text . ' built!', $build->pintoGet('text'));
+        static::expectException(BadMethodCallException::class);
+        $object = PintoObjectCanonicalProductWithoutAttrChild::create($text);
     }
 
     public function testCreateIncorrectEntryPoint(): void

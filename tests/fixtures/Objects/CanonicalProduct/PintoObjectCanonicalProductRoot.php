@@ -44,7 +44,7 @@ class PintoObjectCanonicalProductRoot
     {
         $definitionDiscovery = new DefinitionDiscovery();
         $definitionDiscovery[PintoObjectCanonicalProductChild::class] = PintoListCanonicalProduct::Child;
-        $definitionDiscovery[PintoObjectCanonicalProductChildWithoutAttribute::class] = PintoListCanonicalProduct::Root;
+        $definitionDiscovery[PintoObjectCanonicalProductWithoutAttrChild::class] = PintoListCanonicalProduct::Root;
         $definitionDiscovery[PintoObjectCanonicalProductRoot::class] = PintoListCanonicalProduct::Root;
 
         return new PintoMapping(
