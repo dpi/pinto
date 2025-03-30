@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pinto\Attribute\Asset;
 
+use Pinto\Asset\AssetLibraryPaths;
+
 /**
  * An attribute representing a single CSS file asset used by an object.
  */
@@ -23,7 +25,7 @@ final class Css implements CssAssetInterface, LocalAssetInterface
      * @param array<string, mixed> $attributes
      */
     public function __construct(
-        public string $path,
+        public string $path = '*.css',
         public bool $minified = false,
         public bool $preprocess = false,
         public string $category = 'component',
@@ -41,8 +43,19 @@ final class Css implements CssAssetInterface, LocalAssetInterface
         return $this;
     }
 
-    public function getLibraryPath(): array
+    public function getLibraryPaths(): AssetLibraryPaths
     {
-        return ['css', $this->category, $this->assetPath . '/' . $this->path];
+        $pattern = $this->assetPath . '/' . $this->path;
+        $glob = \glob($pattern);
+        if (false === $glob || [] === $glob) {
+            return new AssetLibraryPaths([['css', $this->category, $pattern]]);
+        }
+
+        $paths = new AssetLibraryPaths();
+        foreach ($glob as $path) {
+            $paths[] = ['css', $this->category, $path];
+        }
+
+        return $paths;
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pinto\Attribute\Asset;
 
+use Pinto\Asset\AssetLibraryPaths;
+
 /**
  * An attribute representing a single Javascript file asset used by an object.
  */
@@ -30,8 +32,8 @@ final class ExternalJs implements JsAssetInterface, ExternalAssetInterface
         return $this->url;
     }
 
-    public function getLibraryPath(): array
+    public function getLibraryPaths(): AssetLibraryPaths
     {
-        return ['js', $this->url];
+        return new AssetLibraryPaths([['js', $this->url]]);
     }
 }

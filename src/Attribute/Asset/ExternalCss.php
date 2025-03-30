@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pinto\Attribute\Asset;
 
+use Pinto\Asset\AssetLibraryPaths;
+
 /**
  * An attribute representing a single CSS file asset used by an object.
  */
@@ -31,8 +33,8 @@ final class ExternalCss implements JsAssetInterface, ExternalAssetInterface
         return $this->url;
     }
 
-    public function getLibraryPath(): array
+    public function getLibraryPaths(): AssetLibraryPaths
     {
-        return ['css', $this->category, $this->url];
+        return new AssetLibraryPaths([['css', $this->category, $this->url]]);
     }
 }

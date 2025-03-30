@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pinto\tests\Attribute;
 
 use PHPUnit\Framework\TestCase;
+use Pinto\Asset\AssetLibraryPaths;
 use Pinto\Attribute\Asset;
 
 /**
@@ -19,7 +20,9 @@ final class AssetAttributesTest extends TestCase
     {
         $js = new Asset\Js('foo.js');
         $js->setPath('/javascript/directory');
-        static::assertEquals(['js', '/javascript/directory/foo.js'], $js->getLibraryPath());
+        static::assertEquals(new AssetLibraryPaths([
+            ['js', '/javascript/directory/foo.js'],
+        ]), $js->getLibraryPaths());
     }
 
     public function testJsAssetForwardSlashException(): void
@@ -33,7 +36,9 @@ final class AssetAttributesTest extends TestCase
     {
         $css = new Asset\Css('styles.css');
         $css->setPath('/css/directory');
-        static::assertEquals(['css', 'component', '/css/directory/styles.css'], $css->getLibraryPath());
+        static::assertEquals(new AssetLibraryPaths([
+            ['css', 'component', '/css/directory/styles.css'],
+        ]), $css->getLibraryPaths());
     }
 
     public function testCssAssetForwardSlashException(): void
@@ -47,7 +52,9 @@ final class AssetAttributesTest extends TestCase
     {
         $js = new Asset\ExternalJs('https://example.com/foo.js');
         static::assertEquals('https://example.com/foo.js', $js->getUrl());
-        static::assertEquals(['js', 'https://example.com/foo.js'], $js->getLibraryPath());
+        static::assertEquals(new AssetLibraryPaths([
+            ['js', 'https://example.com/foo.js'],
+        ]), $js->getLibraryPaths());
     }
 
     public function testExternalJsAssetForwardSlashException(): void
@@ -61,7 +68,9 @@ final class AssetAttributesTest extends TestCase
     {
         $css = new Asset\ExternalCss('https://example.com/styles.css');
         static::assertEquals('https://example.com/styles.css', $css->getUrl());
-        static::assertEquals(['css', 'component', 'https://example.com/styles.css'], $css->getLibraryPath());
+        static::assertEquals(new AssetLibraryPaths([
+            ['css', 'component', 'https://example.com/styles.css'],
+        ]), $css->getLibraryPaths());
     }
 
     public function testExternalCssAssetForwardSlashException(): void
