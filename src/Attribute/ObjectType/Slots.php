@@ -140,17 +140,17 @@ final class Slots implements ObjectTypeInterface
 
     public function getDefinition(ObjectListInterface $case, \Reflector $r): mixed
     {
-        $reflectionMethod = match (true) {
-            $r instanceof \ReflectionClass && null !== $this->method => $r->getMethod($this->method),
-            $r instanceof \ReflectionClass => $r->getConstructor() ?? throw new PintoThemeDefinition('Missing method to reflect parameters from.'),
-            $r instanceof \ReflectionMethod => $r,
-            default => throw new \LogicException('Unsupported reflection: ' . $r::class),
-        };
-
         $slots = $this->slots;
 
         // When no slots were provided to the attribute, use reflection:
         if (0 === $this->slots->count()) {
+            $reflectionMethod = match (true) {
+                $r instanceof \ReflectionClass && null !== $this->method => $r->getMethod($this->method),
+                $r instanceof \ReflectionClass => $r->getConstructor() ?? throw new PintoThemeDefinition('Missing method to reflect parameters from.'),
+                $r instanceof \ReflectionMethod => $r,
+                default => throw new \LogicException('Unsupported reflection: ' . $r::class),
+            };
+
             // Method doesn't need to be public if there are defined slots:
             if (true !== $reflectionMethod->isPublic()) {
                 throw new PintoThemeDefinition(sprintf('Method %s::%s() must be public to be used as a %s entrypoint.', $reflectionMethod->getDeclaringClass()->getName(), $reflectionMethod->getShortName(), static::class));
