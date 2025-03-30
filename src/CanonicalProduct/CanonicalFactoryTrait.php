@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Pinto\CanonicalProduct;
 
-use Pinto\Attribute\Build;
 use Pinto\PintoMapping;
 
 trait CanonicalFactoryTrait
 {
-    #[Build]
     final public static function create(mixed ...$args): self
     {
         $className = self::pintoMappingStatic()->getCanonicalObjectClassName(self::class);

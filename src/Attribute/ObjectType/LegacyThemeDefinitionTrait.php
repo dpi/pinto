@@ -7,6 +7,7 @@ namespace Pinto\Attribute\ObjectType;
 use Pinto\Exception\PintoBuildDefinitionMismatch;
 use Pinto\Exception\PintoThemeDefinition;
 use Pinto\List\ObjectListInterface;
+use Pinto\ObjectType\LateBindObjectContext;
 use Pinto\ObjectType\ObjectTypeInterface;
 use Pinto\ThemeDefinition\HookThemeDefinition;
 
@@ -38,7 +39,7 @@ trait LegacyThemeDefinitionTrait
         ];
     }
 
-    public static function lateBindObjectToBuild(mixed $build, mixed $definition, object $object): void
+    public static function lateBindObjectToBuild(mixed $build, mixed $definition, object $object, LateBindObjectContext $context): void
     {
     }
 

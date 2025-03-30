@@ -7,6 +7,7 @@ namespace Pinto\Attribute\ObjectType;
 use Pinto\Exception\PintoThemeDefinition;
 use Pinto\Exception\Slots\BuildValidation;
 use Pinto\List\ObjectListInterface;
+use Pinto\ObjectType\LateBindObjectContext;
 use Pinto\ObjectType\ObjectTypeInterface;
 use Pinto\Slots\Attribute\RenameSlot;
 use Pinto\Slots\Build;
@@ -88,7 +89,7 @@ final class Slots implements ObjectTypeInterface
         }
     }
 
-    public static function lateBindObjectToBuild(mixed $build, mixed $definition, object $object): void
+    public static function lateBindObjectToBuild(mixed $build, mixed $definition, object $object, LateBindObjectContext $context): void
     {
         assert($build instanceof Build);
         assert($definition instanceof Definition);
@@ -102,6 +103,17 @@ final class Slots implements ObjectTypeInterface
             if (null !== $classProperty) {
                 // @phpstan-ignore-next-line
                 $build->set($slot->name, $object->{$classProperty});
+            }
+        }
+
+        // Auto-invoke known nested objects:
+        foreach ($definition->slots as $slot) {
+            if (true === $build->pintoHas($slot->name)) {
+                $slotValue = $build->pintoGet($slot->name);
+                if (\is_object($slotValue) && ($invokerMethod = $context->getBuildInvoker($slotValue::class)) !== null) {
+                    // @phpstan-ignore-next-line
+                    $build->set($slot->name, $slotValue->{$invokerMethod}());
+                }
             }
         }
     }
