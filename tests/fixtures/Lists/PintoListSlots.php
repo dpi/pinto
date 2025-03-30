@@ -31,6 +31,9 @@ enum PintoListSlots implements ObjectListInterface
     #[Definition(Slots\PintoObjectSlotsBindPromotedPublic::class)]
     case PintoObjectSlotsBindPromotedPublic;
 
+    #[Definition(Slots\PintoObjectSlotsNoConstructor::class)]
+    case SlotsNoConstructor;
+
     public function templateDirectory(): string
     {
         return 'tests/fixtures/resources';

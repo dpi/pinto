@@ -132,6 +132,20 @@ final class PintoSlotsTest extends TestCase
         $object();
     }
 
+    /**
+     * Tests no constructor is required when #[Slots(slots)] is provided.
+     *
+     * Issue would normally expose itself during discovery.
+     *
+     * @see Pinto\Attribute\ObjectType\Slots::getDefinition
+     */
+    public function testSlotsNoConstructor(): void
+    {
+        $definitions = PintoListSlots::definitions(new Pinto\DefinitionDiscovery());
+        // Assert anything (no exception thrown):
+        static::assertGreaterThan(0, count($definitions));
+    }
+
     public function testSlotsBuildMissingValueWithDefault(): void
     {
         $object = new Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsMissingSlotValueWithDefault('Foo!');
@@ -145,7 +159,7 @@ final class PintoSlotsTest extends TestCase
     public function testDefinitionsSlotsAttrOnObject(): void
     {
         $themeDefinitions = PintoListSlots::definitions(new Pinto\DefinitionDiscovery());
-        static::assertCount(6, $themeDefinitions);
+        static::assertCount(7, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[PintoListSlots::Slots];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
