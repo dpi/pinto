@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pinto\Object;
 
 use Pinto\Exception\PintoBuildDefinitionMismatch;
+use Pinto\ObjectType\LateBindObjectContext;
 use Pinto\PintoMapping;
 
 /**
@@ -49,7 +50,7 @@ trait ObjectTrait
         // for all enums (theme objects) under its control.
         $built = (static::$pintoEnum[static::class]->build($wrapper, $this))($build);
 
-        $objectType::lateBindObjectToBuild($built, $definition, $this);
+        $objectType::lateBindObjectToBuild($built, $definition, $this, LateBindObjectContext::create($this->pintoMapping()));
         $objectType::validateBuild($built, $definition, static::class);
 
         return $built;
