@@ -25,6 +25,9 @@ enum PintoFaultyList implements ObjectListInterface
     #[Definition(fixtures\Objects\Faulty\PintoObjectSlotsBindPromotedPublicWithDefinedSlots::class)]
     case PintoObjectSlotsBindPromotedPublicWithDefinedSlots;
 
+    #[Definition(fixtures\Objects\Faulty\PintoObjectAutoInvokeNotKnownObject::class)]
+    case PintoObjectAutoInvokeNotKnownObject;
+
     public function templateDirectory(): string
     {
         return 'tests/fixtures/resources';

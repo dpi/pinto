@@ -5,6 +5,7 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use Pinto\Slots\Build;
 use Pinto\tests\fixtures\Objects\AutoInvokeNested\PintoObjectAutoInvokeContainer;
+use Pinto\tests\fixtures\Objects\Faulty\PintoObjectAutoInvokeNotKnownObject;
 
 final class PintoAutoInvokeNestedTest extends TestCase
 {
@@ -43,5 +44,14 @@ final class PintoAutoInvokeNestedTest extends TestCase
 
         // PintoObjectAutoInvokeChild3 build and slot values.
         static::assertEquals('Text in Child3', $build->pintoGet('child_2')->pintoGet('child2_child')->pintoGet('child3_text'));
+    }
+
+    public function testUnknownChildObject(): void
+    {
+        $object = new PintoObjectAutoInvokeNotKnownObject();
+        $build = $object();
+        // The slot value is the original instance.
+        static::assertInstanceOf(Build::class, $build);
+        static::assertInstanceOf(stdClass::class, $build->pintoGet('child'));
     }
 }
