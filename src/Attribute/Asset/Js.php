@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pinto\Attribute\Asset;
 
+use Pinto\Asset\AssetLibraryPaths;
+
 /**
  * An attribute representing a single Javascript file asset used by an object.
  */
@@ -16,12 +18,12 @@ final class Js implements JsAssetInterface, LocalAssetInterface
      * Defines a Javascript asset for the built library.
      *
      * @param string $path
-     *   A path to append after ObjectListInterface::cssDirectory for the enum
+     *   A path to append after ObjectListInterface::jsDirectory for the enum
      *   this object is represented by
      * @param array<string, mixed> $attributes
      */
     public function __construct(
-        public string $path,
+        public string $path = '*.js',
         public bool $minified = false,
         public bool $preprocess = false,
         public readonly array $attributes = [],
@@ -38,8 +40,19 @@ final class Js implements JsAssetInterface, LocalAssetInterface
         return $this;
     }
 
-    public function getLibraryPath(): array
+    public function getLibraryPaths(): AssetLibraryPaths
     {
-        return ['js', $this->assetPath . '/' . $this->path];
+        $pattern = $this->assetPath . '/' . $this->path;
+        $glob = \glob($pattern);
+        if (false === $glob || [] === $glob) {
+            return new AssetLibraryPaths([['js', $pattern]]);
+        }
+
+        $paths = new AssetLibraryPaths();
+        foreach ($glob as $path) {
+            $paths[] = ['js', $path];
+        }
+
+        return $paths;
     }
 }

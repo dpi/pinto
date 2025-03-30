@@ -66,6 +66,12 @@ trait ObjectListTrait
         /** @var array<\ReflectionAttribute<AssetInterface>> $assets */
         $assets = ($rComponentClass ?? $rCase)->getAttributes(AssetInterface::class, \ReflectionAttribute::IS_INSTANCEOF);
 
+        // Else, try the enum if object or case does not have assets.
+        if ([] === $assets) {
+            $rEnum = new \ReflectionClass($this::class);
+            $assets = $rEnum->getAttributes(AssetInterface::class, \ReflectionAttribute::IS_INSTANCEOF);
+        }
+
         return array_map(fn (\ReflectionAttribute $r) => $r->newInstance(), $assets);
     }
 
@@ -119,7 +125,9 @@ trait ObjectListTrait
                         }
                     }
 
-                    $nestedValueSet($library, $asset->getLibraryPath(), $vars);
+                    foreach ($asset->getLibraryPaths() as $libraryPath) {
+                        $nestedValueSet($library, $libraryPath, $vars);
+                    }
                 }
 
                 $rCase = new \ReflectionEnumUnitCase($case::class, $case->name);
