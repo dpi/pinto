@@ -23,7 +23,7 @@ class PintoObjectCanonicalProductRoot
     use ObjectTrait;
 
     use CanonicalFactoryTrait {
-        CanonicalFactoryTrait::create as customCreate;
+        CanonicalFactoryTrait::factoryCreate as customCreate;
     }
 
     final public function __construct(

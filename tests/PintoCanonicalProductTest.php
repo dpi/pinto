@@ -35,7 +35,7 @@ final class PintoCanonicalProductTest extends TestCase
      */
     public function testCreateUsesTraitWithoutAttribute(): void
     {
-        $object = PintoObjectCanonicalProductWithoutAttrChild::create('foo bar');
+        $object = PintoObjectCanonicalProductWithoutAttrChild::factoryCreate('foo bar');
         static::assertInstanceOf(PintoObjectCanonicalProductWithoutAttrChild::class, $object);
     }
 
@@ -50,7 +50,7 @@ final class PintoCanonicalProductTest extends TestCase
     {
         static::expectException(PintoMultipleCanonicalProduct::class);
         static::expectExceptionMessage('Multiple objects are contested to override object `' . PintoObjectCanonicalProductContestedRoot::class . '` where only one is permitted: ' . PintoObjectCanonicalProductContestedChild1::class . ', ' . PintoObjectCanonicalProductContestedChild2::class);
-        PintoObjectCanonicalProductContestedRoot::create();
+        PintoObjectCanonicalProductContestedRoot::factoryCreate();
     }
 
     /**
@@ -69,10 +69,10 @@ final class PintoCanonicalProductTest extends TestCase
 
     public function testCanonicalProductAttributeOnList(): void
     {
-        $object = PintoObjectCanonicalProductOnListRoot1::create();
+        $object = PintoObjectCanonicalProductOnListRoot1::factoryCreate();
         static::assertInstanceOf(PintoObjectCanonicalProductOnListChild1::class, $object);
 
-        $object = PintoObjectCanonicalProductOnListRoot2::create();
+        $object = PintoObjectCanonicalProductOnListRoot2::factoryCreate();
         static::assertInstanceOf(PintoObjectCanonicalProductOnListChild2::class, $object);
     }
 }
