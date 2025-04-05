@@ -44,12 +44,12 @@ interface ObjectListInterface extends \UnitEnum
     public function templateDirectory(): string;
 
     /**
-     * The CSS assets directory.
+     * Absolute CSS assets directory.
      */
     public function cssDirectory(): string;
 
     /**
-     * The JavaScript asset directory.
+     * Absolute JavaScript asset directory.
      */
     public function jsDirectory(): string;
 

@@ -119,8 +119,16 @@ trait ObjectListTrait
                     unset($vars['path']);
                     if ($asset instanceof LocalAssetInterface) {
                         if ($asset instanceof JsAssetInterface) {
+                            //                            if (!\is_dir($case->jsDirectory())) {
+                            //                                throw new \LogicException(sprintf('JS directory `%s` does not exist for `%s:%s`', $case->jsDirectory(), $case::class, $case->name));
+                            //                            }
+
                             $asset->setPath($case->jsDirectory());
                         } elseif ($asset instanceof CssAssetInterface) {
+                            //                            if (!\is_dir($case->cssDirectory())) {
+                            //                                throw new \LogicException(sprintf('CSS directory `%s` does not exist for `%s:%s`', $case->cssDirectory(), $case::class, $case->name));
+                            //                            }
+
                             $asset->setPath($case->cssDirectory());
                         }
                     }

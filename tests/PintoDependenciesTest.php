@@ -7,6 +7,8 @@ namespace Pinto\tests;
 use PHPUnit\Framework\TestCase;
 use Pinto\tests\fixtures\Lists\PintoListDependencies;
 
+use function Safe\realpath;
+
 /**
  * Tests pinto enums where cases do not have definitions.
  *
@@ -29,7 +31,7 @@ final class PintoDependenciesTest extends TestCase
             ],
             PintoListDependencies::Beta->value => [
                 'js' => [
-                    'tests/fixtures/resources/app.js' => [
+                    realpath(__DIR__ . '/fixtures/resources/javascript/app.js') => [
                         'minified' => false,
                         'preprocess' => false,
                         'attributes' => [],
@@ -37,7 +39,7 @@ final class PintoDependenciesTest extends TestCase
                 ],
                 'css' => [
                     'component' => [
-                        'tests/fixtures/resources/styles.css' => [
+                        realpath(__DIR__ . '/fixtures/resources/css/styles.css') => [
                             'minified' => false,
                             'preprocess' => false,
                             'category' => 'component',
@@ -51,7 +53,7 @@ final class PintoDependenciesTest extends TestCase
             ],
             PintoListDependencies::Charlie->value => [
                 'js' => [
-                    'tests/fixtures/resources/app.js' => [
+                    realpath(__DIR__ . '/fixtures/resources/javascript/app.js') => [
                         'minified' => false,
                         'preprocess' => false,
                         'attributes' => [],

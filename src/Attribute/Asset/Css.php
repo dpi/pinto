@@ -48,6 +48,11 @@ final class Css implements CssAssetInterface, LocalAssetInterface
         $pattern = $this->assetPath . '/' . $this->path;
         $glob = \glob($pattern);
         if (false === $glob || [] === $glob) {
+            if (!\file_exists($pattern)) {
+                // No exceptions when globs are used, no files are allowed.
+                throw new \LogicException('File does not exist: ' . $pattern);
+            }
+
             return new AssetLibraryPaths([['css', $this->category, $pattern]]);
         }
 

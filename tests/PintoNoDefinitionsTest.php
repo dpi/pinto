@@ -7,6 +7,8 @@ namespace Pinto\tests;
 use PHPUnit\Framework\TestCase;
 use Pinto\tests\fixtures\Lists\PintoListNoDefinitions;
 
+use function Safe\realpath;
+
 /**
  * Tests pinto enums where cases do not have definitions.
  *
@@ -31,7 +33,7 @@ final class PintoNoDefinitionsTest extends TestCase
         static::assertEquals([
             PintoListNoDefinitions::No_Definition_With_Assets->value => [
                 'js' => [
-                    'tests/fixtures/resources/app.js' => [
+                    realpath(__DIR__ . '/fixtures/resources/javascript/app.js') => [
                         'minified' => false,
                         'preprocess' => false,
                         'attributes' => [],
@@ -39,7 +41,7 @@ final class PintoNoDefinitionsTest extends TestCase
                 ],
                 'css' => [
                     'component' => [
-                        'tests/fixtures/resources/styles.css' => [
+                        realpath(__DIR__ . '/fixtures/resources/css/styles.css') => [
                             'minified' => false,
                             'preprocess' => false,
                             'category' => 'component',

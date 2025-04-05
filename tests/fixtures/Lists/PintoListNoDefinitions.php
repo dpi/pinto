@@ -9,6 +9,8 @@ use Pinto\Attribute\Asset\Js;
 use Pinto\List\ObjectListInterface;
 use Pinto\List\ObjectListTrait;
 
+use function Safe\realpath;
+
 enum PintoListNoDefinitions: string implements ObjectListInterface
 {
     use ObjectListTrait;
@@ -21,16 +23,16 @@ enum PintoListNoDefinitions: string implements ObjectListInterface
 
     public function templateDirectory(): string
     {
-        return 'tests/fixtures/resources';
+        return realpath(__DIR__ . '/../resources');
     }
 
     public function cssDirectory(): string
     {
-        return 'tests/fixtures/resources';
+        return realpath(__DIR__ . '/../resources/css');
     }
 
     public function jsDirectory(): string
     {
-        return 'tests/fixtures/resources';
+        return realpath(__DIR__ . '/../resources/javascript');
     }
 }
