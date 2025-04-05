@@ -8,6 +8,8 @@ use PHPUnit\Framework\TestCase;
 use Pinto\Asset\AssetLibraryPaths;
 use Pinto\Attribute\Asset;
 
+use function Safe\realpath;
+
 /**
  * @covers \Pinto\Attribute\Asset\Css
  * @covers \Pinto\Attribute\Asset\ExternalCss
@@ -19,9 +21,9 @@ final class AssetAttributesTest extends TestCase
     public function testJs(): void
     {
         $js = new Asset\Js('foo.js');
-        $js->setPath('/javascript/directory');
+        $js->setPath(realpath(__DIR__ . '/../fixtures/resources/javascript'));
         static::assertEquals(new AssetLibraryPaths([
-            ['js', '/javascript/directory/foo.js'],
+            ['js', realpath(__DIR__ . '/../fixtures/resources/javascript/foo.js')],
         ]), $js->getLibraryPaths());
     }
 
@@ -35,9 +37,9 @@ final class AssetAttributesTest extends TestCase
     public function testCss(): void
     {
         $css = new Asset\Css('styles.css');
-        $css->setPath('/css/directory');
+        $css->setPath(realpath(__DIR__ . '/../fixtures/resources/css'));
         static::assertEquals(new AssetLibraryPaths([
-            ['css', 'component', '/css/directory/styles.css'],
+            ['css', 'component', realpath(__DIR__ . '/../fixtures/resources/css/styles.css')],
         ]), $css->getLibraryPaths());
     }
 

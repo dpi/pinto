@@ -10,6 +10,8 @@ use Pinto\Attribute\DependencyOn;
 use Pinto\List\ObjectListInterface;
 use Pinto\List\ObjectListTrait;
 
+use function Safe\realpath;
+
 enum PintoListDependencies: string implements ObjectListInterface
 {
     use ObjectListTrait;
@@ -40,11 +42,11 @@ enum PintoListDependencies: string implements ObjectListInterface
 
     public function cssDirectory(): string
     {
-        return 'tests/fixtures/resources';
+        return realpath(__DIR__ . '/../resources/css');
     }
 
     public function jsDirectory(): string
     {
-        return 'tests/fixtures/resources';
+        return realpath(__DIR__ . '/../resources/javascript');
     }
 }

@@ -11,6 +11,8 @@ use Pinto\ObjectType\ObjectTypeDiscovery;
 use Pinto\ObjectType\ObjectTypeInterface;
 use Pinto\ThemeDefinition\HookThemeDefinition;
 
+use function Safe\realpath;
+
 /**
  * @coversDefaultClass \Pinto\ObjectType\ObjectTypeDiscovery
  */
@@ -45,7 +47,7 @@ final class PintoObjectTypeDiscoveryTest extends TestCase
                 'variables' => [
                     'test_variable' => null,
                 ],
-                'path' => 'tests/fixtures/resources',
+                'path' => realpath(__DIR__ . '/fixtures/resources'),
                 'template' => 'object-test',
             ],
             $definition->definition,

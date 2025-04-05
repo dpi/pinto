@@ -19,6 +19,8 @@ use Pinto\tests\fixtures\Objects\PintoObject;
 use Pinto\tests\fixtures\Objects\PintoObjectBuildDefinitionMismatch;
 use Pinto\ThemeDefinition\HookThemeDefinition;
 
+use function Safe\realpath;
+
 final class PintoTest extends TestCase
 {
     /**
@@ -50,7 +52,7 @@ final class PintoTest extends TestCase
             'variables' => [
                 'test_variable' => null,
             ],
-            'path' => 'tests/fixtures/resources',
+            'path' => realpath(__DIR__ . '/fixtures/resources'),
             'template' => 'object-test',
         ]);
 
@@ -60,7 +62,7 @@ final class PintoTest extends TestCase
             'variables' => [
                 'test_variable' => null,
             ],
-            'path' => 'tests/fixtures/resources',
+            'path' => realpath(__DIR__ . '/fixtures/resources'),
             'template' => 'object-test-attributes',
         ]);
     }
@@ -74,7 +76,7 @@ final class PintoTest extends TestCase
         static::assertEquals([
             'object_test' => [
                 'js' => [
-                    'tests/fixtures/resources/app.js' => [
+                    realpath(__DIR__ . '/fixtures/resources/javascript/app.js') => [
                         'minified' => false,
                         'preprocess' => false,
                         'attributes' => [],
@@ -86,7 +88,7 @@ final class PintoTest extends TestCase
                 ],
                 'css' => [
                     'component' => [
-                        'tests/fixtures/resources/styles.css' => [
+                        realpath(__DIR__ . '/fixtures/resources/css/styles.css') => [
                             'minified' => false,
                             'preprocess' => false,
                             'category' => 'component',
@@ -101,7 +103,7 @@ final class PintoTest extends TestCase
             ],
             'object_test_attributes' => [
                 'js' => [
-                    'tests/fixtures/resources/app.js' => [
+                    realpath(__DIR__ . '/fixtures/resources/javascript/app.js') => [
                         'minified' => false,
                         'preprocess' => false,
                         'attributes' => ['defer' => true],
@@ -113,7 +115,7 @@ final class PintoTest extends TestCase
                 ],
                 'css' => [
                     'component' => [
-                        'tests/fixtures/resources/styles.css' => [
+                        realpath(__DIR__ . '/fixtures/resources/css/styles.css') => [
                             'minified' => false,
                             'preprocess' => false,
                             'category' => 'component',
