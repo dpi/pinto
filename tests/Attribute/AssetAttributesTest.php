@@ -27,6 +27,17 @@ final class AssetAttributesTest extends TestCase
         ]), $js->getLibraryPaths());
     }
 
+    /**
+     * @covers \Pinto\Attribute\Asset\Js::getLibraryPaths
+     */
+    public function testJsFileMissing(): void
+    {
+        $js = new Asset\Js('does-not-exist.js');
+        $js->setPath(realpath(__DIR__ . '/../fixtures/resources/javascript'));
+        static::expectExceptionMessage('File does not exist');
+        $js->getLibraryPaths();
+    }
+
     public function testJsAssetForwardSlashException(): void
     {
         static::expectException(\LogicException::class);
@@ -41,6 +52,17 @@ final class AssetAttributesTest extends TestCase
         static::assertEquals(new AssetLibraryPaths([
             ['css', 'component', realpath(__DIR__ . '/../fixtures/resources/css/styles.css')],
         ]), $css->getLibraryPaths());
+    }
+
+    /**
+     * @covers \Pinto\Attribute\Asset\Css::getLibraryPaths
+     */
+    public function testCssFileMissing(): void
+    {
+        $css = new Asset\Css('does-not-exist.css');
+        $css->setPath(realpath(__DIR__ . '/../fixtures/resources/css'));
+        static::expectExceptionMessage('File does not exist');
+        $css->getLibraryPaths();
     }
 
     public function testCssAssetForwardSlashException(): void
