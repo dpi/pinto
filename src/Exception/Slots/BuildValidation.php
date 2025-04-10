@@ -14,4 +14,18 @@ final class BuildValidation extends \Exception
     {
         return new static(sprintf('Build for %s missing values for %s: `%s`', $objectClassName, 1 === count($missingSlots) ? 'slot' : 'slots', \implode('`, `', $missingSlots)));
     }
+
+    /**
+     * @param class-string $objectClassName
+     * @param array<array{string, string, string}> $validationFailures
+     */
+    public static function validation(string $objectClassName, array $validationFailures): static
+    {
+        $messages = [];
+        foreach ($validationFailures as [$slotName, $expectedType, $actualType]) {
+            $messages[] = sprintf('`%s` expects `%s`, but got `%s`', $slotName, $expectedType, $actualType);
+        }
+
+        return new static(sprintf('Build for %s failed validation: %s', $objectClassName, \implode(', ', $messages)));
+    }
 }
