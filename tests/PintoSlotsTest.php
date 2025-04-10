@@ -11,6 +11,7 @@ use Pinto\tests\fixtures\Lists;
 use Pinto\tests\fixtures\Lists\PintoListSlots;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBasic;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBindPromotedPublic;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBindPromotedPublicNonConstructor;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsByInheritanceChild;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsByInheritanceGrandParent;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicit;
@@ -108,6 +109,26 @@ final class PintoSlotsTest extends TestCase
         static::assertEquals('private value set in invoker', $build->pintoGet('aPrivate'));
     }
 
+    /**
+     * @covers \Pinto\Attribute\ObjectType\Slots::__construct
+     */
+    public function PintoObjectSlotsBindPromotedPublicNonConstructor(): void
+    {
+        [1 => $slotsDefinition] = Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsBindPromotedPublicNonConstructor::class, PintoListSlots::PintoObjectSlotsBindPromotedPublicNonConstructor, definitionDiscovery: new Pinto\DefinitionDiscovery());
+
+        static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
+        static::assertEquals(new SlotList([
+            new Slots\Slot(name: 'foo', fillValueFromThemeObjectClassPropertyWhenEmpty: 'foo'),
+            new Slots\Slot(name: 'bar', fillValueFromThemeObjectClassPropertyWhenEmpty: 'bar'),
+        ]), $slotsDefinition->slots);
+
+        $object = PintoObjectSlotsBindPromotedPublicNonConstructor::actualEntrypoint('text', 'text', 'text', 'text', 'text', 'text');
+        $build = $object();
+        static::assertInstanceOf(Slots\Build::class, $build);
+        static::assertEquals('FOO!', $build->pintoGet('foo'));
+        static::assertEquals('BAR!', $build->pintoGet('bar'));
+    }
+
     public function testPintoObjectSlotsBindPromotedPublicWithDefinedSlots(): void
     {
         static::expectException(Pinto\Exception\PintoThemeDefinition::class);
@@ -159,7 +180,7 @@ final class PintoSlotsTest extends TestCase
     public function testDefinitionsSlotsAttrOnObject(): void
     {
         $themeDefinitions = PintoListSlots::definitions(new Pinto\DefinitionDiscovery());
-        static::assertCount(7, $themeDefinitions);
+        static::assertCount(8, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[PintoListSlots::Slots];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);

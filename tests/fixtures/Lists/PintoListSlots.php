@@ -31,6 +31,9 @@ enum PintoListSlots implements ObjectListInterface
     #[Definition(Slots\PintoObjectSlotsBindPromotedPublic::class)]
     case PintoObjectSlotsBindPromotedPublic;
 
+    #[Definition(Slots\PintoObjectSlotsBindPromotedPublicNonConstructor::class)]
+    case PintoObjectSlotsBindPromotedPublicNonConstructor;
+
     #[Definition(Slots\PintoObjectSlotsNoConstructor::class)]
     case SlotsNoConstructor;
 
