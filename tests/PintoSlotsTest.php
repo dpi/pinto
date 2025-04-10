@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+use Pinto\DefinitionDiscovery;
 use Pinto\Exception\Slots\UnknownValue;
+use Pinto\ObjectType\ObjectTypeDiscovery;
 use Pinto\Slots;
 use Pinto\Slots\SlotList;
 use Pinto\tests\fixtures\Etc\SlotEnum;
@@ -20,6 +22,7 @@ use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsMissingSlotValue;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsRenameChild;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsRenameParent;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsSetInvalidSlot;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsValidationFailurePhpType;
 
 /**
  * @coversDefaultClass \Pinto\PintoMapping
@@ -77,7 +80,7 @@ final class PintoSlotsTest extends TestCase
     {
         // Call \Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject
         // directly since pintoMapping won't execute enum->cases expansion..
-        [1 => $slotsDefinition] = Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsExplicitEnumClass::class, PintoListSlots::PintoObjectSlotsExplicitEnumClass, definitionDiscovery: new Pinto\DefinitionDiscovery());
+        [1 => $slotsDefinition] = ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsExplicitEnumClass::class, PintoListSlots::PintoObjectSlotsExplicitEnumClass, definitionDiscovery: new DefinitionDiscovery());
 
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
@@ -92,13 +95,13 @@ final class PintoSlotsTest extends TestCase
      */
     public function testPintoObjectSlotsBindPromotedPublic(): void
     {
-        [1 => $slotsDefinition] = Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsBindPromotedPublic::class, PintoListSlots::PintoObjectSlotsBindPromotedPublic, definitionDiscovery: new Pinto\DefinitionDiscovery());
+        [1 => $slotsDefinition] = ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsBindPromotedPublic::class, PintoListSlots::PintoObjectSlotsBindPromotedPublic, definitionDiscovery: new DefinitionDiscovery());
 
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'aPublic', fillValueFromThemeObjectClassPropertyWhenEmpty: 'aPublic'),
-            new Slots\Slot(name: 'aPublicAndSetInInvoker', fillValueFromThemeObjectClassPropertyWhenEmpty: 'aPublicAndSetInInvoker'),
-            new Slots\Slot(name: 'aPrivate'),
+            new Slots\Slot(name: 'aPublic', fillValueFromThemeObjectClassPropertyWhenEmpty: 'aPublic', validation: Slots\Validation\PhpType::fromString('string')),
+            new Slots\Slot(name: 'aPublicAndSetInInvoker', fillValueFromThemeObjectClassPropertyWhenEmpty: 'aPublicAndSetInInvoker', validation: Slots\Validation\PhpType::fromString('string')),
+            new Slots\Slot(name: 'aPrivate', validation: Slots\Validation\PhpType::fromString('string')),
         ]), $slotsDefinition->slots);
 
         $object = new PintoObjectSlotsBindPromotedPublic('the public', 'public but also overridden in invoker', 'the private');
@@ -114,7 +117,7 @@ final class PintoSlotsTest extends TestCase
      */
     public function PintoObjectSlotsBindPromotedPublicNonConstructor(): void
     {
-        [1 => $slotsDefinition] = Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsBindPromotedPublicNonConstructor::class, PintoListSlots::PintoObjectSlotsBindPromotedPublicNonConstructor, definitionDiscovery: new Pinto\DefinitionDiscovery());
+        [1 => $slotsDefinition] = ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsBindPromotedPublicNonConstructor::class, PintoListSlots::PintoObjectSlotsBindPromotedPublicNonConstructor, definitionDiscovery: new DefinitionDiscovery());
 
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
@@ -133,7 +136,7 @@ final class PintoSlotsTest extends TestCase
     {
         static::expectException(Pinto\Exception\PintoThemeDefinition::class);
         static::expectExceptionMessage('Slots must use reflection (no explicitly defined `$slots`) when promoted properties bind is on.');
-        Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(Pinto\tests\fixtures\Objects\Faulty\PintoObjectSlotsBindPromotedPublicWithDefinedSlots::class, Lists\PintoFaultyList::PintoObjectSlotsBindPromotedPublicWithDefinedSlots, definitionDiscovery: new Pinto\DefinitionDiscovery());
+        ObjectTypeDiscovery::definitionForThemeObject(Pinto\tests\fixtures\Objects\Faulty\PintoObjectSlotsBindPromotedPublicWithDefinedSlots::class, Lists\PintoFaultyList::PintoObjectSlotsBindPromotedPublicWithDefinedSlots, definitionDiscovery: new DefinitionDiscovery());
     }
 
     public function testSlotsExplicitIgnoresReflection(): void
@@ -154,6 +157,25 @@ final class PintoSlotsTest extends TestCase
     }
 
     /**
+     * @covers \Pinto\Attribute\ObjectType\Slots::validateBuild
+     * @covers \Pinto\Exception\Slots\BuildValidation::validation
+     */
+    public function testSlotsBuildMissingValueValidationFailurePhpType(): void
+    {
+        [1 => $slotsDefinition] = ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsValidationFailurePhpType::class, PintoListSlots::PintoObjectSlotsValidationFailurePhpType, new DefinitionDiscovery());
+
+        static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
+        static::assertEquals(new SlotList([
+            new Slots\Slot(name: 'number', validation: Slots\Validation\PhpType::fromString('int')),
+        ]), $slotsDefinition->slots);
+
+        $object = new PintoObjectSlotsValidationFailurePhpType(123);
+        static::expectException(Pinto\Exception\Slots\BuildValidation::class);
+        static::expectExceptionMessage(sprintf('Build for %s failed validation: `number` expects `int`, but got `string`', PintoObjectSlotsValidationFailurePhpType::class));
+        $object();
+    }
+
+    /**
      * Tests no constructor is required when #[Slots(slots)] is provided.
      *
      * Issue would normally expose itself during discovery.
@@ -162,7 +184,7 @@ final class PintoSlotsTest extends TestCase
      */
     public function testSlotsNoConstructor(): void
     {
-        $definitions = PintoListSlots::definitions(new Pinto\DefinitionDiscovery());
+        $definitions = PintoListSlots::definitions(new DefinitionDiscovery());
         // Assert anything (no exception thrown):
         static::assertGreaterThan(0, count($definitions));
     }
@@ -179,52 +201,52 @@ final class PintoSlotsTest extends TestCase
 
     public function testDefinitionsSlotsAttrOnObject(): void
     {
-        $themeDefinitions = PintoListSlots::definitions(new Pinto\DefinitionDiscovery());
-        static::assertCount(8, $themeDefinitions);
+        $themeDefinitions = PintoListSlots::definitions(new DefinitionDiscovery());
+        static::assertCount(9, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[PintoListSlots::Slots];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'text'),
-            new Slots\Slot(name: 'number', defaultValue: 3),
+            new Slots\Slot(name: 'text', validation: Slots\Validation\PhpType::fromString('string')),
+            new Slots\Slot(name: 'number', defaultValue: 3, validation: Slots\Validation\PhpType::fromString('int')),
         ]), $slotsDefinition->slots);
 
         $slotsDefinition = $themeDefinitions[PintoListSlots::SlotsAttributeOnMethod];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'foo', defaultValue: null),
-            new Slots\Slot(name: 'arr', defaultValue: []),
+            new Slots\Slot(name: 'foo', defaultValue: null, validation: Slots\Validation\PhpType::fromString('?string')),
+            new Slots\Slot(name: 'arr', defaultValue: [], validation: Slots\Validation\PhpType::fromString('?array')),
         ]), $slotsDefinition->slots);
     }
 
     public function testDefinitionsSlotsAttrOnList(): void
     {
-        $themeDefinitions = Lists\PintoListSlotsOnEnum::definitions(new Pinto\DefinitionDiscovery());
+        $themeDefinitions = Lists\PintoListSlotsOnEnum::definitions(new DefinitionDiscovery());
         static::assertCount(1, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsOnEnum::SlotsOnEnum];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'fooFromList'),
-            new Slots\Slot(name: 'number', defaultValue: 4),
+            new Slots\Slot(name: 'fooFromList', validation: Slots\Validation\PhpType::fromString('string')),
+            new Slots\Slot(name: 'number', defaultValue: 4, validation: Slots\Validation\PhpType::fromString('int')),
         ]), $slotsDefinition->slots);
     }
 
     public function testDefinitionsSlotsAttrOnListCase(): void
     {
-        $themeDefinitions = Lists\PintoListSlotsOnEnumCase::definitions(new Pinto\DefinitionDiscovery());
+        $themeDefinitions = Lists\PintoListSlotsOnEnumCase::definitions(new DefinitionDiscovery());
         static::assertCount(1, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsOnEnumCase::SlotsOnEnumCase];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'fooFromListCase'),
+            new Slots\Slot(name: 'fooFromListCase', validation: Slots\Validation\PhpType::fromString('string')),
         ]), $slotsDefinition->slots);
     }
 
     public function testDefinitionsSlotsAttrByInheritance(): void
     {
-        $definitionDiscovery = new Pinto\DefinitionDiscovery();
+        $definitionDiscovery = new DefinitionDiscovery();
         $definitionDiscovery[PintoObjectSlotsByInheritanceChild::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild;
         $definitionDiscovery[PintoObjectSlotsByInheritanceGrandParent::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceGrandParent;
         $themeDefinitions = Lists\PintoListSlotsByInheritance::definitions($definitionDiscovery);
@@ -233,14 +255,14 @@ final class PintoSlotsTest extends TestCase
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'fooFromGrandParent'),
+            new Slots\Slot(name: 'fooFromGrandParent', validation: Slots\Validation\PhpType::fromString('string')),
         ]), $slotsDefinition->slots);
     }
 
     public function testDefinitionsSlotsAttrByInheritanceGrandParentUnregistered(): void
     {
         // It the parent isn't registered to an enum, no object type is determined.
-        $definitionDiscovery = new Pinto\DefinitionDiscovery();
+        $definitionDiscovery = new DefinitionDiscovery();
         // Normally parent is set here.
         $definitionDiscovery[PintoObjectSlotsByInheritanceChild::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild;
 
@@ -250,13 +272,13 @@ final class PintoSlotsTest extends TestCase
 
     public function testDefinitionsSlotsAttrOnListMethodSpecified(): void
     {
-        $themeDefinitions = Lists\PintoListSlotsOnEnumMethodSpecified::definitions(new Pinto\DefinitionDiscovery());
+        $themeDefinitions = Lists\PintoListSlotsOnEnumMethodSpecified::definitions(new DefinitionDiscovery());
         static::assertCount(1, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsOnEnumMethodSpecified::SlotsOnEnumMethodSpecified];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'create', defaultValue: 'from method specified on enum #[Slots]'),
+            new Slots\Slot(name: 'create', defaultValue: 'from method specified on enum #[Slots]', validation: Slots\Validation\PhpType::fromString('?string')),
         ]), $slotsDefinition->slots);
     }
 
@@ -293,7 +315,7 @@ final class PintoSlotsTest extends TestCase
      */
     public function testRenameSlots(): void
     {
-        $definitionDiscovery = new Pinto\DefinitionDiscovery();
+        $definitionDiscovery = new DefinitionDiscovery();
         $definitionDiscovery[PintoObjectSlotsRenameParent::class] = Lists\PintoListSlotsRename::SlotsRenameParent;
         $definitionDiscovery[PintoObjectSlotsRenameChild::class] = Lists\PintoListSlotsRename::SlotsRenameChild;
         $themeDefinitions = Lists\PintoListSlotsRename::definitions($definitionDiscovery);
