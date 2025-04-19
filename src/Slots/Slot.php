@@ -13,6 +13,7 @@ final class Slot
         string $useNamedParameters = self::useNamedParameters,
         public readonly mixed $defaultValue = new NoDefaultValue(),
         public readonly ?string $fillValueFromThemeObjectClassPropertyWhenEmpty = null,
+        public readonly Validation\NoValidation|Validation\PhpType $validation = new Validation\NoValidation(),
     ) {
         if (self::useNamedParameters !== $useNamedParameters) {
             throw new \LogicException(self::useNamedParameters);
