@@ -13,6 +13,7 @@ use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBasic;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBindPromotedPublic;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBindPromotedPublicNonConstructor;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsByInheritanceChild;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsByInheritanceChildModifySlots;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsByInheritanceGrandParent;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicit;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicitEnumClass;
@@ -29,6 +30,7 @@ final class PintoSlotsTest extends TestCase
     public function testSlotsAttribute(): void
     {
         static::expectException(LogicException::class);
+        static::expectExceptionMessage('Using this attribute without named parameters is not supported.');
         new Pinto\Attribute\ObjectType\Slots('');
     }
 
@@ -228,12 +230,49 @@ final class PintoSlotsTest extends TestCase
         $definitionDiscovery[PintoObjectSlotsByInheritanceChild::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild;
         $definitionDiscovery[PintoObjectSlotsByInheritanceGrandParent::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceGrandParent;
         $themeDefinitions = Lists\PintoListSlotsByInheritance::definitions($definitionDiscovery);
-        static::assertCount(2, $themeDefinitions);
+        static::assertCount(3, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
             new Slots\Slot(name: 'fooFromGrandParent'),
+        ]), $slotsDefinition->slots);
+    }
+
+    /**
+     * @covers \Pinto\Slots\Attribute\ModifySlots::__construct
+     */
+    public function testModifySlotsAttributeNamedParameters(): void
+    {
+        static::expectException(LogicException::class);
+        static::expectExceptionMessage('Using this attribute without named parameters is not supported.');
+        new Slots\Attribute\ModifySlots('');
+    }
+
+    /**
+     * @covers \Pinto\Slots\Attribute\ModifySlots::__construct
+     */
+    public function testModifySlotsAttributeAddMissingSlots(): void
+    {
+        static::expectException(LogicException::class);
+        static::expectExceptionMessage('Slots must be added.');
+        new Slots\Attribute\ModifySlots(add: []);
+    }
+
+    public function testDefinitionsSlotsAttrByInheritanceModifiedSlots(): void
+    {
+        $definitionDiscovery = new Pinto\DefinitionDiscovery();
+        $definitionDiscovery[PintoObjectSlotsByInheritanceChild::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild;
+        $definitionDiscovery[PintoObjectSlotsByInheritanceChildModifySlots::class] = Lists\PintoListSlotsByInheritance::PintoObjectSlotsByInheritanceChildModifySlots;
+        $definitionDiscovery[PintoObjectSlotsByInheritanceGrandParent::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceGrandParent;
+        $themeDefinitions = Lists\PintoListSlotsByInheritance::definitions($definitionDiscovery);
+        static::assertCount(3, $themeDefinitions);
+
+        $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsByInheritance::PintoObjectSlotsByInheritanceChildModifySlots];
+        static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
+        static::assertEquals(new SlotList([
+            new Slots\Slot(name: 'fooFromGrandParent'),
+            new Slots\Slot(name: 'new_slot'),
         ]), $slotsDefinition->slots);
     }
 
