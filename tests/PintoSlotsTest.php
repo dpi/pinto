@@ -30,6 +30,7 @@ final class PintoSlotsTest extends TestCase
     public function testSlotsAttribute(): void
     {
         static::expectException(LogicException::class);
+        static::expectExceptionMessage('Using this attribute without named parameters is not supported.');
         new Pinto\Attribute\ObjectType\Slots('');
     }
 
@@ -236,6 +237,26 @@ final class PintoSlotsTest extends TestCase
         static::assertEquals(new SlotList([
             new Slots\Slot(name: 'fooFromGrandParent'),
         ]), $slotsDefinition->slots);
+    }
+
+    /**
+     * @covers \Pinto\Slots\Attribute\ModifySlots::__construct
+     */
+    public function testModifySlotsAttributeNamedParameters(): void
+    {
+        static::expectException(LogicException::class);
+        static::expectExceptionMessage('Using this attribute without named parameters is not supported.');
+        new Slots\Attribute\ModifySlots('');
+    }
+
+    /**
+     * @covers \Pinto\Slots\Attribute\ModifySlots::__construct
+     */
+    public function testModifySlotsAttributeAddMissingSlots(): void
+    {
+        static::expectException(LogicException::class);
+        static::expectExceptionMessage('Slots must be added.');
+        new Slots\Attribute\ModifySlots(add: []);
     }
 
     public function testDefinitionsSlotsAttrByInheritanceModifiedSlots(): void
