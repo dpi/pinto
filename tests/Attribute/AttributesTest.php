@@ -25,6 +25,27 @@ final class AttributesTest extends TestCase
         self::assertEquals(PintoList::Pinto_Object, $dependencyOn->dependency);
     }
 
+    public function testDependencyOnNothing(): void
+    {
+        static::expectException(\LogicException::class);
+        static::expectExceptionMessage(sprintf('%s is not configured.', Attribute\DependencyOn::class));
+        new Attribute\DependencyOn();
+    }
+
+    public function testDependencyOnMultiple(): void
+    {
+        static::expectException(\LogicException::class);
+        static::expectExceptionMessage(sprintf('%s must not have both $dependency and $parent configured. Repeat the attribute to use both.', Attribute\DependencyOn::class));
+        new Attribute\DependencyOn(PintoList::Pinto_Object, parent: true);
+    }
+
+    public function testDependencyOnNamedParametersRequired(): void
+    {
+        static::expectException(\LogicException::class);
+        static::expectExceptionMessage('Using this attribute without named parameters is not supported.');
+        new Attribute\DependencyOn(PintoList::Pinto_Object, '');
+    }
+
     /**
      * @covers \Pinto\Attribute\Build::buildMethodForThemeObject
      */
