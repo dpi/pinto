@@ -24,6 +24,11 @@ final class CanonicalProduct
     }
 
     /**
+     * Determine canonical class produced from factories.
+     *
+     * Classes may nominate themselves as the product produced when a class is
+     * produced from a factory at a root (extended) class.
+     *
      * @return array<class-string, class-string>
      *   Objects strings keyed by the extended object.
      *   The result of this method is designed to be consumed by
@@ -33,23 +38,60 @@ final class CanonicalProduct
      */
     public static function discoverCanonicalProductObjectClasses(DefinitionDiscovery $definitionDiscovery): array
     {
-        $lsbFactoryCanonicalObjectClasses = [];
+        // If at any point a class extends a known object which extends another known object, the
+        // intermediate objects are eliminated from the tree.
+        // If more than one object remains for a factory class, then throw an exception.
 
+        /** @var class-string[] $eliminate */
+        $eliminate = [];
+        /** @var array<class-string, class-string> $keep */
+        $keep = [];
         foreach ($definitionDiscovery as $objectClassName => $case) {
-            // Only mark as extends if there is a #[CanonicalProduct] at any level,
-            // even if a parent is a known theme object.
-            if (CanonicalProduct::hasAttribute($objectClassName, $case)) {
-                $extendsObject = $definitionDiscovery->extendsKnownObject($objectClassName);
-                if (null !== $extendsObject) {
-                    if (\array_key_exists($extendsObject, $lsbFactoryCanonicalObjectClasses)) {
-                        throw new PintoMultipleCanonicalProduct($extendsObject, [$lsbFactoryCanonicalObjectClasses[$extendsObject], $objectClassName]);
-                    }
-                    $lsbFactoryCanonicalObjectClasses[$extendsObject] = $objectClassName;
+            if (false === CanonicalProduct::hasAttribute($objectClassName, $case)) {
+                continue;
+            }
+
+            /** @var class-string[] $extends */
+            $extends = [];
+            $extendsObject = $objectClassName;
+            while (null !== ($extendsObject = $definitionDiscovery->extendsKnownObject($extendsObject))) {
+                $extends[] = $extendsObject;
+
+                // End on this object if it isn't a CanonicalProduct:
+                if (false === static::hasAttribute($extendsObject, $definitionDiscovery[$extendsObject])) {
+                    break;
                 }
             }
+
+            // Only keep the last (root-most).
+            if ([] !== $extends) {
+                $keep[$objectClassName] = \array_pop($extends);
+            }
+
+            // If there are any intermediate classes, mark for elimination.
+            \array_push($eliminate, ...$extends);
         }
 
-        return $lsbFactoryCanonicalObjectClasses;
+        // Remove any intermediate objects:
+        $keep = \array_diff_key($keep, \array_flip($eliminate));
+
+        // Determine which root items have duplicate associated child classes:
+        /** @var array<class-string, int<1, max>> $extendsObjectByUseCount */
+        $extendsObjectByUseCount = array_count_values($keep);
+
+        // Filter out singles.
+        // If any items remain, an exception is guaranteed.
+        $extendsObjectUsedMultipleTimes = \array_diff($extendsObjectByUseCount, [1]);
+
+        // There may be multiple problems, throw on first.
+        foreach (array_keys($extendsObjectUsedMultipleTimes) as $extendsObject) {
+            /** @var class-string[] $objectClassNames */
+            $objectClassNames = array_keys($keep, $extendsObject, true);
+            throw new PintoMultipleCanonicalProduct($extendsObject, $objectClassNames);
+        }
+
+        // Flip around object->root to the other way.
+        return \array_flip($keep);
     }
 
     /**
