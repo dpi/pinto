@@ -13,6 +13,7 @@ use Pinto\Attribute\DependencyOn;
 use Pinto\DefinitionCollection;
 use Pinto\DefinitionDiscovery;
 use Pinto\ObjectType\ObjectTypeDiscovery;
+use Pinto\PintoMapping;
 
 /**
  * Implements interface defaults.
@@ -95,7 +96,7 @@ trait ObjectListTrait
      *
      * @phpstan-return array<string, array{css?: array<string, array<string, array<mixed>>>, js?: array<string, array<mixed>>}>
      */
-    public static function libraries(): array
+    public static function libraries(PintoMapping $pintoMapping): array
     {
         $nestedValueSet = static function (&$array, $keys, $value) {
             $current = &$array;
@@ -110,7 +111,7 @@ trait ObjectListTrait
 
         return array_reduce(
             static::cases(),
-            static function (array $libraries, self $case) use ($nestedValueSet): array {
+            static function (array $libraries, self $case) use ($pintoMapping, $nestedValueSet): array {
                 $library = [];
                 foreach ($case->assets() as $asset) {
                     /** @var JsAssetInterface|CssAssetInterface $asset */
@@ -138,12 +139,28 @@ trait ObjectListTrait
                     }
                 }
 
+                $rEnum = new \ReflectionClass($case::class);
                 $rCase = new \ReflectionEnumUnitCase($case::class, $case->name);
-                foreach ($rCase->getAttributes(DependencyOn::class) as $r) {
+                foreach ([
+                    ...$rEnum->getAttributes(DependencyOn::class),
+                    ...$rCase->getAttributes(DependencyOn::class),
+                ] as $r) {
                     $dependencyAttr = $r->newInstance();
-                    $on = $dependencyAttr->dependency instanceof ObjectListInterface
-                        ? $dependencyAttr->dependency->attachLibraries()
-                        : [$dependencyAttr->dependency];
+
+                    $on = [];
+                    if (null !== $dependencyAttr->dependency) {
+                        $on = $dependencyAttr->dependency instanceof ObjectListInterface
+                          ? $dependencyAttr->dependency->attachLibraries()
+                          : [$dependencyAttr->dependency];
+                    } elseif (true === $dependencyAttr->parent) {
+                        $definitionAttr = ($rCase->getAttributes(Definition::class)[0] ?? null)?->newInstance();
+                        if (null !== $definitionAttr) {
+                            $factoryClass = $pintoMapping->getFactoryOfCanonicalObject($definitionAttr->className) ?? throw new \LogicException('Unable to determine parent of ' . $definitionAttr->className);
+                            $factoryEnumCase = $pintoMapping->getByClass($factoryClass);
+                            $on = $factoryEnumCase->attachLibraries();
+                        }
+                    }
+
                     $library['dependencies'] = [
                         ...($library['dependencies'] ?? []),
                         ...$on,

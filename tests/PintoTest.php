@@ -72,7 +72,7 @@ final class PintoTest extends TestCase
      */
     public function testLibraries(): void
     {
-        $themeDefinitions = PintoList::libraries();
+        $themeDefinitions = PintoList::libraries(new \Pinto\PintoMapping([], [], [], [], [], []));
         static::assertEquals([
             'object_test' => [
                 'js' => [

@@ -50,6 +50,6 @@ final class PintoNoDefinitionsTest extends TestCase
                     ],
                 ],
             ],
-        ], PintoListNoDefinitions::libraries());
+        ], PintoListNoDefinitions::libraries(new \Pinto\PintoMapping([], [], [], [], [], [])));
     }
 }
