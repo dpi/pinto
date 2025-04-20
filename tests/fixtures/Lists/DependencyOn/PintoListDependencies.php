@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Pinto\tests\fixtures\Lists;
+namespace Pinto\tests\fixtures\Lists\DependencyOn;
 
 use Pinto\Attribute\Asset\Css;
 use Pinto\Attribute\Asset\Js;
@@ -42,11 +42,11 @@ enum PintoListDependencies: string implements ObjectListInterface
 
     public function cssDirectory(): string
     {
-        return realpath(__DIR__ . '/../resources/css');
+        return realpath(__DIR__ . '/../../resources/css');
     }
 
     public function jsDirectory(): string
     {
-        return realpath(__DIR__ . '/../resources/javascript');
+        return realpath(__DIR__ . '/../../resources/javascript');
     }
 }

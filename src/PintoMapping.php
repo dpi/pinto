@@ -101,4 +101,14 @@ final readonly class PintoMapping
     {
         return $this->lsbFactoryCanonicalObjectClasses[$rootObjectClassName] ?? null;
     }
+
+    /**
+     * @phpstan-return class-string
+     */
+    public function getFactoryOfCanonicalObject(string $objectClassName): ?string
+    {
+        $key = \array_search($objectClassName, $this->lsbFactoryCanonicalObjectClasses, true);
+
+        return false !== $key ? $key : null;
+    }
 }

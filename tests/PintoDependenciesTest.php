@@ -5,7 +5,13 @@ declare(strict_types=1);
 namespace Pinto\tests;
 
 use PHPUnit\Framework\TestCase;
-use Pinto\tests\fixtures\Lists\PintoListDependencies;
+use Pinto\CanonicalProduct\Attribute\CanonicalProduct;
+use Pinto\DefinitionDiscovery;
+use Pinto\tests\fixtures\Lists\DependencyOn\PintoListDependencies;
+use Pinto\tests\fixtures\Lists\DependencyOn\PintoListDependenciesHierarchyChild;
+use Pinto\tests\fixtures\Lists\DependencyOn\PintoListDependenciesHierarchyParent;
+use Pinto\tests\fixtures\Objects\DependencyOn\PintoObjectDependencyOnChild;
+use Pinto\tests\fixtures\Objects\DependencyOn\PintoObjectDependencyOnParent;
 
 use function Safe\realpath;
 
@@ -19,6 +25,7 @@ final class PintoDependenciesTest extends TestCase
     /**
      * @covers \Pinto\List\ObjectListTrait::assets
      * @covers \Pinto\List\ObjectListTrait::libraries
+     * @covers \Pinto\Attribute\DependencyOn
      */
     public function testNoAssets(): void
     {
@@ -66,6 +73,34 @@ final class PintoDependenciesTest extends TestCase
                     'foo/bar',
                 ],
             ],
-        ], PintoListDependencies::libraries());
+        ], PintoListDependencies::libraries(new \Pinto\PintoMapping([], [], [], [], [], [])));
+    }
+
+    /**
+     * Test DependencyOn(parent).
+     */
+    public function testDependencyOnParent(): void
+    {
+        $definitionDiscovery = new DefinitionDiscovery();
+        $definitionDiscovery[PintoObjectDependencyOnChild::class] = PintoListDependenciesHierarchyChild::Child;
+        $definitionDiscovery[PintoObjectDependencyOnParent::class] = PintoListDependenciesHierarchyParent::Parent;
+
+        $pintoMapping = new \Pinto\PintoMapping(
+            enumClasses: [],
+            enums: [
+                PintoObjectDependencyOnParent::class => [PintoListDependenciesHierarchyParent::class, PintoListDependenciesHierarchyParent::Parent->name],
+            ],
+            definitions: [],
+            buildInvokers: [],
+            types: [],
+            lsbFactoryCanonicalObjectClasses: CanonicalProduct::discoverCanonicalProductObjectClasses($definitionDiscovery),
+        );
+        static::assertEquals([
+            PintoListDependenciesHierarchyChild::Child->name => [
+                'dependencies' => [
+                    'pinto/Parent',
+                ],
+            ],
+        ], PintoListDependenciesHierarchyChild::libraries($pintoMapping));
     }
 }
