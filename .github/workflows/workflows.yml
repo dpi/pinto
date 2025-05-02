@@ -1,5 +1,12 @@
 name: Pinto
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
   code-style:
     runs-on: ubuntu-latest
