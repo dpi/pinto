@@ -8,7 +8,7 @@ use Pinto\PintoMapping;
 
 trait CanonicalFactoryTrait
 {
-    final public static function factoryCreate(mixed ...$args): self
+    final public static function factoryCreate(mixed ...$args): static
     {
         $className = self::pintoMappingStatic()->getCanonicalObjectClassName(self::class);
         if (null === $className) {
