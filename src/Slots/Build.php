@@ -48,9 +48,13 @@ final class Build
      */
     public function pintoGet(string|\UnitEnum $slot): mixed
     {
+        if (!\in_array($slot, $this->slotNames, true)) {
+            throw new UnknownValue(sprintf('Unknown slot `%s`', \is_string($slot) ? $slot : sprintf('%s::%s', $slot::class, $slot->name)));
+        }
+
         return \is_string($slot)
-          ? (\array_key_exists($slot, $this->slotStringValues) ? $this->slotStringValues[$slot] : throw new UnknownValue('Unknown slot `' . $slot . '`'))
-          : $this->slotObjValues[$slot] ?? throw new UnknownValue(sprintf('Unknown slot `%s::%s`', $slot::class, $slot->name))
+          ? (\array_key_exists($slot, $this->slotStringValues) ? $this->slotStringValues[$slot] : throw new UnknownValue('Value not set for slot `' . $slot . '`'))
+          : ($this->slotObjValues->offsetExists($slot) ? $this->slotObjValues[$slot] : throw new UnknownValue(sprintf('Value not set for slot `%s::%s`', $slot::class, $slot->name)))
         ;
     }
 
@@ -61,7 +65,7 @@ final class Build
      */
     public function pintoHas(string|\UnitEnum $slot): mixed
     {
-        return \is_string($slot) ? \array_key_exists($slot, $this->slotStringValues) : $this->slotObjValues[$slot];
+        return \is_string($slot) ? \array_key_exists($slot, $this->slotStringValues) : $this->slotObjValues->offsetExists($slot);
     }
 
     /**
