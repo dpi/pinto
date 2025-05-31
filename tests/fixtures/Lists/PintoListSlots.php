@@ -22,6 +22,9 @@ enum PintoListSlots implements ObjectListInterface
     #[Definition(Slots\PintoObjectSlotsMissingSlotValue::class)]
     case SlotMissingValue;
 
+    #[Definition(Slots\PintoObjectSlotsValidationFailurePhpType::class)]
+    case PintoObjectSlotsValidationFailurePhpType;
+
     #[Definition(Slots\PintoObjectSlotsMissingSlotValueWithDefault::class)]
     case PintoObjectSlotsMissingSlotValueWithDefault;
 
