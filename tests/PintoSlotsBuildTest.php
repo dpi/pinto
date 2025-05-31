@@ -12,7 +12,7 @@ use Pinto\tests\fixtures\Etc\SlotEnum;
 final class PintoSlotsBuildTest extends TestCase
 {
     /**
-     * @covers ::pintoGet
+     * @covers \Pinto\Slots\Build::pintoGet
      */
     public function testPintoGetStringSlotDoesntExist(): void
     {
@@ -23,7 +23,7 @@ final class PintoSlotsBuildTest extends TestCase
     }
 
     /**
-     * @covers ::pintoGet
+     * @covers \Pinto\Slots\Build::pintoGet
      */
     public function testPintoGetEnumSlotDoesntExist(): void
     {
@@ -34,7 +34,7 @@ final class PintoSlotsBuildTest extends TestCase
     }
 
     /**
-     * @covers ::pintoGet
+     * @covers \Pinto\Slots\Build::pintoGet
      */
     public function testPintoGetStringSlotNoValue(): void
     {
@@ -45,7 +45,7 @@ final class PintoSlotsBuildTest extends TestCase
     }
 
     /**
-     * @covers ::pintoGet
+     * @covers \Pinto\Slots\Build::pintoGet
      */
     public function testPintoGetEnumSlotNoValue(): void
     {
@@ -56,7 +56,7 @@ final class PintoSlotsBuildTest extends TestCase
     }
 
     /**
-     * @covers ::pintoHas
+     * @covers \Pinto\Slots\Build::pintoHas
      */
     public function testPintoHasEnumSlot(): void
     {
