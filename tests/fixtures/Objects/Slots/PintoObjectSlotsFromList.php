@@ -19,8 +19,8 @@ final class PintoObjectSlotsFromList
     use ObjectTrait;
 
     public function __construct(
-        readonly string $fooFromList,
-        readonly int $number = 4,
+        public readonly string $fooFromList,
+        public readonly int $number = 4,
     ) {
     }
 

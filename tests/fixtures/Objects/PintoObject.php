@@ -29,7 +29,7 @@ final class PintoObject
      * Constructor.
      */
     private function __construct(
-        readonly string $text,
+        public readonly string $text,
     ) {
     }
 

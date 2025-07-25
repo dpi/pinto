@@ -24,8 +24,8 @@ final class PintoObjectSlotsExplicitIgnoresReflection
     use ObjectTrait;
 
     public function __construct(
-        readonly string $textShouldBeIgnored,
-        readonly int $numberShouldBeIgnored = 4,
+        public readonly string $textShouldBeIgnored,
+        public readonly int $numberShouldBeIgnored = 4,
     ) {
     }
 

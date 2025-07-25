@@ -23,7 +23,7 @@ class PintoObjectSlotsByInheritanceChildModifySlots extends PintoObjectSlotsByIn
     use ObjectTrait;
 
     public function __construct(
-        readonly string $fooFromChild,
+        public readonly string $fooFromChild,
     ) {
         parent::__construct('');
     }
