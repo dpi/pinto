@@ -19,7 +19,7 @@ final class PintoObjectSlotsFromListCase
     use ObjectTrait;
 
     public function __construct(
-        readonly string $fooFromListCase,
+        public readonly string $fooFromListCase,
     ) {
     }
 
