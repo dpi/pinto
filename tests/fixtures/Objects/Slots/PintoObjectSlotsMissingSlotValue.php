@@ -20,8 +20,8 @@ final class PintoObjectSlotsMissingSlotValue
     use ObjectTrait;
 
     public function __construct(
-        readonly string $text,
-        readonly int $number,
+        public readonly string $text,
+        public readonly int $number,
     ) {
     }
 

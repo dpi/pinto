@@ -23,7 +23,7 @@ final class PintoBuildOverrideObject
      * Constructor.
      */
     private function __construct(
-        readonly string $text,
+        public readonly string $text,
     ) {
     }
 

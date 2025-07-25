@@ -18,7 +18,7 @@ class PintoObjectSlotsByInheritanceGrandParent
     use ObjectTrait;
 
     public function __construct(
-        readonly string $fooFromGrandParent,
+        public readonly string $fooFromGrandParent,
     ) {
     }
 
