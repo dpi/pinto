@@ -8,6 +8,7 @@ use Pinto\Attribute\Definition;
 use Pinto\List\ObjectListInterface;
 use Pinto\List\ObjectListTrait;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsByInheritanceChild;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsByInheritanceChildModifySlots;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsByInheritanceGrandParent;
 
 enum PintoListSlotsByInheritance implements ObjectListInterface
@@ -19,6 +20,9 @@ enum PintoListSlotsByInheritance implements ObjectListInterface
 
     #[Definition(PintoObjectSlotsByInheritanceChild::class)]
     case SlotsByInheritanceChild;
+
+    #[Definition(PintoObjectSlotsByInheritanceChildModifySlots::class)]
+    case PintoObjectSlotsByInheritanceChildModifySlots;
 
     public function templateDirectory(): string
     {

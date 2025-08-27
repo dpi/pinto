@@ -9,9 +9,16 @@ use Pinto\PintoMapping;
 use Pinto\Slots;
 
 /**
- * Slots from parent.
+ * Modify slots from parent.
  */
-final class PintoObjectSlotsByInheritanceChild extends PintoObjectSlotsByInheritanceParent
+#[Slots\Attribute\ModifySlots(
+    add: [
+        new Slots\Slot(
+            'new_slot',
+        ),
+    ],
+)]
+class PintoObjectSlotsByInheritanceChildModifySlots extends PintoObjectSlotsByInheritanceParent
 {
     use ObjectTrait;
 

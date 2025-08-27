@@ -20,8 +20,8 @@ final class PintoObjectSlotsBasic
     use ObjectTrait;
 
     public function __construct(
-        readonly string $text,
-        readonly int $number = 3,
+        public readonly string $text,
+        public readonly int $number = 3,
     ) {
     }
 

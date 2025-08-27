@@ -19,7 +19,7 @@ final class PintoObjectSlotsRenameChild extends PintoObjectSlotsRenameParent
     use ObjectTrait;
 
     public function __construct(
-        readonly string $fooFromChild,
+        public readonly string $fooFromChild,
     ) {
         parent::__construct();
     }

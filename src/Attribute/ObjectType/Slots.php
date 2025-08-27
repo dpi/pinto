@@ -10,10 +10,12 @@ use Pinto\Exception\Slots\BuildValidation;
 use Pinto\List\ObjectListInterface;
 use Pinto\ObjectType\LateBindObjectContext;
 use Pinto\ObjectType\ObjectTypeInterface;
+use Pinto\Slots\Attribute\ModifySlots;
 use Pinto\Slots\Attribute\RenameSlot;
 use Pinto\Slots\Build;
 use Pinto\Slots\Definition;
 use Pinto\Slots\NoDefaultValue;
+use Pinto\Slots\RenameSlots;
 use Pinto\Slots\Slot;
 use Pinto\Slots\SlotList;
 use Pinto\Slots\Validation;
@@ -200,6 +202,12 @@ final class Slots implements ObjectTypeInterface
 
         // Now look for other attributes.
 
+        $reflectionClass = match (true) {
+            $r instanceof \ReflectionClass => $r,
+            $r instanceof \ReflectionMethod => $r->getDeclaringClass(),
+            default => throw new \LogicException('Unsupported reflection: ' . $r::class),
+        };
+
         // Get the theme object class name.
         $rCase = new \ReflectionEnumUnitCase($case::class, $case->name);
         /** @var array<\ReflectionAttribute<\Pinto\Attribute\Definition>> $attributes */
@@ -207,15 +215,27 @@ final class Slots implements ObjectTypeInterface
         $definition = ($attributes[0] ?? null)?->newInstance() ?? throw new \LogicException('Missing definition for slot');
         $objectClassName = $definition->className;
 
-        $renameSlots = \Pinto\Slots\RenameSlots::create();
-        // Only check on the object class (not enums or parents, for now).
-        $objectClassReflection = new \ReflectionClass($objectClassName);
-        foreach ($objectClassReflection->getAttributes(RenameSlot::class) as $rAttr) {
-            $renameSlots->add($rAttr->newInstance());
+        $renameSlots = RenameSlots::create();
+
+        // Only if the object type isn't defined on the same object:
+        if ($reflectionClass->getName() !== $objectClassName) {
+            $objectClassReflection = new \ReflectionClass($objectClassName);
+
+            // Only check on the object class (not enums or parents, for now).
+            foreach ($objectClassReflection->getAttributes(RenameSlot::class) as $rAttr) {
+                $renameSlots->add($rAttr->newInstance());
+            }
+
+            foreach ($objectClassReflection->getAttributes(ModifySlots::class) as $rAttr) {
+                $modifySlotsAttr = $rAttr->newInstance();
+                foreach ($modifySlotsAttr->add as $add) {
+                    $slots[] = $add;
+                }
+            }
         }
 
         return new Definition(
-            $slots,
+            slots: $slots,
             renameSlots: $renameSlots,
         );
     }

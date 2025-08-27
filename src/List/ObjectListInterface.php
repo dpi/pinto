@@ -6,6 +6,7 @@ namespace Pinto\List;
 
 use Pinto\DefinitionCollection;
 use Pinto\DefinitionDiscovery;
+use Pinto\PintoMapping;
 
 /**
  * an interface.
@@ -74,5 +75,5 @@ interface ObjectListInterface extends \UnitEnum
      *
      * @internal
      */
-    public static function libraries(): array;
+    public static function libraries(PintoMapping $pintoMapping): array;
 }

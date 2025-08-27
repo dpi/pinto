@@ -55,6 +55,6 @@ final class PintoAssetGlobTest extends TestCase
                     ],
                 ],
             ],
-        ], PintoListAssetGlob::libraries());
+        ], PintoListAssetGlob::libraries(new Pinto\PintoMapping([], [], [], [], [], [])));
     }
 }

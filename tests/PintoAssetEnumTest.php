@@ -48,6 +48,6 @@ final class PintoAssetEnumTest extends TestCase
                     ],
                 ],
             ],
-        ], PintoListAssetEnum::libraries());
+        ], PintoListAssetEnum::libraries(new Pinto\PintoMapping([], [], [], [], [], [])));
     }
 }
