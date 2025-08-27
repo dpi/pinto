@@ -20,7 +20,7 @@ final class PintoObjectSlotsValidationFailurePhpType
     use ObjectTrait;
 
     public function __construct(
-        readonly int $number,
+        public readonly int $number,
     ) {
     }
 
