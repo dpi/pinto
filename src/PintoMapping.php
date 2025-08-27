@@ -16,7 +16,7 @@ final readonly class PintoMapping
      * @param array<class-string<ObjectListInterface>> $enumClasses
      * @param array<
      *   class-string,
-     *   array{class-string<\Pinto\List\ObjectListInterface>, string}
+     *   array{class-string<ObjectListInterface>, string}
      * > $enums
      * @param array<class-string, mixed> $definitions
      * @param array<class-string, string> $buildInvokers

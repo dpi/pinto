@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pinto\Attribute\ObjectType;
 
+use Nette\Utils\Type;
 use Pinto\Exception\PintoThemeDefinition;
 use Pinto\Exception\Slots\BuildValidation;
 use Pinto\List\ObjectListInterface;
@@ -17,6 +18,7 @@ use Pinto\Slots\NoDefaultValue;
 use Pinto\Slots\RenameSlots;
 use Pinto\Slots\Slot;
 use Pinto\Slots\SlotList;
+use Pinto\Slots\Validation;
 
 /**
  * An attribute representing an object with slots.
@@ -122,21 +124,36 @@ final class Slots implements ObjectTypeInterface
 
     public static function validateBuild(mixed $build, mixed $definition, string $objectClassName): void
     {
-        // @todo validate typing?
         assert($build instanceof Build);
         assert($definition instanceof Definition);
 
         $missingSlots = [];
+        /** @var array<array{string, string, string}> $validationFailures */
+        $validationFailures = [];
 
         foreach ($definition->slots as $slot) {
             // When there is no default, the slot must be defined:
             if ($slot->defaultValue instanceof NoDefaultValue && false === $build->pintoHas($slot->name)) {
                 $missingSlots[] = $slot->name instanceof \UnitEnum ? $slot->name->name : $slot->name;
             }
+            //
+            //            if (!$slot->validation instanceof Validation\NoValidation && true === $build->pintoHas($slot->name)) {
+            //                // @todo this might need to be optional...
+            //                $v = $build->pintoGet($slot->name);
+            //                $expectedType = Type::fromString($slot->validation->type);
+            //                $actualType = \is_object($v) ? $v::class : \gettype($v);
+            //                if (!$expectedType->allows($actualType)) {
+            //                    $validationFailures[] = [$slot->name instanceof \UnitEnum ? $slot->name->name : $slot->name, $slot->validation->type, $actualType];
+            //                }
+            //            }
         }
 
         if ([] !== $missingSlots) {
             throw BuildValidation::missingSlots($objectClassName, $missingSlots);
+        }
+
+        if ([] !== $validationFailures) {
+            throw BuildValidation::validation($objectClassName, $validationFailures);
         }
     }
 
@@ -162,8 +179,7 @@ final class Slots implements ObjectTypeInterface
             $parametersFrom = false === $this->bindPromotedProperties ? $reflectionMethod : ($reflectionMethod->getDeclaringClass()->getConstructor() ?? throw new \LogicException('A constructor must be defined to use `bindPromotedProperties`'));
             foreach ($parametersFrom->getParameters() as $rParam) {
                 $paramType = $rParam->getType();
-                if ($paramType instanceof \ReflectionNamedType) {
-                    // @todo use the type @ $paramType->getName()
+                if ($paramType instanceof \ReflectionNamedType || $paramType instanceof \ReflectionUnionType) {
                     $args = ['name' => $rParam->getName()];
                     // Default should only be set if there is a default.
                     if ($rParam->isDefaultValueAvailable()) {
@@ -173,6 +189,8 @@ final class Slots implements ObjectTypeInterface
                     if ($this->bindPromotedProperties && $rParam->isPromoted() && $reflectionMethod->getDeclaringClass()->getProperty($rParam->name)->isPublic()) {
                         $args['fillValueFromThemeObjectClassPropertyWhenEmpty'] = $rParam->name;
                     }
+
+                    $args['validation'] = Validation\PhpType::fromReflection($rParam);
 
                     $slots[] = new Slot(...$args);
                 }
