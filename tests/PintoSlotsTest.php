@@ -283,7 +283,7 @@ final class PintoSlotsTest extends TestCase
 
     public function testDefinitionsSlotsAttrByInheritanceModifiedSlots(): void
     {
-        $definitionDiscovery = new Pinto\DefinitionDiscovery();
+        $definitionDiscovery = new DefinitionDiscovery();
         $definitionDiscovery[PintoObjectSlotsByInheritanceChild::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild;
         $definitionDiscovery[PintoObjectSlotsByInheritanceChildModifySlots::class] = Lists\PintoListSlotsByInheritance::PintoObjectSlotsByInheritanceChildModifySlots;
         $definitionDiscovery[PintoObjectSlotsByInheritanceGrandParent::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceGrandParent;
