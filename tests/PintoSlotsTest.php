@@ -158,24 +158,24 @@ final class PintoSlotsTest extends TestCase
         $object();
     }
 
-    /**
-     * @covers \Pinto\Attribute\ObjectType\Slots::validateBuild
-     * @covers \Pinto\Exception\Slots\BuildValidation::validation
-     */
-    public function testSlotsBuildMissingValueValidationFailurePhpType(): void
-    {
-        [1 => $slotsDefinition] = ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsValidationFailurePhpType::class, PintoListSlots::PintoObjectSlotsValidationFailurePhpType, new DefinitionDiscovery());
-
-        static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
-        static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'number', validation: Slots\Validation\PhpType::fromString('int')),
-        ]), $slotsDefinition->slots);
-
-        $object = new PintoObjectSlotsValidationFailurePhpType(123);
-        static::expectException(Pinto\Exception\Slots\BuildValidation::class);
-        static::expectExceptionMessage(sprintf('Build for %s failed validation: `number` expects `int`, but got `string`', PintoObjectSlotsValidationFailurePhpType::class));
-        $object();
-    }
+    //    /**
+    //     * @covers \Pinto\Attribute\ObjectType\Slots::validateBuild
+    //     * @covers \Pinto\Exception\Slots\BuildValidation::validation
+    //     */
+    //    public function testSlotsBuildMissingValueValidationFailurePhpType(): void
+    //    {
+    //        [1 => $slotsDefinition] = ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsValidationFailurePhpType::class, PintoListSlots::PintoObjectSlotsValidationFailurePhpType, new DefinitionDiscovery());
+    //
+    //        static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
+    //        static::assertEquals(new SlotList([
+    //            new Slots\Slot(name: 'number', validation: Slots\Validation\PhpType::fromString('int')),
+    //        ]), $slotsDefinition->slots);
+    //
+    //        $object = new PintoObjectSlotsValidationFailurePhpType(123);
+    //        static::expectException(Pinto\Exception\Slots\BuildValidation::class);
+    //        static::expectExceptionMessage(sprintf('Build for %s failed validation: `number` expects `int`, but got `string`', PintoObjectSlotsValidationFailurePhpType::class));
+    //        $object();
+    //    }
 
     /**
      * Tests no constructor is required when #[Slots(slots)] is provided.

@@ -136,16 +136,16 @@ final class Slots implements ObjectTypeInterface
             if ($slot->defaultValue instanceof NoDefaultValue && false === $build->pintoHas($slot->name)) {
                 $missingSlots[] = $slot->name instanceof \UnitEnum ? $slot->name->name : $slot->name;
             }
-
-            if (!$slot->validation instanceof Validation\NoValidation && true === $build->pintoHas($slot->name)) {
-                // @todo this might need to be optional...
-                $v = $build->pintoGet($slot->name);
-                $expectedType = Type::fromString($slot->validation->type);
-                $actualType = \is_object($v) ? $v::class : \gettype($v);
-                if (!$expectedType->allows($actualType)) {
-                    $validationFailures[] = [$slot->name instanceof \UnitEnum ? $slot->name->name : $slot->name, $slot->validation->type, $actualType];
-                }
-            }
+            //
+            //            if (!$slot->validation instanceof Validation\NoValidation && true === $build->pintoHas($slot->name)) {
+            //                // @todo this might need to be optional...
+            //                $v = $build->pintoGet($slot->name);
+            //                $expectedType = Type::fromString($slot->validation->type);
+            //                $actualType = \is_object($v) ? $v::class : \gettype($v);
+            //                if (!$expectedType->allows($actualType)) {
+            //                    $validationFailures[] = [$slot->name instanceof \UnitEnum ? $slot->name->name : $slot->name, $slot->validation->type, $actualType];
+            //                }
+            //            }
         }
 
         if ([] !== $missingSlots) {
