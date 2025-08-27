@@ -293,7 +293,7 @@ final class PintoSlotsTest extends TestCase
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsByInheritance::PintoObjectSlotsByInheritanceChildModifySlots];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'fooFromGrandParent'),
+            new Slots\Slot(name: 'fooFromGrandParent', validation: Slots\Validation\PhpType::fromString('string')),
             new Slots\Slot(name: 'new_slot'),
         ]), $slotsDefinition->slots);
     }
