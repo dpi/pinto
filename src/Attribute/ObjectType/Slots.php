@@ -162,8 +162,8 @@ final class Slots implements ObjectTypeInterface
             $parametersFrom = false === $this->bindPromotedProperties ? $reflectionMethod : ($reflectionMethod->getDeclaringClass()->getConstructor() ?? throw new \LogicException('A constructor must be defined to use `bindPromotedProperties`'));
             foreach ($parametersFrom->getParameters() as $rParam) {
                 $paramType = $rParam->getType();
-                if ($paramType instanceof \ReflectionNamedType) {
-                    // @todo use the type @ $paramType->getName()
+              if ($paramType instanceof \ReflectionNamedType || $paramType instanceof \ReflectionUnionType) {
+                // @todo use the type @ $paramType->getName()
                     $args = ['name' => $rParam->getName()];
                     // Default should only be set if there is a default.
                     if ($rParam->isDefaultValueAvailable()) {
