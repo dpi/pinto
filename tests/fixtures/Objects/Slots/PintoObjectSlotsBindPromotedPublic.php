@@ -24,6 +24,7 @@ final class PintoObjectSlotsBindPromotedPublic
         public readonly string $aPublicAndSetInInvoker,
         // @phpstan-ignore-next-line
         private readonly string $aPrivate,
+        public readonly string|int|float|null $unionType,
     ) {
     }
 
@@ -32,7 +33,8 @@ final class PintoObjectSlotsBindPromotedPublic
         return $this->pintoBuild(function (Slots\Build $build): Slots\Build {
             return $build
               ->set('aPublicAndSetInInvoker', 'public value set in invoker')
-              ->set('aPrivate', 'private value set in invoker');
+              ->set('aPrivate', 'private value set in invoker')
+              ->set('unionType', 42.0);
         });
     }
 
@@ -48,6 +50,7 @@ final class PintoObjectSlotsBindPromotedPublic
                     new Slots\Slot(name: 'aPublic', defaultValue: new NoDefaultValue(), fillValueFromThemeObjectClassPropertyWhenEmpty: 'aPublic'),
                     new Slots\Slot(name: 'aPublicAndSetInInvoker', defaultValue: new NoDefaultValue(), fillValueFromThemeObjectClassPropertyWhenEmpty: 'aPublicAndSetInInvoker'),
                     new Slots\Slot(name: 'aPrivate', defaultValue: new NoDefaultValue(), fillValueFromThemeObjectClassPropertyWhenEmpty: null),
+                    new Slots\Slot(name: 'unionType', defaultValue: new NoDefaultValue(), fillValueFromThemeObjectClassPropertyWhenEmpty: null),
                 ])),
             ],
             buildInvokers: [

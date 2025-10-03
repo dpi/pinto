@@ -101,14 +101,16 @@ final class PintoSlotsTest extends TestCase
             new Slots\Slot(name: 'aPublic', fillValueFromThemeObjectClassPropertyWhenEmpty: 'aPublic'),
             new Slots\Slot(name: 'aPublicAndSetInInvoker', fillValueFromThemeObjectClassPropertyWhenEmpty: 'aPublicAndSetInInvoker'),
             new Slots\Slot(name: 'aPrivate'),
+            new Slots\Slot(name: 'unionType', fillValueFromThemeObjectClassPropertyWhenEmpty: 'unionType'),
         ]), $slotsDefinition->slots);
 
-        $object = new PintoObjectSlotsBindPromotedPublic('the public', 'public but also overridden in invoker', 'the private');
+        $object = new PintoObjectSlotsBindPromotedPublic('the public', 'public but also overridden in invoker', 'the private', 42.0);
         $build = $object();
         static::assertInstanceOf(Slots\Build::class, $build);
         static::assertEquals('the public', $build->pintoGet('aPublic'));
         static::assertEquals('public value set in invoker', $build->pintoGet('aPublicAndSetInInvoker'));
         static::assertEquals('private value set in invoker', $build->pintoGet('aPrivate'));
+        static::assertEquals(42.0, $build->pintoGet('unionType'));
     }
 
     /**
