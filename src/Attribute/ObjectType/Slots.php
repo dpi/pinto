@@ -14,6 +14,7 @@ use Pinto\Slots\Attribute\RenameSlot;
 use Pinto\Slots\Build;
 use Pinto\Slots\Definition;
 use Pinto\Slots\NoDefaultValue;
+use Pinto\Slots\Origin;
 use Pinto\Slots\RenameSlots;
 use Pinto\Slots\Slot;
 use Pinto\Slots\SlotList;
@@ -78,7 +79,7 @@ final class Slots implements ObjectTypeInterface
                 $r = new \ReflectionClass($slot);
                 if ($r->implementsInterface(\UnitEnum::class)) {
                     foreach ($slot::cases() as $case) {
-                        $this->slots->add(new Slot(name: $case));
+                        $this->slots->add(new Slot(name: $case, origin: Origin\EnumCase::createFromEnum($case)));
                     }
                 }
 
@@ -86,7 +87,12 @@ final class Slots implements ObjectTypeInterface
                 continue;
             }
             $this->slots->add(
-                $slot instanceof Slot ? $slot : new Slot(name: $slot)
+                $slot instanceof Slot
+                  ? $slot
+                  : new Slot(name: $slot, origin: match (true) {
+                      \is_string($slot) => Origin\StaticallyDefined::create(data: $slot),
+                      $slot instanceof \UnitEnum => Origin\EnumCase::createFromEnum($slot),
+                  }),
             );
         }
     }
@@ -163,7 +169,6 @@ final class Slots implements ObjectTypeInterface
             foreach ($parametersFrom->getParameters() as $rParam) {
                 $paramType = $rParam->getType();
                 if ($paramType instanceof \ReflectionNamedType || $paramType instanceof \ReflectionUnionType) {
-                    // @todo use the type @ $paramType->getName()
                     $args = ['name' => $rParam->getName()];
                     // Default should only be set if there is a default.
                     if ($rParam->isDefaultValueAvailable()) {
@@ -173,6 +178,8 @@ final class Slots implements ObjectTypeInterface
                     if ($this->bindPromotedProperties && $rParam->isPromoted() && $reflectionMethod->getDeclaringClass()->getProperty($rParam->name)->isPublic()) {
                         $args['fillValueFromThemeObjectClassPropertyWhenEmpty'] = $rParam->name;
                     }
+
+                    $args['origin'] = Origin\Parameter::fromReflection($rParam);
 
                     $slots[] = new Slot(...$args);
                 }
