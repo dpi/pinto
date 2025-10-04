@@ -11,6 +11,8 @@ use Pinto\Slots\SlotList;
 use Pinto\tests\fixtures\Etc\SlotEnum;
 use Pinto\tests\fixtures\Lists;
 use Pinto\tests\fixtures\Lists\PintoListSlots;
+use Pinto\tests\fixtures\Objects\Faulty\PintoObjectSlotsBindPromotedPublicWithDefinedSlots;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsAttributeOnMethod;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBasic;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBindPromotedPublic;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsBindPromotedPublicNonConstructor;
@@ -19,7 +21,13 @@ use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsByInheritanceChildModifyS
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsByInheritanceGrandParent;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicit;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicitEnumClass;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicitEnums;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsExplicitIgnoresReflection;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsFromList;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsFromListCase;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsFromListMethodSpecified;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsMissingSlotValue;
+use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsMissingSlotValueWithDefault;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsRenameChild;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsRenameParent;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsSetInvalidSlot;
@@ -64,7 +72,7 @@ final class PintoSlotsTest extends TestCase
 
     public function testSlotsExplicitEnums(): void
     {
-        $object = new fixtures\Objects\Slots\PintoObjectSlotsExplicitEnums();
+        $object = new PintoObjectSlotsExplicitEnums();
         $build = $object();
         static::assertInstanceOf(Slots\Build::class, $build);
         static::assertEquals('Slot One', $build->pintoGet(SlotEnum::Slot1));
@@ -85,9 +93,9 @@ final class PintoSlotsTest extends TestCase
 
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: SlotEnum::Slot1),
-            new Slots\Slot(name: SlotEnum::Slot2),
-            new Slots\Slot(name: SlotEnum::Slot3),
+            new Slots\Slot(name: SlotEnum::Slot1, origin: Slots\Origin\EnumCase::createFromEnum(SlotEnum::Slot1)),
+            new Slots\Slot(name: SlotEnum::Slot2, origin: Slots\Origin\EnumCase::createFromEnum(SlotEnum::Slot2)),
+            new Slots\Slot(name: SlotEnum::Slot3, origin: Slots\Origin\EnumCase::createFromEnum(SlotEnum::Slot3)),
         ]), $slotsDefinition->slots);
     }
 
@@ -100,10 +108,10 @@ final class PintoSlotsTest extends TestCase
 
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'aPublic', fillValueFromThemeObjectClassPropertyWhenEmpty: 'aPublic'),
-            new Slots\Slot(name: 'aPublicAndSetInInvoker', fillValueFromThemeObjectClassPropertyWhenEmpty: 'aPublicAndSetInInvoker'),
-            new Slots\Slot(name: 'aPrivate'),
-            new Slots\Slot(name: 'unionType', fillValueFromThemeObjectClassPropertyWhenEmpty: 'unionType'),
+            new Slots\Slot(name: 'aPublic', origin: Slots\Origin\Parameter::fromReflection(new \ReflectionParameter([PintoObjectSlotsBindPromotedPublic::class, '__construct'], 'aPublic')), fillValueFromThemeObjectClassPropertyWhenEmpty: 'aPublic'),
+            new Slots\Slot(name: 'aPublicAndSetInInvoker', origin: Slots\Origin\Parameter::fromReflection(new \ReflectionParameter([PintoObjectSlotsBindPromotedPublic::class, '__construct'], 'aPublicAndSetInInvoker')), fillValueFromThemeObjectClassPropertyWhenEmpty: 'aPublicAndSetInInvoker'),
+            new Slots\Slot(name: 'aPrivate', origin: Slots\Origin\Parameter::fromReflection(new \ReflectionParameter([PintoObjectSlotsBindPromotedPublic::class, '__construct'], 'aPrivate'))),
+            new Slots\Slot(name: 'unionType', origin: Slots\Origin\Parameter::fromReflection(new \ReflectionParameter([PintoObjectSlotsBindPromotedPublic::class, '__construct'], 'unionType')), fillValueFromThemeObjectClassPropertyWhenEmpty: 'unionType'),
         ]), $slotsDefinition->slots);
 
         $object = new PintoObjectSlotsBindPromotedPublic('the public', 'public but also overridden in invoker', 'the private', 42.0);
@@ -139,12 +147,12 @@ final class PintoSlotsTest extends TestCase
     {
         static::expectException(\Pinto\Exception\PintoThemeDefinition::class);
         static::expectExceptionMessage('Slots must use reflection (no explicitly defined `$slots`) when promoted properties bind is on.');
-        \Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(fixtures\Objects\Faulty\PintoObjectSlotsBindPromotedPublicWithDefinedSlots::class, Lists\PintoFaultyList::PintoObjectSlotsBindPromotedPublicWithDefinedSlots, definitionDiscovery: new \Pinto\DefinitionDiscovery());
+        \Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsBindPromotedPublicWithDefinedSlots::class, Lists\PintoFaultyList::PintoObjectSlotsBindPromotedPublicWithDefinedSlots, definitionDiscovery: new \Pinto\DefinitionDiscovery());
     }
 
     public function testSlotsExplicitIgnoresReflection(): void
     {
-        $object = new fixtures\Objects\Slots\PintoObjectSlotsExplicitIgnoresReflection('Should be ignored', 999);
+        $object = new PintoObjectSlotsExplicitIgnoresReflection('Should be ignored', 999);
         $build = $object();
         static::assertInstanceOf(Slots\Build::class, $build);
         static::assertEquals('Some text', $build->pintoGet('text'));
@@ -175,7 +183,7 @@ final class PintoSlotsTest extends TestCase
 
     public function testSlotsBuildMissingValueWithDefault(): void
     {
-        $object = new fixtures\Objects\Slots\PintoObjectSlotsMissingSlotValueWithDefault('Foo!');
+        $object = new PintoObjectSlotsMissingSlotValueWithDefault('Foo!');
         $build = $object();
         static::assertInstanceOf(Slots\Build::class, $build);
         static::assertEquals('Foo!', $build->pintoGet('text'));
@@ -186,20 +194,20 @@ final class PintoSlotsTest extends TestCase
     public function testDefinitionsSlotsAttrOnObject(): void
     {
         $themeDefinitions = PintoListSlots::definitions(new \Pinto\DefinitionDiscovery());
-        static::assertCount(8, $themeDefinitions);
+        static::assertCount(9, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[PintoListSlots::Slots];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'text'),
-            new Slots\Slot(name: 'number', defaultValue: 3),
+            new Slots\Slot(name: 'text', origin: Slots\Origin\Parameter::fromReflection(new \ReflectionParameter([PintoObjectSlotsBasic::class, '__construct'], 'text'))),
+            new Slots\Slot(name: 'number', defaultValue: 3, origin: Slots\Origin\Parameter::fromReflection(new \ReflectionParameter([PintoObjectSlotsBasic::class, '__construct'], 'number'))),
         ]), $slotsDefinition->slots);
 
         $slotsDefinition = $themeDefinitions[PintoListSlots::SlotsAttributeOnMethod];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'foo', defaultValue: null),
-            new Slots\Slot(name: 'arr', defaultValue: []),
+            new Slots\Slot(name: 'foo', defaultValue: null, origin: Slots\Origin\Parameter::fromReflection(new \ReflectionParameter([PintoObjectSlotsAttributeOnMethod::class, 'create'], 'foo'))),
+            new Slots\Slot(name: 'arr', defaultValue: [], origin: Slots\Origin\Parameter::fromReflection(new \ReflectionParameter([PintoObjectSlotsAttributeOnMethod::class, 'create'], 'arr'))),
         ]), $slotsDefinition->slots);
     }
 
@@ -211,8 +219,8 @@ final class PintoSlotsTest extends TestCase
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsOnEnum::SlotsOnEnum];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'fooFromList'),
-            new Slots\Slot(name: 'number', defaultValue: 4),
+            new Slots\Slot(name: 'fooFromList', origin: Slots\Origin\Parameter::fromReflection(new \ReflectionParameter([PintoObjectSlotsFromList::class, '__construct'], 'fooFromList'))),
+            new Slots\Slot(name: 'number', defaultValue: 4, origin: Slots\Origin\Parameter::fromReflection(new \ReflectionParameter([PintoObjectSlotsFromList::class, '__construct'], 'number'))),
         ]), $slotsDefinition->slots);
     }
 
@@ -224,7 +232,7 @@ final class PintoSlotsTest extends TestCase
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsOnEnumCase::SlotsOnEnumCase];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'fooFromListCase'),
+            new Slots\Slot(name: 'fooFromListCase', origin: Slots\Origin\Parameter::fromReflection(new \ReflectionParameter([PintoObjectSlotsFromListCase::class, '__construct'], 'fooFromListCase'))),
         ]), $slotsDefinition->slots);
     }
 
@@ -239,7 +247,7 @@ final class PintoSlotsTest extends TestCase
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'fooFromGrandParent'),
+            new Slots\Slot(name: 'fooFromGrandParent', origin: Slots\Origin\Parameter::fromReflection(new \ReflectionParameter([PintoObjectSlotsByInheritanceGrandParent::class, '__construct'], 'fooFromGrandParent'))),
         ]), $slotsDefinition->slots);
     }
 
@@ -275,8 +283,8 @@ final class PintoSlotsTest extends TestCase
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsByInheritance::PintoObjectSlotsByInheritanceChildModifySlots];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'fooFromGrandParent'),
-            new Slots\Slot(name: 'new_slot'),
+            new Slots\Slot(name: 'fooFromGrandParent', origin: Slots\Origin\Parameter::fromReflection(new \ReflectionParameter([PintoObjectSlotsByInheritanceGrandParent::class, '__construct'], 'fooFromGrandParent'))),
+            new Slots\Slot(name: 'new_slot', origin: new Slots\Origin\StaticallyDefined()),
         ]), $slotsDefinition->slots);
     }
 
@@ -299,7 +307,7 @@ final class PintoSlotsTest extends TestCase
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsOnEnumMethodSpecified::SlotsOnEnumMethodSpecified];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'create', defaultValue: 'from method specified on enum #[Slots]'),
+            new Slots\Slot(name: 'create', defaultValue: 'from method specified on enum #[Slots]', origin: Slots\Origin\Parameter::fromReflection(new \ReflectionParameter([PintoObjectSlotsFromListMethodSpecified::class, 'create'], 'create'))),
         ]), $slotsDefinition->slots);
     }
 
@@ -311,8 +319,8 @@ final class PintoSlotsTest extends TestCase
         ]);
 
         static::assertEquals([
-            new Slots\Slot(name: 'foo'),
-            new Slots\Slot(name: 'bar'),
+            new Slots\Slot(name: 'foo', origin: Slots\Origin\StaticallyDefined::create(data: null)),
+            new Slots\Slot(name: 'bar', origin: Slots\Origin\StaticallyDefined::create(data: 'bar')),
         ], $attr->slots->toArray());
     }
 
@@ -320,7 +328,7 @@ final class PintoSlotsTest extends TestCase
     {
         static::expectException(\LogicException::class);
         static::expectExceptionMessage('Using this attribute without named parameters is not supported.');
-        new Slots\Slot('slotname', '', 'defaultvalue');
+        new Slots\Slot('slotname', origin: Slots\Origin\StaticallyDefined::create(data: 'slotname'), useNamedParameters: 'defaultvalue');
     }
 
     public function testSlotAttributeNamedParameters(): void
@@ -345,9 +353,9 @@ final class PintoSlotsTest extends TestCase
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsRename::SlotsRenameChild];
         static::assertInstanceOf(Slots\Definition::class, $slotsDefinition);
         static::assertEquals(new SlotList([
-            new Slots\Slot(name: 'slotFromParentUnrenamed'),
-            new Slots\Slot(name: 'stringFromParentThatWillBeRenamed'),
-            new Slots\Slot(name: SlotEnum::Slot1),
+            new Slots\Slot(name: 'slotFromParentUnrenamed', origin: Slots\Origin\StaticallyDefined::create(data: 'slotFromParentUnrenamed')),
+            new Slots\Slot(name: 'stringFromParentThatWillBeRenamed', origin: Slots\Origin\StaticallyDefined::create(data: 'stringFromParentThatWillBeRenamed')),
+            new Slots\Slot(name: SlotEnum::Slot1, origin: Slots\Origin\EnumCase::createFromEnum(SlotEnum::Slot1)),
         ]), $slotsDefinition->slots);
 
         $expectedRenameSlots = Slots\RenameSlots::create();
