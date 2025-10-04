@@ -25,7 +25,7 @@ use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsRenameParent;
 use Pinto\tests\fixtures\Objects\Slots\PintoObjectSlotsSetInvalidSlot;
 
 /**
- * @coversDefaultClass \\Pinto\PintoMapping
+ * @coversDefaultClass \Pinto\PintoMapping
  */
 final class PintoSlotsTest extends TestCase
 {
@@ -75,11 +75,11 @@ final class PintoSlotsTest extends TestCase
     }
 
     /**
-     * @covers \\Pinto\Attribute\ObjectType\Slots::__construct
+     * @covers \Pinto\Attribute\ObjectType\Slots::__construct
      */
     public function testSlotsExplicitEnumClass(): void
     {
-        // Call \\Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject
+        // Call \Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject
         // directly since pintoMapping won't execute enum->cases expansion..
         [1 => $slotsDefinition] = \Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsExplicitEnumClass::class, PintoListSlots::PintoObjectSlotsExplicitEnumClass, definitionDiscovery: new \Pinto\DefinitionDiscovery());
 
@@ -92,7 +92,7 @@ final class PintoSlotsTest extends TestCase
     }
 
     /**
-     * @covers \\Pinto\Attribute\ObjectType\Slots::__construct
+     * @covers \Pinto\Attribute\ObjectType\Slots::__construct
      */
     public function testPintoObjectSlotsBindPromotedPublic(): void
     {
@@ -116,7 +116,7 @@ final class PintoSlotsTest extends TestCase
     }
 
     /**
-     * @covers \\Pinto\Attribute\ObjectType\Slots::__construct
+     * @covers \Pinto\Attribute\ObjectType\Slots::__construct
      */
     public function PintoObjectSlotsBindPromotedPublicNonConstructor(): void
     {
@@ -244,7 +244,7 @@ final class PintoSlotsTest extends TestCase
     }
 
     /**
-     * @covers \\Pinto\Slots\Attribute\ModifySlots::__construct
+     * @covers \Pinto\Slots\Attribute\ModifySlots::__construct
      */
     public function testModifySlotsAttributeNamedParameters(): void
     {
@@ -254,7 +254,7 @@ final class PintoSlotsTest extends TestCase
     }
 
     /**
-     * @covers \\Pinto\Slots\Attribute\ModifySlots::__construct
+     * @covers \Pinto\Slots\Attribute\ModifySlots::__construct
      */
     public function testModifySlotsAttributeAddMissingSlots(): void
     {
@@ -331,8 +331,8 @@ final class PintoSlotsTest extends TestCase
     }
 
     /**
-     * @covers \\Pinto\Slots\Attribute\RenameSlot
-     * @covers \\Pinto\Slots\RenameSlots
+     * @covers \Pinto\Slots\Attribute\RenameSlot
+     * @covers \Pinto\Slots\RenameSlots
      */
     public function testRenameSlots(): void
     {
