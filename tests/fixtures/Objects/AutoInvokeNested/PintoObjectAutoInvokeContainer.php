@@ -6,6 +6,7 @@ namespace Pinto\tests\fixtures\Objects\AutoInvokeNested;
 
 use Pinto\Attribute\ObjectType;
 use Pinto\DefinitionDiscovery;
+use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
 use Pinto\Slots;
@@ -51,14 +52,11 @@ class PintoObjectAutoInvokeContainer
         $definitionDiscovery[PintoObjectAutoInvokeChild3::class] = PintoListAutoInvokeNested::Child3;
 
         return new PintoMapping(
-            enumClasses: [
-                // Not tested.
-            ],
-            enums: [
-                static::class => [PintoListAutoInvokeNested::class, PintoListAutoInvokeNested::Containing->name],
-                PintoObjectAutoInvokeChild1::class => [PintoListAutoInvokeNested::class, PintoListAutoInvokeNested::Child1->name],
-                PintoObjectAutoInvokeChild2::class => [PintoListAutoInvokeNested::class, PintoListAutoInvokeNested::Child2->name],
-                PintoObjectAutoInvokeChild3::class => [PintoListAutoInvokeNested::class, PintoListAutoInvokeNested::Child3->name],
+            resources: [
+                static::class => ObjectListEnumResource::createFromEnum(PintoListAutoInvokeNested::Containing),
+                PintoObjectAutoInvokeChild1::class => ObjectListEnumResource::createFromEnum(PintoListAutoInvokeNested::Child1),
+                PintoObjectAutoInvokeChild2::class => ObjectListEnumResource::createFromEnum(PintoListAutoInvokeNested::Child2),
+                PintoObjectAutoInvokeChild3::class => ObjectListEnumResource::createFromEnum(PintoListAutoInvokeNested::Child3),
             ],
             definitions: [
                 static::class => new Slots\Definition(new Slots\SlotList([

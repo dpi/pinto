@@ -8,6 +8,7 @@ use Pinto\Attribute\ObjectType;
 use Pinto\CanonicalProduct\Attribute\CanonicalProduct;
 use Pinto\CanonicalProduct\CanonicalFactoryTrait;
 use Pinto\DefinitionDiscovery;
+use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
 use Pinto\Slots;
@@ -48,9 +49,8 @@ class PintoObjectCanonicalProductRoot
         $definitionDiscovery[PintoObjectCanonicalProductRoot::class] = PintoListCanonicalProduct::Root;
 
         return new PintoMapping(
-            enumClasses: [],
-            enums: [
-                static::class => [PintoListCanonicalProduct::class, PintoListCanonicalProduct::Child->name],
+            resources: [
+                static::class => ObjectListEnumResource::createFromEnum(PintoListCanonicalProduct::Child),
             ],
             definitions: [
                 static::class => new Slots\Definition(new Slots\SlotList([

@@ -176,7 +176,7 @@ final class PintoSlotsTest extends TestCase
      */
     public function testSlotsNoConstructor(): void
     {
-        $definitions = PintoListSlots::definitions(new \Pinto\DefinitionDiscovery());
+        $definitions = PintoTestUtility::definitions(PintoListSlots::class, new \Pinto\DefinitionDiscovery());
         // Assert anything (no exception thrown):
         static::assertGreaterThan(0, count($definitions));
     }
@@ -193,7 +193,7 @@ final class PintoSlotsTest extends TestCase
 
     public function testDefinitionsSlotsAttrOnObject(): void
     {
-        $themeDefinitions = PintoListSlots::definitions(new \Pinto\DefinitionDiscovery());
+        $themeDefinitions = PintoTestUtility::definitions(PintoListSlots::class, new \Pinto\DefinitionDiscovery());
         static::assertCount(9, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[PintoListSlots::Slots];
@@ -213,7 +213,7 @@ final class PintoSlotsTest extends TestCase
 
     public function testDefinitionsSlotsAttrOnList(): void
     {
-        $themeDefinitions = Lists\PintoListSlotsOnEnum::definitions(new \Pinto\DefinitionDiscovery());
+        $themeDefinitions = PintoTestUtility::definitions(Lists\PintoListSlotsOnEnum::class, new \Pinto\DefinitionDiscovery());
         static::assertCount(1, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsOnEnum::SlotsOnEnum];
@@ -226,7 +226,7 @@ final class PintoSlotsTest extends TestCase
 
     public function testDefinitionsSlotsAttrOnListCase(): void
     {
-        $themeDefinitions = Lists\PintoListSlotsOnEnumCase::definitions(new \Pinto\DefinitionDiscovery());
+        $themeDefinitions = PintoTestUtility::definitions(Lists\PintoListSlotsOnEnumCase::class, new \Pinto\DefinitionDiscovery());
         static::assertCount(1, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsOnEnumCase::SlotsOnEnumCase];
@@ -241,7 +241,7 @@ final class PintoSlotsTest extends TestCase
         $definitionDiscovery = new \Pinto\DefinitionDiscovery();
         $definitionDiscovery[PintoObjectSlotsByInheritanceChild::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild;
         $definitionDiscovery[PintoObjectSlotsByInheritanceGrandParent::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceGrandParent;
-        $themeDefinitions = Lists\PintoListSlotsByInheritance::definitions($definitionDiscovery);
+        $themeDefinitions = PintoTestUtility::definitions(Lists\PintoListSlotsByInheritance::class, $definitionDiscovery);
         static::assertCount(3, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild];
@@ -277,7 +277,7 @@ final class PintoSlotsTest extends TestCase
         $definitionDiscovery[PintoObjectSlotsByInheritanceChild::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild;
         $definitionDiscovery[PintoObjectSlotsByInheritanceChildModifySlots::class] = Lists\PintoListSlotsByInheritance::PintoObjectSlotsByInheritanceChildModifySlots;
         $definitionDiscovery[PintoObjectSlotsByInheritanceGrandParent::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceGrandParent;
-        $themeDefinitions = Lists\PintoListSlotsByInheritance::definitions($definitionDiscovery);
+        $themeDefinitions = PintoTestUtility::definitions(Lists\PintoListSlotsByInheritance::class, $definitionDiscovery);
         static::assertCount(3, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsByInheritance::PintoObjectSlotsByInheritanceChildModifySlots];
@@ -296,12 +296,12 @@ final class PintoSlotsTest extends TestCase
         $definitionDiscovery[PintoObjectSlotsByInheritanceChild::class] = Lists\PintoListSlotsByInheritance::SlotsByInheritanceChild;
 
         static::expectException(\Pinto\Exception\PintoIndeterminableObjectType::class);
-        Lists\PintoListSlotsByInheritance::definitions($definitionDiscovery);
+        PintoTestUtility::definitions(Lists\PintoListSlotsByInheritance::class, $definitionDiscovery);
     }
 
     public function testDefinitionsSlotsAttrOnListMethodSpecified(): void
     {
-        $themeDefinitions = Lists\PintoListSlotsOnEnumMethodSpecified::definitions(new \Pinto\DefinitionDiscovery());
+        $themeDefinitions = PintoTestUtility::definitions(Lists\PintoListSlotsOnEnumMethodSpecified::class, new \Pinto\DefinitionDiscovery());
         static::assertCount(1, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsOnEnumMethodSpecified::SlotsOnEnumMethodSpecified];
@@ -347,7 +347,7 @@ final class PintoSlotsTest extends TestCase
         $definitionDiscovery = new \Pinto\DefinitionDiscovery();
         $definitionDiscovery[PintoObjectSlotsRenameParent::class] = Lists\PintoListSlotsRename::SlotsRenameParent;
         $definitionDiscovery[PintoObjectSlotsRenameChild::class] = Lists\PintoListSlotsRename::SlotsRenameChild;
-        $themeDefinitions = Lists\PintoListSlotsRename::definitions($definitionDiscovery);
+        $themeDefinitions = PintoTestUtility::definitions(Lists\PintoListSlotsRename::class, $definitionDiscovery);
         static::assertCount(2, $themeDefinitions);
 
         $slotsDefinition = $themeDefinitions[Lists\PintoListSlotsRename::SlotsRenameChild];

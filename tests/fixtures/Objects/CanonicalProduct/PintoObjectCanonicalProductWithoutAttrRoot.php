@@ -38,10 +38,7 @@ class PintoObjectCanonicalProductWithoutAttrRoot
         $definitionDiscovery[PintoObjectCanonicalProductWithoutAttrRoot::class] = PintoListCanonicalProductWithoutAttrList::Root;
 
         return new PintoMapping(
-            enumClasses: [
-                // Not tested.
-            ],
-            enums: [
+            resources: [
                 // Not tested.
             ],
             definitions: [

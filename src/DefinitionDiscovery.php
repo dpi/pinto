@@ -9,7 +9,7 @@ use Ramsey\Collection\Map\AbstractMap;
 /**
  * A mapping from theme object class-strings to the related enum case.
  *
- * @extends AbstractMap<class-string,\Pinto\List\ObjectListInterface>
+ * @extends AbstractMap<class-string, \Pinto\Resource\ResourceInterface>
  */
 final class DefinitionDiscovery extends AbstractMap
 {

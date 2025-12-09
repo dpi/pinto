@@ -6,6 +6,7 @@ namespace Pinto\tests\fixtures\Objects\Faulty;
 
 use Pinto\Attribute\ObjectType;
 use Pinto\DefinitionDiscovery;
+use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
 use Pinto\Slots;
@@ -41,11 +42,8 @@ class PintoObjectAutoInvokeNotKnownObject
         $definitionDiscovery[static::class] = PintoFaultyList::PintoObjectAutoInvokeNotKnownObject;
 
         return new PintoMapping(
-            enumClasses: [
-                // Not tested.
-            ],
-            enums: [
-                static::class => [PintoFaultyList::class, PintoFaultyList::PintoObjectAutoInvokeNotKnownObject->name],
+            resources: [
+                static::class => ObjectListEnumResource::createFromEnum(PintoFaultyList::PintoObjectAutoInvokeNotKnownObject),
             ],
             definitions: [
                 static::class => new Slots\Definition(new Slots\SlotList([

@@ -6,7 +6,8 @@ namespace Pinto\CanonicalProduct\Attribute;
 
 use Pinto\CanonicalProduct\Exception\PintoMultipleCanonicalProduct;
 use Pinto\DefinitionDiscovery;
-use Pinto\List\ObjectListInterface;
+use Pinto\List\Resource\ObjectListEnumResource;
+use Pinto\Resource\ResourceInterface;
 
 /**
  * An attribute for representing whether an object replaces another when the canonical factory is used.
@@ -103,14 +104,18 @@ final class CanonicalProduct
      *
      * @param class-string $objectClassName
      */
-    private static function hasAttribute(string $objectClassName, ObjectListInterface $case): bool
+    private static function hasAttribute(string $objectClassName, ResourceInterface $resource): bool
     {
-        foreach ([
+        $candidates = [
             // Look for attribute instances of ObjectTypeInterface on the class itself.
             $objectClassName,
-            // Then the enum.
-            $case::class,
-        ] as $className) {
+        ];
+
+        if ($resource instanceof ObjectListEnumResource) {
+            $candidates[] = $resource->pintoEnum::class;
+        }
+
+        foreach ($candidates as $className) {
             $objectClassReflection = new \ReflectionClass($className);
             if ([] !== $objectClassReflection->getAttributes(static::class)) {
                 return true;

@@ -7,8 +7,11 @@ namespace Pinto\tests;
 use PHPUnit\Framework\TestCase;
 use Pinto\Exception\PintoIndeterminableObjectType;
 use Pinto\Exception\PintoThemeDefinition;
+use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\ObjectType\ObjectTypeDiscovery;
 use Pinto\ObjectType\ObjectTypeInterface;
+use Pinto\Resource\ResourceInterface;
+use Pinto\tests\fixtures\Objects\Faulty\PintoObjectZeroObjectTypeAttributes;
 use Pinto\ThemeDefinition\HookThemeDefinition;
 
 use function Safe\realpath;
@@ -23,12 +26,12 @@ final class PintoObjectTypeDiscoveryTest extends TestCase
         static::expectException(PintoIndeterminableObjectType::class);
         static::expectExceptionMessage(sprintf('Missing %s attribute on %s or a parent class or %s or %s::%s',
             ObjectTypeInterface::class,
-            fixtures\Objects\Faulty\PintoObjectZeroObjectTypeAttributes::class,
+            PintoObjectZeroObjectTypeAttributes::class,
             fixtures\Lists\PintoFaultyList::class,
             fixtures\Lists\PintoFaultyList::class,
             fixtures\Lists\PintoFaultyList::PintoObjectZeroObjectTypeAttributes->name,
         ));
-        ObjectTypeDiscovery::definitionForThemeObject(fixtures\Objects\Faulty\PintoObjectZeroObjectTypeAttributes::class, fixtures\Lists\PintoFaultyList::PintoObjectZeroObjectTypeAttributes, definitionDiscovery: new \Pinto\DefinitionDiscovery());
+        ObjectTypeDiscovery::definitionForThemeObject(PintoObjectZeroObjectTypeAttributes::class, ObjectListEnumResource::createFromEnum(fixtures\Lists\PintoFaultyList::PintoObjectZeroObjectTypeAttributes), definitionDiscovery: new \Pinto\DefinitionDiscovery());
     }
 
     public function testMultipleObjectTypeAttributes(): void
@@ -52,5 +55,17 @@ final class PintoObjectTypeDiscoveryTest extends TestCase
             ],
             $definition->definition,
         );
+    }
+
+    /**
+     * Ensures objects registered always have an ObjectType attribute if they are not an enum resource.
+     */
+    public function testResourceNotEnumWhenNoObjectTypeFound(): void
+    {
+        static::expectException(PintoThemeDefinition::class);
+        static::expectExceptionMessage(sprintf('Resource for %s is not a %s', PintoObjectZeroObjectTypeAttributes::class, ObjectListEnumResource::class));
+
+        $resource = $this->createMock(ResourceInterface::class);
+        ObjectTypeDiscovery::definitionForThemeObject(PintoObjectZeroObjectTypeAttributes::class, $resource, definitionDiscovery: new \Pinto\DefinitionDiscovery());
     }
 }

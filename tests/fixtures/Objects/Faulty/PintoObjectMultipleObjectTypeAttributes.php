@@ -30,6 +30,6 @@ final class PintoObjectMultipleObjectTypeAttributes
 
     private function pintoMapping(): PintoMapping
     {
-        return new PintoMapping([], [], [], [], [], []);
+        return new PintoMapping([], [], [], [], []);
     }
 }

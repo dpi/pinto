@@ -11,6 +11,7 @@ use Pinto\Attribute\Asset\ExternalJs;
 use Pinto\Attribute\Asset\Js;
 use Pinto\Attribute\Build;
 use Pinto\Exception\PintoBuildDefinitionMismatch;
+use Pinto\Library\LibraryBuilder;
 use Pinto\tests\fixtures\Lists\PintoList;
 use Pinto\tests\fixtures\Objects\Build\PintoBuildOverrideObject;
 use Pinto\tests\fixtures\Objects\Extends\PintoObjectExtends1;
@@ -38,12 +39,11 @@ final class PintoTest extends TestCase
     }
 
     /**
-     * @covers \Pinto\List\ObjectListInterface::definitions
-     * @covers \Pinto\List\ObjectListTrait::definitions
+     * @covers \Pinto\tests\PintoTestUtility::definitions
      */
     public function testThemeDefinitions(): void
     {
-        $themeDefinitions = PintoList::definitions(new \Pinto\DefinitionDiscovery());
+        $themeDefinitions = PintoTestUtility::definitions(PintoList::class, new \Pinto\DefinitionDiscovery());
         static::assertCount(2, $themeDefinitions);
 
         $definition1 = $themeDefinitions[PintoList::Pinto_Object];
@@ -68,67 +68,39 @@ final class PintoTest extends TestCase
     }
 
     /**
-     * @covers \Pinto\List\ObjectListTrait::libraries
+     * @covers \Pinto\Library\LibraryBuilder::expandLibraryPaths
      */
     public function testLibraries(): void
     {
-        $themeDefinitions = PintoList::libraries(new \Pinto\PintoMapping([], [], [], [], [], []));
         static::assertEquals([
-            'object_test' => [
-                'js' => [
-                    realpath(__DIR__ . '/fixtures/resources/javascript/app.js') => [
-                        'minified' => false,
-                        'preprocess' => false,
-                        'attributes' => [],
-                    ],
-                    'https://example.com/path.js' => [
-                        'external' => true,
-                        'attributes' => [],
-                    ],
-                ],
-                'css' => [
-                    'component' => [
-                        realpath(__DIR__ . '/fixtures/resources/css/styles.css') => [
-                            'minified' => false,
-                            'preprocess' => false,
-                            'category' => 'component',
-                            'attributes' => [],
-                        ],
-                        'https://example.com/path.css' => [
-                            'external' => true,
-                            'attributes' => [],
-                        ],
-                    ],
-                ],
-            ],
-            'object_test_attributes' => [
-                'js' => [
-                    realpath(__DIR__ . '/fixtures/resources/javascript/app.js') => [
-                        'minified' => false,
-                        'preprocess' => false,
-                        'attributes' => ['defer' => true],
-                    ],
-                    'https://example.com/path.js' => [
-                        'external' => true,
-                        'attributes' => ['defer' => true],
-                    ],
-                ],
-                'css' => [
-                    'component' => [
-                        realpath(__DIR__ . '/fixtures/resources/css/styles.css') => [
-                            'minified' => false,
-                            'preprocess' => false,
-                            'category' => 'component',
-                            'attributes' => ['defer' => true],
-                        ],
-                        'https://example.com/path.css' => [
-                            'external' => true,
-                            'attributes' => ['defer' => true],
-                        ],
-                    ],
-                ],
-            ],
-        ], $themeDefinitions);
+            [(new Css('styles.css'))->setPath(realpath(__DIR__ . '/fixtures/resources/css/')), [
+                'css', 'component', realpath(__DIR__ . '/fixtures/resources/css/styles.css'),
+            ]],
+            [(new Js('app.js'))->setPath(realpath(__DIR__ . '/fixtures/resources/javascript/')), [
+                'js', realpath(__DIR__ . '/fixtures/resources/javascript/app.js'),
+            ]],
+            [new ExternalJs('https://example.com/path.js'), [
+                'js', 'https://example.com/path.js',
+            ]],
+            [new ExternalCss('https://example.com/path.css'), [
+                'css', 'component', 'https://example.com/path.css',
+            ]],
+        ], iterator_to_array(LibraryBuilder::expandLibraryPaths(PintoList::Pinto_Object)));
+
+        static::assertEquals([
+            [(new Css('styles.css', attributes: ['defer' => true]))->setPath(realpath(__DIR__ . '/fixtures/resources/css/')), [
+                'css', 'component', realpath(__DIR__ . '/fixtures/resources/css/styles.css'),
+            ]],
+            [(new Js('app.js', attributes: ['defer' => true]))->setPath(realpath(__DIR__ . '/fixtures/resources/javascript/')), [
+                'js', realpath(__DIR__ . '/fixtures/resources/javascript/app.js'),
+            ]],
+            [new ExternalJs('https://example.com/path.js', attributes: ['defer' => true]), [
+                'js', 'https://example.com/path.js',
+            ]],
+            [new ExternalCss('https://example.com/path.css', attributes: ['defer' => true]), [
+                'css', 'component', 'https://example.com/path.css',
+            ]],
+        ], iterator_to_array(LibraryBuilder::expandLibraryPaths(PintoList::Pinto_Object_Attributes)));
     }
 
     public function testAssets(): void

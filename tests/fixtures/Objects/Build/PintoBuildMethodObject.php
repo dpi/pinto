@@ -24,6 +24,6 @@ final class PintoBuildMethodObject
 
     private function pintoMapping(): PintoMapping
     {
-        return new PintoMapping([], [], [], [], [], []);
+        return new PintoMapping([], [], [], [], []);
     }
 }

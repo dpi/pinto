@@ -9,6 +9,7 @@ use Pinto\Attribute\Asset\ExternalCss;
 use Pinto\Attribute\Asset\ExternalJs;
 use Pinto\Attribute\Asset\Js;
 use Pinto\Attribute\ThemeDefinition;
+use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
 use Pinto\tests\fixtures\Lists\PintoList;
@@ -67,9 +68,8 @@ final class PintoObject
     private function pintoMapping(): PintoMapping
     {
         return new PintoMapping(
-            enumClasses: [],
-            enums: [
-                static::class => [PintoList::class, PintoList::Pinto_Object->name],
+            resources: [
+                static::class => ObjectListEnumResource::createFromEnum(PintoList::Pinto_Object),
             ],
             definitions: [
                 static::class => new HookThemeDefinition([

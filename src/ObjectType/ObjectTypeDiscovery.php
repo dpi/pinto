@@ -8,6 +8,8 @@ use Pinto\DefinitionDiscovery;
 use Pinto\Exception\PintoIndeterminableObjectType;
 use Pinto\Exception\PintoThemeDefinition;
 use Pinto\List\ObjectListInterface;
+use Pinto\List\Resource\ObjectListEnumResource;
+use Pinto\Resource\ResourceInterface;
 
 /**
  * Discovers ObjectTypeInterface attributes on a class, on a class or its methods.
@@ -37,7 +39,7 @@ final class ObjectTypeDiscovery
      *
      * @throws PintoThemeDefinition
      */
-    public static function definitionForThemeObject(string $objectClassName, ObjectListInterface $case, DefinitionDiscovery $definitionDiscovery, ?ObjectListInterface $originalCase = null): array
+    public static function definitionForThemeObject(string $objectClassName, ResourceInterface $resource, DefinitionDiscovery $definitionDiscovery, ?ObjectListInterface $originalCase = null): array
     {
         /** @var array<array{\ReflectionAttribute<ObjectTypeInterface>, \Reflector}> $definitions */
         $definitions = [];
@@ -64,8 +66,15 @@ final class ObjectTypeDiscovery
         if (count($definitions) > 1) {
             throw new PintoThemeDefinition(sprintf('Multiple theme definitions found on %s. There must only be one.', $objectClassName));
         } elseif (1 === count($definitions)) {
-            return [$definitions[0][0]->getName(), $definitions[0][0]->newInstance()->getDefinition($originalCase ?? $case, $definitions[0][1])];
+            return [$definitions[0][0]->getName(), $definitions[0][0]->newInstance()->getDefinition($originalCase ?? $resource, $definitions[0][1])];
         }
+
+        if (!$resource instanceof ObjectListEnumResource) {
+            // If we haven't got one now it's a big problem.
+            throw new PintoThemeDefinition(sprintf('Resource for %s is not a %s', $objectClassName, ObjectListEnumResource::class));
+        }
+
+        $case = $resource->pintoEnum;
 
         // Otherwise defer to parent if it was provided (this isn't recurison).
         $extendsObject = $definitionDiscovery->extendsKnownObject($objectClassName);

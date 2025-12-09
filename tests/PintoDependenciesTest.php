@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace Pinto\tests;
 
 use PHPUnit\Framework\TestCase;
+use Pinto\Attribute\DependencyOn;
 use Pinto\CanonicalProduct\Attribute\CanonicalProduct;
 use Pinto\DefinitionDiscovery;
+use Pinto\Library\DependencyCollection;
+use Pinto\Library\LibraryBuilder;
+use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\tests\fixtures\Lists\DependencyOn\PintoListDependencies;
 use Pinto\tests\fixtures\Lists\DependencyOn\PintoListDependenciesHierarchyChild;
 use Pinto\tests\fixtures\Lists\DependencyOn\PintoListDependenciesHierarchyParent;
 use Pinto\tests\fixtures\Objects\DependencyOn\PintoObjectDependencyOnChild;
 use Pinto\tests\fixtures\Objects\DependencyOn\PintoObjectDependencyOnParent;
-
-use function Safe\realpath;
 
 /**
  * Tests pinto enums where cases do not have definitions.
@@ -24,56 +26,52 @@ final class PintoDependenciesTest extends TestCase
 {
     /**
      * @covers \Pinto\List\ObjectListTrait::assets
-     * @covers \Pinto\List\ObjectListTrait::libraries
      * @covers \Pinto\Attribute\DependencyOn
+     * @covers \Pinto\Library\LibraryBuilder::solveDeps
      */
-    public function testNoAssets(): void
+    public function testAssets(): void
     {
+        $pintoMapping = new \Pinto\PintoMapping(
+            resources: [
+                '--test-1' => ObjectListEnumResource::createFromEnum(PintoListDependencies::Alpha),
+                '--test-2' => ObjectListEnumResource::createFromEnum(PintoListDependencies::Beta),
+                '--test-3' => ObjectListEnumResource::createFromEnum(PintoListDependencies::Charlie),
+                '--test-4' => ObjectListEnumResource::createFromEnum(PintoListDependencies::Delta),
+            ],
+            definitions: [],
+            buildInvokers: [],
+            types: [],
+            lsbFactoryCanonicalObjectClasses: [],
+        );
+
         static::assertEquals([
-            PintoListDependencies::Alpha->value => [
-                'dependencies' => [
-                    'pinto/beta',
-                    'pinto/charlie',
-                ],
-            ],
-            PintoListDependencies::Beta->value => [
-                'js' => [
-                    realpath(__DIR__ . '/fixtures/resources/javascript/app.js') => [
-                        'minified' => false,
-                        'preprocess' => false,
-                        'attributes' => [],
-                    ],
-                ],
-                'css' => [
-                    'component' => [
-                        realpath(__DIR__ . '/fixtures/resources/css/styles.css') => [
-                            'minified' => false,
-                            'preprocess' => false,
-                            'category' => 'component',
-                            'attributes' => [],
-                        ],
-                    ],
-                ],
-                'dependencies' => [
-                    'pinto/charlie',
-                ],
-            ],
-            PintoListDependencies::Charlie->value => [
-                'js' => [
-                    realpath(__DIR__ . '/fixtures/resources/javascript/app.js') => [
-                        'minified' => false,
-                        'preprocess' => false,
-                        'attributes' => [],
-                    ],
-                ],
-            ],
-            PintoListDependencies::Delta->value => [
-                'dependencies' => [
-                    'pinto/alpha',
-                    'foo/bar',
-                ],
-            ],
-        ], PintoListDependencies::libraries(new \Pinto\PintoMapping([], [], [], [], [], [])));
+            new DependencyOn(PintoListDependencies::Beta),
+            new DependencyOn(PintoListDependencies::Charlie),
+        ], PintoListDependencies::Alpha->dependencies());
+        static::assertEquals([
+            new DependencyOn(PintoListDependencies::Charlie),
+        ], PintoListDependencies::Beta->dependencies());
+        static::assertEquals([], PintoListDependencies::Charlie->dependencies());
+        static::assertEquals([
+            new DependencyOn(PintoListDependencies::Alpha),
+            new DependencyOn(dependency: 'foo/bar'),
+        ], PintoListDependencies::Delta->dependencies());
+
+        static::assertEquals(DependencyCollection::create([
+            ObjectListEnumResource::createFromEnum(PintoListDependencies::Beta),
+            ObjectListEnumResource::createFromEnum(PintoListDependencies::Charlie),
+        ]), LibraryBuilder::solveDeps(PintoListDependencies::Alpha, $pintoMapping));
+
+        static::assertEquals(DependencyCollection::create([
+            ObjectListEnumResource::createFromEnum(PintoListDependencies::Charlie),
+        ]), LibraryBuilder::solveDeps(PintoListDependencies::Beta, $pintoMapping));
+
+        static::assertEquals(DependencyCollection::create([]), LibraryBuilder::solveDeps(PintoListDependencies::Charlie, $pintoMapping));
+
+        static::assertEquals(DependencyCollection::create([
+            ObjectListEnumResource::createFromEnum(PintoListDependencies::Alpha),
+            'foo/bar',
+        ]), LibraryBuilder::solveDeps(PintoListDependencies::Delta, $pintoMapping));
     }
 
     /**
@@ -86,21 +84,22 @@ final class PintoDependenciesTest extends TestCase
         $definitionDiscovery[PintoObjectDependencyOnParent::class] = PintoListDependenciesHierarchyParent::Parent;
 
         $pintoMapping = new \Pinto\PintoMapping(
-            enumClasses: [],
-            enums: [
-                PintoObjectDependencyOnParent::class => [PintoListDependenciesHierarchyParent::class, PintoListDependenciesHierarchyParent::Parent->name],
+            resources: [
+                PintoObjectDependencyOnChild::class => ObjectListEnumResource::createFromEnum(PintoListDependenciesHierarchyChild::Child),
+                PintoObjectDependencyOnParent::class => ObjectListEnumResource::createFromEnum(PintoListDependenciesHierarchyParent::Parent),
             ],
             definitions: [],
             buildInvokers: [],
             types: [],
             lsbFactoryCanonicalObjectClasses: CanonicalProduct::discoverCanonicalProductObjectClasses($definitionDiscovery),
         );
+
         static::assertEquals([
-            PintoListDependenciesHierarchyChild::Child->name => [
-                'dependencies' => [
-                    'pinto/Parent',
-                ],
-            ],
-        ], PintoListDependenciesHierarchyChild::libraries($pintoMapping));
+            new DependencyOn(parent: true),
+        ], PintoListDependenciesHierarchyChild::Child->dependencies());
+
+        static::assertEquals(DependencyCollection::create([
+            ObjectListEnumResource::createFromEnum(PintoListDependenciesHierarchyParent::Parent),
+        ]), LibraryBuilder::solveDeps(PintoListDependenciesHierarchyChild::Child, $pintoMapping));
     }
 }

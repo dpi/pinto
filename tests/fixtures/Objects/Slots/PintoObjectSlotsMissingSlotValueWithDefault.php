@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pinto\tests\fixtures\Objects\Slots;
 
 use Pinto\Attribute\ObjectType;
+use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
 use Pinto\Slots;
@@ -38,9 +39,8 @@ final class PintoObjectSlotsMissingSlotValueWithDefault
     private function pintoMapping(): PintoMapping
     {
         return new PintoMapping(
-            enumClasses: [],
-            enums: [
-                static::class => [PintoListSlots::class, PintoListSlots::PintoObjectSlotsMissingSlotValueWithDefault->name],
+            resources: [
+                static::class => ObjectListEnumResource::createFromEnum(PintoListSlots::PintoObjectSlotsMissingSlotValueWithDefault),
             ],
             definitions: [
                 static::class => new Slots\Definition(new Slots\SlotList([

@@ -7,9 +7,9 @@ namespace Pinto\List;
 /**
  * An implementation where all resources are in a single directory.
  *
- * @see ObjectListInterface
+ * @see \Pinto\Resource\ResourceInterface
  *
- * @phpstan-require-implements \Pinto\List\ObjectListInterface
+ * @phpstan-require-implements \Pinto\Resource\ResourceInterface
  */
 trait SingleDirectoryObjectListTrait
 {
