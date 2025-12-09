@@ -39,10 +39,7 @@ class PintoObjectCanonicalProductContestedRoot
         $definitionDiscovery[PintoObjectCanonicalProductContestedRoot::class] = PintoListCanonicalProductContested::Root;
 
         return new PintoMapping(
-            enumClasses: [
-                // Not tested.
-            ],
-            enums: [
+            resources: [
                 // Not tested.
             ],
             definitions: [

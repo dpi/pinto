@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+use Pinto\Attribute\Asset\Css;
+use Pinto\Attribute\Asset\Js;
+use Pinto\Library\LibraryBuilder;
 use Pinto\tests\fixtures\Lists\AssetGlob\PintoListAssetEnum;
 
 /**
@@ -18,36 +21,23 @@ final class PintoAssetEnumTest extends TestCase
     public function testEnumAssetAttribute(): void
     {
         static::assertEquals([
-            PintoListAssetEnum::Obj->name => [
-                'css' => [
-                    'component' => [
-                        'tests/fixtures/Assets/PintoListAssetGlob/styles1.css' => [
-                            'minified' => false,
-                            'preprocess' => false,
-                            'category' => 'component',
-                            'attributes' => [],
-                        ],
-                        'tests/fixtures/Assets/PintoListAssetGlob/styles2.css' => [
-                            'minified' => false,
-                            'preprocess' => false,
-                            'category' => 'component',
-                            'attributes' => [],
-                        ],
-                    ],
-                ],
-                'js' => [
-                    'tests/fixtures/Assets/PintoListAssetGlob/script1.js' => [
-                        'minified' => false,
-                        'preprocess' => false,
-                        'attributes' => [],
-                    ],
-                    'tests/fixtures/Assets/PintoListAssetGlob/script2.js' => [
-                        'minified' => false,
-                        'preprocess' => false,
-                        'attributes' => [],
-                    ],
-                ],
-            ],
-        ], PintoListAssetEnum::libraries(new Pinto\PintoMapping([], [], [], [], [], [])));
+            new Css(),
+            new Js(),
+        ], PintoListAssetEnum::Obj->assets());
+
+        static::assertEquals([
+            [(new Css())->setPath('tests/fixtures/Assets/PintoListAssetGlob'), [
+                'css', 'component', 'tests/fixtures/Assets/PintoListAssetGlob/styles1.css',
+            ]],
+            [(new Css())->setPath('tests/fixtures/Assets/PintoListAssetGlob'), [
+                'css', 'component', 'tests/fixtures/Assets/PintoListAssetGlob/styles2.css',
+            ]],
+            [(new Js())->setPath('tests/fixtures/Assets/PintoListAssetGlob'), [
+                'js', 'tests/fixtures/Assets/PintoListAssetGlob/script1.js',
+            ]],
+            [(new Js())->setPath('tests/fixtures/Assets/PintoListAssetGlob'), [
+                'js', 'tests/fixtures/Assets/PintoListAssetGlob/script2.js',
+            ]],
+        ], iterator_to_array(LibraryBuilder::expandLibraryPaths(PintoListAssetEnum::Obj)));
     }
 }

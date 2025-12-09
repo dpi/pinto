@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pinto\tests\fixtures\Objects\Build;
 
 use Pinto\Attribute\ThemeDefinition;
+use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
 use Pinto\tests\fixtures\Lists\PintoBuildOverrideList;
@@ -65,9 +66,8 @@ final class PintoBuildOverrideObject
     private function pintoMapping(): PintoMapping
     {
         return new PintoMapping(
-            enumClasses: [],
-            enums: [
-                static::class => [PintoBuildOverrideList::class, PintoBuildOverrideList::PintoBuildOverrideObject->name],
+            resources: [
+                static::class => ObjectListEnumResource::createFromEnum(PintoBuildOverrideList::PintoBuildOverrideObject),
             ],
             definitions: [
                 static::class => new HookThemeDefinition([

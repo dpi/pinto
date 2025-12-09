@@ -7,6 +7,7 @@ namespace Pinto\tests\fixtures\Objects;
 use Pinto\Attribute\Asset\Css;
 use Pinto\Attribute\Asset\Js;
 use Pinto\Attribute\ThemeDefinition;
+use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
 use Pinto\tests\fixtures\Lists\PintoListObjectBuildDefinitionMismatch;
@@ -61,9 +62,8 @@ final class PintoObjectBuildDefinitionMismatch
     private function pintoMapping(): PintoMapping
     {
         return new PintoMapping(
-            enumClasses: [],
-            enums: [
-                static::class => [PintoListObjectBuildDefinitionMismatch::class, PintoListObjectBuildDefinitionMismatch::Pinto_Object_Build_Definition_Mismatch->name],
+            resources: [
+                static::class => ObjectListEnumResource::createFromEnum(PintoListObjectBuildDefinitionMismatch::Pinto_Object_Build_Definition_Mismatch),
             ],
             definitions: [
                 static::class => new HookThemeDefinition([

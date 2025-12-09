@@ -6,9 +6,9 @@ namespace Pinto\Attribute\ObjectType;
 
 use Pinto\Exception\PintoThemeDefinition;
 use Pinto\Exception\Slots\BuildValidation;
-use Pinto\List\ObjectListInterface;
 use Pinto\ObjectType\LateBindObjectContext;
 use Pinto\ObjectType\ObjectTypeInterface;
+use Pinto\Resource\ResourceInterface;
 use Pinto\Slots\Attribute\ModifySlots;
 use Pinto\Slots\Attribute\RenameSlot;
 use Pinto\Slots\Build;
@@ -29,7 +29,7 @@ final class Slots implements ObjectTypeInterface
 
     public SlotList $slots;
 
-    public static function createBuild(ObjectListInterface $case, mixed $definition, string $objectClassName): mixed
+    public static function createBuild(ResourceInterface $resource, mixed $definition, string $objectClassName): mixed
     {
         assert($definition instanceof Definition);
 
@@ -146,7 +146,7 @@ final class Slots implements ObjectTypeInterface
         }
     }
 
-    public function getDefinition(ObjectListInterface $case, \Reflector $r): mixed
+    public function getDefinition(ResourceInterface $resource, \Reflector $r): mixed
     {
         $slots = $this->slots;
 
@@ -197,12 +197,7 @@ final class Slots implements ObjectTypeInterface
             default => throw new \LogicException('Unsupported reflection: ' . $r::class),
         };
 
-        // Get the theme object class name.
-        $rCase = new \ReflectionEnumUnitCase($case::class, $case->name);
-        /** @var array<\ReflectionAttribute<\Pinto\Attribute\Definition>> $attributes */
-        $attributes = $rCase->getAttributes(\Pinto\Attribute\Definition::class);
-        $definition = ($attributes[0] ?? null)?->newInstance() ?? throw new \LogicException('Missing definition for slot');
-        $objectClassName = $definition->className;
+        $objectClassName = $resource->getClass() ?? throw new \LogicException('Missing definition for slot');
 
         $renameSlots = RenameSlots::create();
 

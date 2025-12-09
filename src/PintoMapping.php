@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace Pinto;
 
 use Pinto\Exception\PintoMissingObjectMapping;
-use Pinto\List\ObjectListInterface;
+use Pinto\Resource\ResourceCollection;
+use Pinto\Resource\ResourceCollectionInterface;
+use Pinto\Resource\ResourceInterface;
 
 /**
  * Pinto mapping.
  */
 final readonly class PintoMapping
 {
+    private ResourceCollectionInterface $resources;
+
     /**
-     * @param array<class-string<ObjectListInterface>> $enumClasses
-     * @param array<
-     *   class-string,
-     *   array{class-string<ObjectListInterface>, string}
-     * > $enums
+     * @param array<string, ResourceInterface> $resources
      * @param array<class-string, mixed> $definitions
      * @param array<class-string, string> $buildInvokers
      * @param array<class-string, class-string<ObjectType\ObjectTypeInterface>> $types
@@ -30,31 +30,23 @@ final readonly class PintoMapping
      * @internal
      */
     public function __construct(
-        private array $enumClasses,
-        private array $enums,
+        array $resources,
         private array $definitions,
         private array $buildInvokers,
         private array $types,
         private array $lsbFactoryCanonicalObjectClasses,
     ) {
+        $this->resources = ResourceCollection::create($resources);
     }
 
     /**
-     * Get the enum case.
-     *
      * @param class-string $objectClassName
      *
      * @throws PintoMissingObjectMapping
      */
-    public function getByClass(string $objectClassName): ObjectListInterface
+    public function getResource(string $objectClassName): ResourceInterface
     {
-        /** @var class-string<ObjectListInterface> $listClass */
-        [$listClass, $caseName] = $this->enums[$objectClassName] ?? throw new PintoMissingObjectMapping($objectClassName);
-
-        /** @var ObjectListInterface $enum */
-        $enum = constant($listClass . '::' . $caseName);
-
-        return $enum;
+        return $this->resources[$objectClassName] ?? throw new PintoMissingObjectMapping($objectClassName);
     }
 
     /**
@@ -77,12 +69,9 @@ final readonly class PintoMapping
         return $this->buildInvokers[$objectClassName] ?? throw new PintoMissingObjectMapping($objectClassName);
     }
 
-    /**
-     * @return array<class-string<ObjectListInterface>>
-     */
-    public function getEnumClasses(): array
+    public function getResources(): ResourceCollectionInterface
     {
-        return $this->enumClasses;
+        return $this->resources;
     }
 
     /**

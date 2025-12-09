@@ -8,6 +8,7 @@ use Pinto\Attribute\ObjectType;
 use Pinto\CanonicalProduct\Attribute\CanonicalProduct;
 use Pinto\CanonicalProduct\CanonicalFactoryTrait;
 use Pinto\DefinitionDiscovery;
+use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
 use Pinto\tests\fixtures\Lists\CanonicalProduct\PintoListCanonicalProductOnList;
@@ -34,14 +35,11 @@ class PintoObjectCanonicalProductOnListRoot2
     private static function pintoMappingStatic(): PintoMapping
     {
         $definitionDiscovery = new DefinitionDiscovery();
-        $definitionDiscovery[PintoObjectCanonicalProductOnListChild2::class] = PintoListCanonicalProductOnList::Child2;
-        $definitionDiscovery[PintoObjectCanonicalProductOnListRoot2::class] = PintoListCanonicalProductOnList::Root2;
+        $definitionDiscovery[PintoObjectCanonicalProductOnListChild2::class] = ObjectListEnumResource::createFromEnum(PintoListCanonicalProductOnList::Child2);
+        $definitionDiscovery[PintoObjectCanonicalProductOnListRoot2::class] = ObjectListEnumResource::createFromEnum(PintoListCanonicalProductOnList::Root2);
 
         return new PintoMapping(
-            enumClasses: [
-                // Not tested.
-            ],
-            enums: [
+            resources: [
                 // Not tested.
             ],
             definitions: [

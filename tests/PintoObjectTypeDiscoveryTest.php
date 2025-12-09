@@ -7,6 +7,7 @@ namespace Pinto\tests;
 use PHPUnit\Framework\TestCase;
 use Pinto\Exception\PintoIndeterminableObjectType;
 use Pinto\Exception\PintoThemeDefinition;
+use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\ObjectType\ObjectTypeDiscovery;
 use Pinto\ObjectType\ObjectTypeInterface;
 use Pinto\ThemeDefinition\HookThemeDefinition;
@@ -28,7 +29,7 @@ final class PintoObjectTypeDiscoveryTest extends TestCase
             fixtures\Lists\PintoFaultyList::class,
             fixtures\Lists\PintoFaultyList::PintoObjectZeroObjectTypeAttributes->name,
         ));
-        ObjectTypeDiscovery::definitionForThemeObject(fixtures\Objects\Faulty\PintoObjectZeroObjectTypeAttributes::class, fixtures\Lists\PintoFaultyList::PintoObjectZeroObjectTypeAttributes, definitionDiscovery: new \Pinto\DefinitionDiscovery());
+        ObjectTypeDiscovery::definitionForThemeObject(fixtures\Objects\Faulty\PintoObjectZeroObjectTypeAttributes::class, ObjectListEnumResource::createFromEnum(fixtures\Lists\PintoFaultyList::PintoObjectZeroObjectTypeAttributes), definitionDiscovery: new \Pinto\DefinitionDiscovery());
     }
 
     public function testMultipleObjectTypeAttributes(): void

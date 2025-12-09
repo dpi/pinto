@@ -6,6 +6,7 @@ namespace Pinto\tests;
 
 use PHPUnit\Framework\TestCase;
 use Pinto\Exception\PintoMissingObjectMapping;
+use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\PintoMapping;
 use Pinto\tests\fixtures\Objects\CanonicalProduct\PintoObjectCanonicalProductChild;
 use Pinto\tests\fixtures\Objects\CanonicalProduct\PintoObjectCanonicalProductRoot;
@@ -17,21 +18,22 @@ final class PintoMappingTest extends TestCase
 {
     public function testPintoMapping(): void
     {
-        $pintoMapping = new PintoMapping([
-            fixtures\Lists\PintoList::class,
-        ], [
-            fixtures\Objects\PintoObject::class => [
-                fixtures\Lists\PintoList::class, fixtures\Lists\PintoList::Pinto_Object->name,
+        $pintoMapping = new PintoMapping(
+            resources: [
+                fixtures\Objects\PintoObject::class => ObjectListEnumResource::createFromEnum(fixtures\Lists\PintoList::Pinto_Object),
             ],
-        ], [], [], [], [
-            PintoObjectCanonicalProductRoot::class => PintoObjectCanonicalProductChild::class,
-        ]);
+            definitions: [],
+            buildInvokers: [],
+            types: [],
+            lsbFactoryCanonicalObjectClasses: [
+                PintoObjectCanonicalProductRoot::class => PintoObjectCanonicalProductChild::class,
+            ],
+        );
 
-        static::assertEquals([
-            fixtures\Lists\PintoList::class,
-        ], $pintoMapping->getEnumClasses());
-
-        static::assertEquals(fixtures\Lists\PintoList::Pinto_Object, $pintoMapping->getByClass(fixtures\Objects\PintoObject::class));
+        static::assertEquals(
+            ObjectListEnumResource::createFromEnum(fixtures\Lists\PintoList::Pinto_Object),
+            $pintoMapping->getResource(fixtures\Objects\PintoObject::class),
+        );
 
         static::assertEquals(PintoObjectCanonicalProductChild::class, $pintoMapping->getCanonicalObjectClassName(PintoObjectCanonicalProductRoot::class));
         static::assertNull($pintoMapping->getCanonicalObjectClassName('other'));
@@ -39,7 +41,7 @@ final class PintoMappingTest extends TestCase
 
     public function testGetBuildInvokerException(): void
     {
-        $pintoMapping = new PintoMapping([], [], [], [], [], []);
+        $pintoMapping = new PintoMapping([], [], [], [], []);
         static::expectException(PintoMissingObjectMapping::class);
         $pintoMapping->getBuildInvoker(fixtures\Objects\PintoObject::class);
     }

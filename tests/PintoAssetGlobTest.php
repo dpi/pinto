@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+use Pinto\Attribute\Asset\Css;
+use Pinto\Attribute\Asset\Js;
+use Pinto\Library\LibraryBuilder;
 use Pinto\tests\fixtures\Lists\AssetGlob\PintoListAssetGlob;
 
 /**
@@ -25,36 +28,23 @@ final class PintoAssetGlobTest extends TestCase
     public function testGlob(): void
     {
         static::assertEquals([
-            PintoListAssetGlob::Wildcard->name => [
-                'css' => [
-                    'component' => [
-                        'tests/fixtures/Assets/PintoListAssetGlob/styles1.css' => [
-                            'minified' => false,
-                            'preprocess' => false,
-                            'category' => 'component',
-                            'attributes' => [],
-                        ],
-                        'tests/fixtures/Assets/PintoListAssetGlob/styles2.css' => [
-                            'minified' => false,
-                            'preprocess' => false,
-                            'category' => 'component',
-                            'attributes' => [],
-                        ],
-                    ],
-                ],
-                'js' => [
-                    'tests/fixtures/Assets/PintoListAssetGlob/script1.js' => [
-                        'minified' => false,
-                        'preprocess' => false,
-                        'attributes' => [],
-                    ],
-                    'tests/fixtures/Assets/PintoListAssetGlob/script2.js' => [
-                        'minified' => false,
-                        'preprocess' => false,
-                        'attributes' => [],
-                    ],
-                ],
-            ],
-        ], PintoListAssetGlob::libraries(new Pinto\PintoMapping([], [], [], [], [], [])));
+            new Css(path: 'styles*.css'),
+            new Js(path: 'script*.js'),
+        ], PintoListAssetGlob::Wildcard->assets());
+
+        static::assertEquals([
+            [(new Css('styles*.css'))->setPath('tests/fixtures/Assets/PintoListAssetGlob'), [
+                'css', 'component', 'tests/fixtures/Assets/PintoListAssetGlob/styles1.css',
+            ]],
+            [(new Css('styles*.css'))->setPath('tests/fixtures/Assets/PintoListAssetGlob'), [
+                'css', 'component', 'tests/fixtures/Assets/PintoListAssetGlob/styles2.css',
+            ]],
+            [(new Js('script*.js'))->setPath('tests/fixtures/Assets/PintoListAssetGlob'), [
+                'js', 'tests/fixtures/Assets/PintoListAssetGlob/script1.js',
+            ]],
+            [(new Js('script*.js'))->setPath('tests/fixtures/Assets/PintoListAssetGlob'), [
+                'js', 'tests/fixtures/Assets/PintoListAssetGlob/script2.js',
+            ]],
+        ], iterator_to_array(LibraryBuilder::expandLibraryPaths(PintoListAssetGlob::Wildcard)));
     }
 }

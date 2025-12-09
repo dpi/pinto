@@ -7,6 +7,7 @@ namespace Pinto\Object;
 use Pinto\Exception\PintoBuildDefinitionMismatch;
 use Pinto\ObjectType\LateBindObjectContext;
 use Pinto\PintoMapping;
+use Pinto\Resource\ResourceInterface;
 
 /**
  * An optional trait for theme objects.
@@ -16,11 +17,11 @@ trait ObjectTrait
     /**
      * Memo/cache.
      *
-     * @var array<class-string<object>, \Pinto\List\ObjectListInterface>
+     * @var array<class-string<object>, ResourceInterface>
      *
      * @internal
      */
-    protected static array $pintoEnum = [];
+    protected static array $pintoResource = [];
 
     /**
      * An optional wrapper for individual object build methods.
@@ -39,16 +40,16 @@ trait ObjectTrait
      */
     private function pintoBuild(callable $wrapper): mixed
     {
-        static::$pintoEnum[static::class] ??= $this->pintoMapping()->getByClass(static::class);
+        static::$pintoResource[static::class] ??= $this->pintoMapping()->getResource(static::class);
 
         $objectType = $this->pintoMapping()->getObjectType(static::class);
         $definition = $this->pintoMapping()->getThemeDefinition($this::class);
 
-        $build = $objectType::createBuild(static::$pintoEnum[static::class], $definition, static::class);
+        $build = $objectType::createBuild(static::$pintoResource[static::class], $definition, static::class);
 
         // A wrapper closure is used as to allow the enum to alter the build
         // for all enums (theme objects) under its control.
-        $built = (static::$pintoEnum[static::class]->build($wrapper, $this))($build);
+        $built = (static::$pintoResource[static::class]->build($wrapper, $this))($build);
 
         $objectType::lateBindObjectToBuild($built, $definition, $this, LateBindObjectContext::create($this->pintoMapping()));
         $objectType::validateBuild($built, $definition, static::class);

@@ -6,9 +6,9 @@ namespace Pinto\Attribute\ObjectType;
 
 use Pinto\Exception\PintoBuildDefinitionMismatch;
 use Pinto\Exception\PintoThemeDefinition;
-use Pinto\List\ObjectListInterface;
 use Pinto\ObjectType\LateBindObjectContext;
 use Pinto\ObjectType\ObjectTypeInterface;
+use Pinto\Resource\ResourceInterface;
 use Pinto\ThemeDefinition\HookThemeDefinition;
 
 /**
@@ -31,11 +31,11 @@ trait LegacyThemeDefinitionTrait
     ) {
     }
 
-    final public static function createBuild(ObjectListInterface $case, mixed $definition, string $objectClassName): mixed
+    final public static function createBuild(ResourceInterface $resource, mixed $definition, string $objectClassName): mixed
     {
         return [
-            '#theme' => $case->name(),
-            '#attached' => ['library' => $case->attachLibraries()],
+            '#theme' => $resource->name(),
+            '#attached' => ['library' => $resource->attachLibraries()],
         ];
     }
 
@@ -67,7 +67,7 @@ trait LegacyThemeDefinitionTrait
         }
     }
 
-    final public function getDefinition(ObjectListInterface $case, \Reflector $r): mixed
+    final public function getDefinition(ResourceInterface $resource, \Reflector $r): mixed
     {
         if ($r instanceof \ReflectionClass) {
             $definition = $this->definition ?? throw new PintoThemeDefinition('$definition property must be set for ' . ObjectTypeInterface::class . ' attributes on the class level of a theme object.');
@@ -86,8 +86,8 @@ trait LegacyThemeDefinitionTrait
 
         return new HookThemeDefinition(definition: ($definition ?? []) + [
             'variables' => [],
-            'path' => $case->templateDirectory(),
-            'template' => $case->templateName(),
+            'path' => $resource->templateDirectory(),
+            'template' => $resource->templateName(),
         ]);
     }
 }
