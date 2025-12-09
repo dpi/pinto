@@ -71,7 +71,7 @@ final class ObjectTypeDiscovery
 
         if (!$resource instanceof ObjectListEnumResource) {
             // If we haven't got one now it's a big problem.
-            throw new \LogicException('Resource is not a ObjectListEnumResource');
+            throw new PintoThemeDefinition(sprintf('Resource for %s is not a %s', $objectClassName, ObjectListEnumResource::class));
         }
 
         $case = $resource->pintoEnum;

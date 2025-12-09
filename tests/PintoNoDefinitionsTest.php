@@ -28,6 +28,14 @@ final class PintoNoDefinitionsTest extends TestCase
     }
 
     /**
+     * @covers \Pinto\tests\PintoTestUtility::definitions
+     */
+    public function testResourceClass(): void
+    {
+        static::assertNull(PintoListNoDefinitions::No_Definition_With_Assets->getClass());
+    }
+
+    /**
      * @covers \Pinto\List\ObjectListTrait::assets
      * @covers \Pinto\Library\LibraryBuilder::expandLibraryPaths
      */
