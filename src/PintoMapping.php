@@ -69,6 +69,17 @@ final readonly class PintoMapping
         return $this->buildInvokers[$objectClassName] ?? throw new PintoMissingObjectMapping($objectClassName);
     }
 
+    /**
+     * @throws PintoMissingObjectMapping
+     */
+    public function getBuilder(object $component): \Closure
+    {
+        $method = $this->buildInvokers[$component::class] ?? throw new PintoMissingObjectMapping($component::class);
+
+        // @phpstan-ignore-next-line
+        return $component->{$method}(...);
+    }
+
     public function getResources(): ResourceCollectionInterface
     {
         return $this->resources;

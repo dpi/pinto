@@ -45,4 +45,35 @@ final class PintoMappingTest extends TestCase
         static::expectException(PintoMissingObjectMapping::class);
         $pintoMapping->getBuildInvoker(fixtures\Objects\PintoObject::class);
     }
+
+    public function testGetBuilderException(): void
+    {
+        $pintoMapping = new PintoMapping([], [], [], [], []);
+        static::expectException(PintoMissingObjectMapping::class);
+        $component = fixtures\Objects\PintoObject::create('Foo');
+        $pintoMapping->getBuilder($component);
+    }
+
+    /**
+     * @covers \Pinto\PintoMapping::getBuilder
+     */
+    public function testGetBuilder(): void
+    {
+        $pintoMapping = new PintoMapping(
+            resources: [],
+            definitions: [],
+            buildInvokers: [
+                fixtures\Objects\PintoObject::class => '__invoke',
+            ],
+            types: [],
+            lsbFactoryCanonicalObjectClasses: [],
+        );
+
+        $component = fixtures\Objects\PintoObject::create('Foo');
+        $builder = $pintoMapping->getBuilder($component);
+        static::assertIsCallable($builder);
+
+        $result = $builder();
+        static::assertEquals('Foo', $result['#test_variable']);
+    }
 }

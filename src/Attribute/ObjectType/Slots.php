@@ -118,9 +118,8 @@ final class Slots implements ObjectTypeInterface
         foreach ($definition->slots as $slot) {
             if (true === $build->pintoHas($slot->name)) {
                 $slotValue = $build->pintoGet($slot->name);
-                if (\is_object($slotValue) && ($invokerMethod = $context->getBuildInvoker($slotValue::class)) !== null) {
-                    // @phpstan-ignore-next-line
-                    $build->set($slot->name, $slotValue->{$invokerMethod}());
+                if (\is_object($slotValue) && ($builder = $context->getBuilder($slotValue)) !== null) {
+                    $build->set($slot->name, $builder());
                 }
             }
         }

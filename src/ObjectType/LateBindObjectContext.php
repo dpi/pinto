@@ -8,8 +8,6 @@ use Pinto\Exception\PintoMissingObjectMapping;
 use Pinto\PintoMapping;
 
 /**
- * Discovers ObjectTypeInterface attributes on a class, on a class or its methods.
- *
  * @internal
  */
 final class LateBindObjectContext
@@ -27,13 +25,10 @@ final class LateBindObjectContext
         return new static($pintoMapping);
     }
 
-    /**
-     * @param class-string $objectClassName
-     */
-    public function getBuildInvoker(string $objectClassName): ?string
+    public function getBuilder(object $component): ?\Closure
     {
         try {
-            return $this->pintoMapping->getBuildInvoker($objectClassName);
+            return $this->pintoMapping->getBuilder($component);
         } catch (PintoMissingObjectMapping) {
             return null;
         }
