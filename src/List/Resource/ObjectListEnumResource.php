@@ -39,16 +39,6 @@ final class ObjectListEnumResource implements ResourceInterface
         return $this->pintoEnum->templateName();
     }
 
-    public function libraryName(): string
-    {
-        return $this->pintoEnum->libraryName();
-    }
-
-    public function attachLibraries(): array
-    {
-        return $this->pintoEnum->attachLibraries();
-    }
-
     public function build(callable $wrapper, object $object): callable
     {
         return $this->pintoEnum->build($wrapper, $object);

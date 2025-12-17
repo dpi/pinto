@@ -20,8 +20,6 @@ final class PintoObjectListEnumResourceTest extends TestCase
         static::assertEquals($enum->getClass(), $resource->getClass());
         static::assertEquals($enum->name(), $resource->name());
         static::assertEquals($enum->templateName(), $resource->templateName());
-        static::assertEquals($enum->libraryName(), $resource->libraryName());
-        static::assertEquals($enum->attachLibraries(), $resource->attachLibraries());
         static::assertEquals($enum->templateDirectory(), $resource->templateDirectory());
         static::assertEquals($enum->cssDirectory(), $resource->cssDirectory());
         static::assertEquals($enum->jsDirectory(), $resource->jsDirectory());
