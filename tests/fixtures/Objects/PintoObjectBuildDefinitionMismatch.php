@@ -6,12 +6,12 @@ namespace Pinto\tests\fixtures\Objects;
 
 use Pinto\Attribute\Asset\Css;
 use Pinto\Attribute\Asset\Js;
-use Pinto\Attribute\ThemeDefinition;
+use Pinto\Attribute\ObjectType;
 use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
+use Pinto\Slots;
 use Pinto\tests\fixtures\Lists\PintoListObjectBuildDefinitionMismatch;
-use Pinto\ThemeDefinition\HookThemeDefinition;
 
 /**
  * Test object.
@@ -30,9 +30,7 @@ final class PintoObjectBuildDefinitionMismatch
     ) {
     }
 
-    /**
-     * Creates a new object.
-     */
+    #[ObjectType\Slots(slots: ['test_variable'])]
     public static function create(
         string $text,
     ): static {
@@ -41,22 +39,9 @@ final class PintoObjectBuildDefinitionMismatch
 
     public function __invoke(): mixed
     {
-        return $this->pintoBuild(function (mixed $build): mixed {
-            return $build + [];
+        return $this->pintoBuild(function (Slots\Build $build): Slots\Build {
+            return $build;
         });
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    #[ThemeDefinition]
-    public static function theme(): array
-    {
-        return [
-            'variables' => [
-                'test_variable' => null,
-            ],
-        ];
     }
 
     private function pintoMapping(): PintoMapping
@@ -66,16 +51,14 @@ final class PintoObjectBuildDefinitionMismatch
                 static::class => ObjectListEnumResource::createFromEnum(PintoListObjectBuildDefinitionMismatch::Pinto_Object_Build_Definition_Mismatch),
             ],
             definitions: [
-                static::class => new HookThemeDefinition([
-                    'variables' => [
-                        'test_variable' => null,
-                    ],
-                ]),
+                static::class => new Slots\Definition(new Slots\SlotList([
+                    new Slots\Slot(name: 'test_variable'),
+                ])),
             ],
             buildInvokers: [
                 static::class => '__invoke',
             ],
-            types: [static::class => ThemeDefinition::class],
+            types: [static::class => ObjectType\Slots::class],
             lsbFactoryCanonicalObjectClasses: [],
         );
     }

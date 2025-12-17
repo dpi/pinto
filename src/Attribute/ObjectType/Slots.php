@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Pinto\Attribute\ObjectType;
 
-use Pinto\Exception\PintoThemeDefinition;
+use Pinto\Exception\PintoObjectTypeDefinition;
 use Pinto\Exception\Slots\BuildValidation;
 use Pinto\ObjectType\LateBindObjectContext;
 use Pinto\ObjectType\ObjectTypeInterface;
@@ -153,14 +153,14 @@ final class Slots implements ObjectTypeInterface
         if (0 === $this->slots->count()) {
             $reflectionMethod = match (true) {
                 $r instanceof \ReflectionClass && null !== $this->method => $r->getMethod($this->method),
-                $r instanceof \ReflectionClass => $r->getConstructor() ?? throw new PintoThemeDefinition('Missing method to reflect parameters from.'),
+                $r instanceof \ReflectionClass => $r->getConstructor() ?? throw new PintoObjectTypeDefinition('Missing method to reflect parameters from.'),
                 $r instanceof \ReflectionMethod => $r,
                 default => throw new \LogicException('Unsupported reflection: ' . $r::class),
             };
 
             // Method doesn't need to be public if there are defined slots:
             if (true !== $reflectionMethod->isPublic()) {
-                throw new PintoThemeDefinition(sprintf('Method %s::%s() must be public to be used as a %s entrypoint.', $reflectionMethod->getDeclaringClass()->getName(), $reflectionMethod->getShortName(), static::class));
+                throw new PintoObjectTypeDefinition(sprintf('Method %s::%s() must be public to be used as a %s entrypoint.', $reflectionMethod->getDeclaringClass()->getName(), $reflectionMethod->getShortName(), static::class));
             }
 
             $slots = new SlotList();
@@ -185,7 +185,7 @@ final class Slots implements ObjectTypeInterface
             }
         } elseif (true === $this->bindPromotedProperties) {
             // Slots > 0 and bind properties are an invalid state.
-            throw new PintoThemeDefinition(sprintf('Slots must use reflection (no explicitly defined `$slots`) when promoted properties bind is on.'));
+            throw new PintoObjectTypeDefinition(sprintf('Slots must use reflection (no explicitly defined `$slots`) when promoted properties bind is on.'));
         }
 
         // Now look for other attributes.

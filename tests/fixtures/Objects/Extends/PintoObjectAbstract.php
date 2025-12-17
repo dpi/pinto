@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Pinto\tests\fixtures\Objects\Extends;
 
-use Pinto\Attribute\ThemeDefinition;
+use Pinto\Attribute\ObjectType;
 use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\Object\ObjectTrait;
 use Pinto\PintoMapping;
+use Pinto\Slots;
 use Pinto\tests\fixtures\Lists\PintoListExtends;
-use Pinto\ThemeDefinition\HookThemeDefinition;
 
 abstract class PintoObjectAbstract
 {
@@ -28,8 +28,8 @@ abstract class PintoObjectAbstract
 
     public function __invoke(): mixed
     {
-        return $this->pintoBuild(function (mixed $build): mixed {
-            return $build + [];
+        return $this->pintoBuild(function (Slots\Build $build): Slots\Build {
+            return $build->set('text', $this->text);
         });
     }
 
@@ -41,14 +41,18 @@ abstract class PintoObjectAbstract
                 PintoObjectExtends2::class => ObjectListEnumResource::createFromEnum(PintoListExtends::Extends2),
             ],
             definitions: [
-                PintoObjectExtends1::class => new HookThemeDefinition([]),
-                PintoObjectExtends2::class => new HookThemeDefinition([]),
+                PintoObjectExtends1::class => new Slots\Definition(new Slots\SlotList([
+                    new Slots\Slot(name: 'text'),
+                ])),
+                PintoObjectExtends2::class => new Slots\Definition(new Slots\SlotList([
+                    new Slots\Slot(name: 'text'),
+                ])),
             ],
             buildInvokers: [
                 PintoObjectExtends1::class => '__invoke',
                 PintoObjectExtends2::class => '__invoke',
             ],
-            types: [static::class => ThemeDefinition::class],
+            types: [static::class => ObjectType\Slots::class],
             lsbFactoryCanonicalObjectClasses: [],
         );
     }

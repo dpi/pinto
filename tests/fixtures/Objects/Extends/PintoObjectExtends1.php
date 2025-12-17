@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Pinto\tests\fixtures\Objects\Extends;
 
-use Pinto\Attribute\ThemeDefinition;
+use Pinto\Attribute\ObjectType\Slots;
 
-#[ThemeDefinition]
+#[Slots]
 final class PintoObjectExtends1 extends PintoObjectAbstract
 {
 }

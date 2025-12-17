@@ -74,6 +74,6 @@ final class PintoMappingTest extends TestCase
         static::assertIsCallable($builder);
 
         $result = $builder();
-        static::assertEquals('Foo', $result['#test_variable']);
+        static::assertEquals('Foo', $result->pintoGet('test_variable'));
     }
 }

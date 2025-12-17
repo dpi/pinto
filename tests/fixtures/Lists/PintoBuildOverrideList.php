@@ -19,8 +19,8 @@ enum PintoBuildOverrideList: string implements ObjectListInterface
     public function build(callable $wrapper, object $object): callable
     {
         return function (mixed $build) use ($wrapper, $object) {
-            if (is_array($build)) {
-                $build['build_context_from_list'] = $object::class;
+            if ($build instanceof \Pinto\Slots\Build) {
+                $build->set('build_context_from_list', $object::class . ' set by ' . static::class);
             }
 
             return $wrapper($build);
