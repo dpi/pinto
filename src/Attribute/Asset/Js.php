@@ -27,6 +27,7 @@ final class Js implements JsAssetInterface, LocalAssetInterface
         public bool $minified = false,
         public bool $preprocess = false,
         public readonly array $attributes = [],
+        public readonly bool $silenceNoMatches = false,
     ) {
         if (str_starts_with($path, '/')) {
             throw new \LogicException('Path must not begin with forward-slash');
@@ -46,8 +47,9 @@ final class Js implements JsAssetInterface, LocalAssetInterface
         $glob = \glob($pattern);
         if (false === $glob || [] === $glob) {
             if (!\file_exists($pattern)) {
-                // No exceptions when globs are used, no files are allowed.
-                throw new \LogicException('File does not exist: ' . $pattern);
+                return $this->silenceNoMatches
+                  ? new AssetLibraryPaths()
+                  : throw new \LogicException('File does not exist: ' . $pattern);
             }
 
             return new AssetLibraryPaths([['js', $pattern]]);
