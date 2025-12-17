@@ -11,9 +11,11 @@ use Pinto\DefinitionDiscovery;
 use Pinto\Library\DependencyCollection;
 use Pinto\Library\LibraryBuilder;
 use Pinto\List\Resource\ObjectListEnumResource;
+use Pinto\Resource\ResourceInterface;
 use Pinto\tests\fixtures\Lists\DependencyOn\PintoListDependencies;
 use Pinto\tests\fixtures\Lists\DependencyOn\PintoListDependenciesHierarchyChild;
 use Pinto\tests\fixtures\Lists\DependencyOn\PintoListDependenciesHierarchyParent;
+use Pinto\tests\fixtures\Lists\PintoList;
 use Pinto\tests\fixtures\Objects\DependencyOn\PintoObjectDependencyOnChild;
 use Pinto\tests\fixtures\Objects\DependencyOn\PintoObjectDependencyOnParent;
 
@@ -27,7 +29,7 @@ final class PintoDependenciesTest extends TestCase
     /**
      * @covers \Pinto\List\ObjectListTrait::assets
      * @covers \Pinto\Attribute\DependencyOn
-     * @covers \Pinto\Library\LibraryBuilder::solveDeps
+     * @covers \LibraryBuilder::solveDeps
      */
     public function testAssets(): void
     {
@@ -101,5 +103,29 @@ final class PintoDependenciesTest extends TestCase
         static::assertEquals(DependencyCollection::create([
             ObjectListEnumResource::createFromEnum(PintoListDependenciesHierarchyParent::Parent),
         ]), LibraryBuilder::solveDeps(PintoListDependenciesHierarchyChild::Child, $pintoMapping));
+    }
+
+    public function testDeduplicateDependencies(): void
+    {
+        $objectListEnum = PintoList::Pinto_Object;
+        $resource = \Mockery::mock(ResourceInterface::class);
+        $resource->expects('dependencies')->andReturn([
+            new DependencyOn(dependency: $objectListEnum),
+            new DependencyOn(dependency: $objectListEnum),
+        ]);
+        $pintoMapping = new \Pinto\PintoMapping(
+            resources: [
+                'untestedKey' => ObjectListEnumResource::createFromEnum($objectListEnum),
+            ],
+            definitions: [],
+            buildInvokers: [],
+            types: [],
+            lsbFactoryCanonicalObjectClasses: [],
+        );
+
+        $dependencyCollection = LibraryBuilder::solveDeps($resource, $pintoMapping);
+        static::assertEquals([
+            ObjectListEnumResource::createFromEnum($objectListEnum),
+        ], \iterator_to_array($dependencyCollection));
     }
 }

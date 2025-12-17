@@ -14,7 +14,9 @@
         "phpstan/phpstan-deprecation-rules": "^1.2.1",
         "phpstan/phpstan-symfony": "^1.4.14",
         "phpunit/phpunit": "^11.5.15",
-        "thecodingmachine/safe": "^2 || ^3.0"
+        "thecodingmachine/safe": "^2 || ^3.0",
+        "mockery/mockery": "^1.6",
+        "phpstan/phpstan-mockery": "^1.1"
     },
     "config": {
         "allow-plugins": {

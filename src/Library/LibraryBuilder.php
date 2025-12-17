@@ -61,6 +61,9 @@ final class LibraryBuilder
             }
         }
 
+        // Regular is good for objects.
+        $deps = \array_unique($deps, \SORT_REGULAR);
+
         if ([] === $deps) {
             return DependencyCollection::create([]);
         }
