@@ -23,18 +23,6 @@ interface ResourceInterface
     public function templateName(): string;
 
     /**
-     * Get the library name.
-     */
-    public function libraryName(): string;
-
-    /**
-     * Get the libraries to attach.
-     *
-     * @return string[]
-     */
-    public function attachLibraries(): array;
-
-    /**
      * Build function called after an object build method.
      *
      * @param (callable (mixed $build): mixed) $wrapper

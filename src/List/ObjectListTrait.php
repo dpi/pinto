@@ -42,20 +42,6 @@ trait ObjectListTrait
         return str_replace('_', '-', $this->name());
     }
 
-    public function libraryName(): string
-    {
-        return match ($this) {
-            default => $this instanceof \BackedEnum ? $this->value : $this->name,
-        };
-    }
-
-    public function attachLibraries(): array
-    {
-        return [
-            sprintf('pinto/%s', $this->libraryName()),
-        ];
-    }
-
     public function build(callable $wrapper, object $object): callable
     {
         return function (mixed $build) use ($wrapper) {
