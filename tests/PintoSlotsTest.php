@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pinto\tests;
 
 use PHPUnit\Framework\TestCase;
+use Pinto\Exception\PintoObjectTypeDefinition;
 use Pinto\Exception\Slots\UnknownValue;
 use Pinto\Slots;
 use Pinto\Slots\SlotList;
@@ -145,7 +146,7 @@ final class PintoSlotsTest extends TestCase
 
     public function testPintoObjectSlotsBindPromotedPublicWithDefinedSlots(): void
     {
-        static::expectException(\Pinto\Exception\PintoThemeDefinition::class);
+        static::expectException(PintoObjectTypeDefinition::class);
         static::expectExceptionMessage('Slots must use reflection (no explicitly defined `$slots`) when promoted properties bind is on.');
         \Pinto\ObjectType\ObjectTypeDiscovery::definitionForThemeObject(PintoObjectSlotsBindPromotedPublicWithDefinedSlots::class, Lists\PintoFaultyList::PintoObjectSlotsBindPromotedPublicWithDefinedSlots, definitionDiscovery: new \Pinto\DefinitionDiscovery());
     }

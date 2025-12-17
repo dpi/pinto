@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace Pinto\tests;
 
 use PHPUnit\Framework\TestCase;
+use Pinto\Attribute\ObjectType;
 use Pinto\Exception\PintoIndeterminableObjectType;
-use Pinto\Exception\PintoThemeDefinition;
+use Pinto\Exception\PintoObjectTypeDefinition;
 use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\ObjectType\ObjectTypeDiscovery;
 use Pinto\ObjectType\ObjectTypeInterface;
 use Pinto\Resource\ResourceInterface;
+use Pinto\Slots;
 use Pinto\tests\fixtures\Objects\Faulty\PintoObjectZeroObjectTypeAttributes;
-use Pinto\ThemeDefinition\HookThemeDefinition;
-
-use function Safe\realpath;
 
 /**
  * @coversDefaultClass \Pinto\ObjectType\ObjectTypeDiscovery
@@ -36,7 +35,7 @@ final class PintoObjectTypeDiscoveryTest extends TestCase
 
     public function testMultipleObjectTypeAttributes(): void
     {
-        static::expectException(PintoThemeDefinition::class);
+        static::expectException(PintoObjectTypeDefinition::class);
         static::expectExceptionMessage(sprintf('Multiple theme definitions found on %s. There must only be one.', fixtures\Objects\Faulty\PintoObjectMultipleObjectTypeAttributes::class));
         ObjectTypeDiscovery::definitionForThemeObject(fixtures\Objects\Faulty\PintoObjectMultipleObjectTypeAttributes::class, fixtures\Lists\PintoFaultyList::PintoObjectMultipleObjectTypeAttributes, definitionDiscovery: new \Pinto\DefinitionDiscovery());
     }
@@ -44,17 +43,13 @@ final class PintoObjectTypeDiscoveryTest extends TestCase
     public function testDefinitionForThemeObject(): void
     {
         $definition = ObjectTypeDiscovery::definitionForThemeObject(fixtures\Objects\PintoObject::class, fixtures\Lists\PintoList::Pinto_Object, definitionDiscovery: new \Pinto\DefinitionDiscovery())[1];
-        static::assertInstanceOf(HookThemeDefinition::class, $definition);
-        static::assertEquals(
-            [
-                'variables' => [
-                    'test_variable' => null,
-                ],
-                'path' => realpath(__DIR__ . '/fixtures/resources'),
-                'template' => 'object-test',
-            ],
-            $definition->definition,
-        );
+        static::assertInstanceOf(Slots\Definition::class, $definition);
+        static::assertEquals(new Slots\Definition(
+            slots: new Slots\SlotList([
+                new Slots\Slot(name: 'test_variable', origin: Slots\Origin\StaticallyDefined::create(data: 'test_variable')),
+            ]),
+            renameSlots: Slots\RenameSlots::create(),
+        ), $definition);
     }
 
     /**
@@ -62,7 +57,7 @@ final class PintoObjectTypeDiscoveryTest extends TestCase
      */
     public function testResourceNotEnumWhenNoObjectTypeFound(): void
     {
-        static::expectException(PintoThemeDefinition::class);
+        static::expectException(PintoObjectTypeDefinition::class);
         static::expectExceptionMessage(sprintf('Resource for %s is not a %s', PintoObjectZeroObjectTypeAttributes::class, ObjectListEnumResource::class));
 
         $resource = $this->createMock(ResourceInterface::class);

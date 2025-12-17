@@ -10,15 +10,16 @@ use Pinto\Attribute\Asset\ExternalCss;
 use Pinto\Attribute\Asset\ExternalJs;
 use Pinto\Attribute\Asset\Js;
 use Pinto\Attribute\Build;
-use Pinto\Exception\PintoBuildDefinitionMismatch;
+use Pinto\Exception\Slots\BuildValidation;
 use Pinto\Library\LibraryBuilder;
+use Pinto\Slots;
+use Pinto\tests\fixtures\Lists\PintoBuildOverrideList;
 use Pinto\tests\fixtures\Lists\PintoList;
 use Pinto\tests\fixtures\Objects\Build\PintoBuildOverrideObject;
 use Pinto\tests\fixtures\Objects\Extends\PintoObjectExtends1;
 use Pinto\tests\fixtures\Objects\Extends\PintoObjectExtends2;
 use Pinto\tests\fixtures\Objects\PintoObject;
 use Pinto\tests\fixtures\Objects\PintoObjectBuildDefinitionMismatch;
-use Pinto\ThemeDefinition\HookThemeDefinition;
 
 use function Safe\realpath;
 
@@ -28,14 +29,13 @@ final class PintoTest extends TestCase
      * Tests where an object build method doesn't fulfill required keys.
      *
      * @covers \Pinto\Object\ObjectTrait::pintoBuild
-     * @covers \Pinto\Exception\PintoBuildDefinitionMismatch
      */
     public function testPintoBuildDefinitionMismatchException(): void
     {
-        static::expectException(PintoBuildDefinitionMismatch::class);
-        static::expectExceptionMessage('Build for Pinto\tests\fixtures\Objects\PintoObjectBuildDefinitionMismatch is missing keys: #test_variable');
+        static::expectException(BuildValidation::class);
+        static::expectExceptionMessage('Build for Pinto\tests\fixtures\Objects\PintoObjectBuildDefinitionMismatch missing values for slot: `test_variable`');
         $object = PintoObjectBuildDefinitionMismatch::create('Foo bar!');
-        static::assertEquals([], $object());
+        $object();
     }
 
     /**
@@ -47,24 +47,22 @@ final class PintoTest extends TestCase
         static::assertCount(2, $themeDefinitions);
 
         $definition1 = $themeDefinitions[PintoList::Pinto_Object];
-        static::assertInstanceOf(HookThemeDefinition::class, $definition1);
-        static::assertEquals($definition1->definition, [
-            'variables' => [
-                'test_variable' => null,
-            ],
-            'path' => realpath(__DIR__ . '/fixtures/resources'),
-            'template' => 'object-test',
-        ]);
+        static::assertInstanceOf(Slots\Definition::class, $definition1);
+        static::assertEquals(new Slots\Definition(
+            slots: new Slots\SlotList([
+                new Slots\Slot(name: 'test_variable', origin: Slots\Origin\StaticallyDefined::create(data: 'test_variable')),
+            ]),
+            renameSlots: Slots\RenameSlots::create(),
+        ), $definition1);
 
         $definition2 = $themeDefinitions[PintoList::Pinto_Object_Attributes];
-        static::assertInstanceOf(HookThemeDefinition::class, $definition2);
-        static::assertEquals($definition2->definition, [
-            'variables' => [
-                'test_variable' => null,
-            ],
-            'path' => realpath(__DIR__ . '/fixtures/resources'),
-            'template' => 'object-test-attributes',
-        ]);
+        static::assertInstanceOf(Slots\Definition::class, $definition2);
+        static::assertEquals(new Slots\Definition(
+            slots: new Slots\SlotList([
+                new Slots\Slot(name: 'test_variable', origin: Slots\Origin\StaticallyDefined::create(data: 'test_variable')),
+            ]),
+            renameSlots: Slots\RenameSlots::create(),
+        ), $definition2);
     }
 
     /**
@@ -116,15 +114,9 @@ final class PintoTest extends TestCase
     public function testObject(): void
     {
         $object = PintoObject::create('Foo bar!');
-        $this::assertEquals([
-            '#theme' => 'object_test',
-            '#attached' => [
-                'library' => [
-                    'pinto/object_test',
-                ],
-            ],
-            '#test_variable' => 'Foo bar!',
-        ], $object());
+        $result = $object();
+        static::assertInstanceOf(Slots\Build::class, $result);
+        $this::assertEquals('Foo bar!', $result->pintoGet('test_variable'));
     }
 
     public function testBuildMethodForThemeObject(): void
@@ -138,9 +130,11 @@ final class PintoTest extends TestCase
     public function testBuildOverride(): void
     {
         $object = PintoBuildOverrideObject::create('Foo');
+        $result = $object();
+        static::assertInstanceOf(Slots\Build::class, $result);
         static::assertEquals(
-            PintoBuildOverrideObject::class,
-            $object()['build_context_from_list'],
+            PintoBuildOverrideObject::class . ' set by ' . PintoBuildOverrideList::class,
+            $result->pintoGet('build_context_from_list'),
         );
     }
 
@@ -150,24 +144,13 @@ final class PintoTest extends TestCase
     public function testObjectExtends(): void
     {
         $object = PintoObjectExtends1::create('Foo bar!');
-        $this::assertEquals([
-            '#theme' => 'extends1',
-            '#attached' => [
-                'library' => [
-                    'pinto/extends1',
-                ],
-            ],
-        ], $object());
+        $result = $object();
+        static::assertInstanceOf(Slots\Build::class, $result);
+        $this::assertEquals('Foo bar!', $result->pintoGet('text'));
 
         $object = PintoObjectExtends2::create('Fizz buzz!');
-        $this::assertEquals([
-            // Ensures the enum is matched and the correct meta information is merged into the build.
-            '#theme' => 'extends2',
-            '#attached' => [
-                'library' => [
-                    'pinto/extends2',
-                ],
-            ],
-        ], $object());
+        $result = $object();
+        static::assertInstanceOf(Slots\Build::class, $result);
+        $this::assertEquals('Fizz buzz!', $result->pintoGet('text'));
     }
 }

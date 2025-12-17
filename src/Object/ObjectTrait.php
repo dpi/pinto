@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Pinto\Object;
 
-use Pinto\Exception\PintoBuildDefinitionMismatch;
 use Pinto\ObjectType\LateBindObjectContext;
 use Pinto\PintoMapping;
 use Pinto\Resource\ResourceInterface;
@@ -34,7 +33,7 @@ trait ObjectTrait
      * @param (callable (W $build): W) $wrapper
      *
      * @throws \Pinto\Exception\PintoMissingObjectMapping
-     * @throws PintoBuildDefinitionMismatch
+     * @throws \Pinto\Exception\PintoObjectTypeDefinition
      *
      * @template W
      */

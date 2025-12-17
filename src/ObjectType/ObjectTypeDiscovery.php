@@ -6,7 +6,7 @@ namespace Pinto\ObjectType;
 
 use Pinto\DefinitionDiscovery;
 use Pinto\Exception\PintoIndeterminableObjectType;
-use Pinto\Exception\PintoThemeDefinition;
+use Pinto\Exception\PintoObjectTypeDefinition;
 use Pinto\List\ObjectListInterface;
 use Pinto\List\Resource\ObjectListEnumResource;
 use Pinto\Resource\ResourceInterface;
@@ -37,7 +37,7 @@ final class ObjectTypeDiscovery
      *
      * @return array{class-string<ObjectTypeInterface>, mixed}
      *
-     * @throws PintoThemeDefinition
+     * @throws PintoObjectTypeDefinition
      */
     public static function definitionForThemeObject(string $objectClassName, ResourceInterface $resource, DefinitionDiscovery $definitionDiscovery, ?ObjectListInterface $originalCase = null): array
     {
@@ -64,14 +64,14 @@ final class ObjectTypeDiscovery
         }
 
         if (count($definitions) > 1) {
-            throw new PintoThemeDefinition(sprintf('Multiple theme definitions found on %s. There must only be one.', $objectClassName));
+            throw new PintoObjectTypeDefinition(sprintf('Multiple theme definitions found on %s. There must only be one.', $objectClassName));
         } elseif (1 === count($definitions)) {
             return [$definitions[0][0]->getName(), $definitions[0][0]->newInstance()->getDefinition($originalCase ?? $resource, $definitions[0][1])];
         }
 
         if (!$resource instanceof ObjectListEnumResource) {
             // If we haven't got one now it's a big problem.
-            throw new PintoThemeDefinition(sprintf('Resource for %s is not a %s', $objectClassName, ObjectListEnumResource::class));
+            throw new PintoObjectTypeDefinition(sprintf('Resource for %s is not a %s', $objectClassName, ObjectListEnumResource::class));
         }
 
         $case = $resource->pintoEnum;
