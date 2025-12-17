@@ -29,7 +29,7 @@ final class PintoDependenciesTest extends TestCase
     /**
      * @covers \Pinto\List\ObjectListTrait::assets
      * @covers \Pinto\Attribute\DependencyOn
-     * @covers \LibraryBuilder::solveDeps
+     * @covers \Pinto\Library\LibraryBuilder::solveDeps
      */
     public function testAssets(): void
     {
